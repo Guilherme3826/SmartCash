@@ -3,14 +3,56 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SmartCash.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:Class="SmartCash.Views.MainView"
              x:DataType="vm:MainViewModel">
-  <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<Grid RowDefinitions="Auto, *">
+		<Border Grid.Row="0" Background="#2196F3" Height="60">
+			<Grid ColumnDefinitions="Auto, *, Auto">
+				<Button Grid.Column="0" Command="{Binding VoltarCommand}"
+                        Background="Transparent" Foreground="White" Content="⬅"
+                        IsVisible="{Binding !ExibindoMenuPrincipal}"/>
+
+				<TextBlock Grid.Column="1" Text="SmartCash"
+                           Foreground="White" VerticalAlignment="Center"
+                           HorizontalAlignment="Center" FontSize="20" FontWeight="Bold"/>
+			</Grid>
+		</Border>
+
+		<Panel Grid.Row="1">
+			<ScrollViewer IsVisible="{Binding ExibindoMenuPrincipal}">
+				<Border Padding="20">
+					<StackPanel Spacing="15">
+						<Button Command="{Binding NavegarCategoriasCommand}"
+                                Height="100" HorizontalAlignment="Stretch" VerticalContentAlignment="Center">
+							<StackPanel Orientation="Horizontal" Spacing="20">
+								<TextBlock Text="📁" FontSize="30"/>
+								<TextBlock Text="Categorias" FontSize="18"/>
+							</StackPanel>
+						</Button>
+
+						<Button Command="{Binding NavegarProdutosCommand}"
+                                Height="100" HorizontalAlignment="Stretch" VerticalContentAlignment="Center">
+							<StackPanel Orientation="Horizontal" Spacing="20">
+								<TextBlock Text="📦" FontSize="30"/>
+								<TextBlock Text="Produtos" FontSize="18"/>
+							</StackPanel>
+						</Button>
+
+						<Button Command="{Binding NavegarTransacoesCommand}"
+                                Height="100" HorizontalAlignment="Stretch" VerticalContentAlignment="Center">
+							<StackPanel Orientation="Horizontal" Spacing="20">
+								<TextBlock Text="💰" FontSize="30"/>
+								<TextBlock Text="Transações" FontSize="18"/>
+							</StackPanel>
+						</Button>
+					</StackPanel>
+				</Border>
+			</ScrollViewer>
+
+			<ContentControl Content="{Binding ViewAtual}"
+                            IsVisible="{Binding !ExibindoMenuPrincipal}"/>
+		</Panel>
+	</Grid>
 </UserControl>

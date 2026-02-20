@@ -1,0 +1,26 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SmartCash.EfCore.Models;
+
+namespace SmartCash.EfCore.Configurations
+{
+    public class ProdutoConfiguration : IEntityTypeConfiguration<ProdutoModel>
+    {
+        public void Configure(EntityTypeBuilder<ProdutoModel> builder)
+        {
+            builder.ToTable("Produto", t =>
+            {
+                t.HasCheckConstraint("CHK_Produto_Valor", "Valor >= 0");
+            });
+
+            builder.HasKey(e => e.IdProduto);
+            builder.Property(e => e.Nome).IsRequired().HasMaxLength(50);
+            builder.Property(e => e.Valor).IsRequired();
+
+            builder.HasOne(d => d.Categoria)
+                .WithMany(p => p.Produtos)
+                .HasForeignKey(d => d.IdCategoria)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
+}

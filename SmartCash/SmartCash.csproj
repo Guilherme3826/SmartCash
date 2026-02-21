@@ -29,4 +29,8 @@
 		<PackageReference Include="Projektanker.Icons.Avalonia" />
 		<PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
 </Project>

@@ -33,7 +33,7 @@ namespace SmartCash.ViewModels
         private async Task CarregarCategorias()
         {
             Categorias.Clear();
-            var lista = await _categoriaRepository.ObterTodosAsync();
+            var lista = await _categoriaRepository.GetAllAsync();
 
             foreach(var item in lista)
             {

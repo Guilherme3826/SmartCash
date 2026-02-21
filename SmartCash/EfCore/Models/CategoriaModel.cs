@@ -6,6 +6,7 @@ namespace SmartCash.EfCore.Models
     {
         public int IdCategoria { get; set; }
         public string Nome { get; set; } = string.Empty;
+        public string IconeApresentacao { get; set; } = "fa-solid fa-tags"; // Ícone padrão caso não haja um definido
 
         public ICollection<ProdutoModel> Produtos { get; set; } = new List<ProdutoModel>();
     }

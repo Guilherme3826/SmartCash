@@ -8,10 +8,14 @@ namespace SmartCash.EfCore.Interfaces
 {
     public interface IBaseRepository<T> where T : class
     {
-        Task<IEnumerable<T>> ObterTodosAsync();
-        Task<T?> ObterPorIdAsync(int id);
-        Task AdicionarAsync(T entidade);
-        Task AtualizarAsync(T entidade);
-        Task RemoverAsync(int id);
+        // O parâmetro 'include' permite injetar os .Include() de cada implementação
+        Task<List<T>> GetAllAsync(Func<IQueryable<T>, IQueryable<T>>? include = null);
+
+        // Agora o GetById também aceita a lógica de carregamento de relações
+        Task<T?> GetByIdAsync(int id, Func<IQueryable<T>, IQueryable<T>>? include = null);
+
+        Task AddAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(int id);
     }
 }

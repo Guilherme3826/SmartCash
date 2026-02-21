@@ -11,6 +11,7 @@ namespace SmartCash.EfCore.Configurations
             builder.ToTable("Categoria");
             builder.HasKey(e => e.IdCategoria);
             builder.Property(e => e.Nome).IsRequired().HasMaxLength(50);
+            builder.Property(e => e.IconeApresentacao).IsRequired().HasMaxLength(50);
         }
     }
 }

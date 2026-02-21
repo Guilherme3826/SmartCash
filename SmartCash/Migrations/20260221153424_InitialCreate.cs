@@ -17,7 +17,8 @@ namespace SmartCash.Migrations
                 {
                     IdCategoria = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Nome = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false)
+                    Nome = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    IconeApresentacao = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {

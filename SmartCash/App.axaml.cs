@@ -91,29 +91,24 @@ public partial class App : Application
 
     private void SeedDatabase(MeuDbContext context)
     {
-        // Verifica se já existem categorias para evitar duplicidade
         if (!context.Set<CategoriaModel>().Any())
         {
             System.Diagnostics.Debug.WriteLine("[EF DEBUG] Iniciando carga inicial de categorias...");
 
             var categoriasIniciais = new List<CategoriaModel>
-            {
-                new CategoriaModel { Nome = "Alimentação" },
-                new CategoriaModel { Nome = "Transporte" },
-                new CategoriaModel { Nome = "Lazer" },
-                new CategoriaModel { Nome = "Saúde" },
-                new CategoriaModel { Nome = "Educação" },
-                new CategoriaModel { Nome = "Moradia" }
-            };
+        {
+            new CategoriaModel { Nome = "Alimentação", IconeApresentacao = "fa-solid fa-utensils" },
+            new CategoriaModel { Nome = "Transporte", IconeApresentacao = "fa-solid fa-car" },
+            new CategoriaModel { Nome = "Lazer", IconeApresentacao = "fa-solid fa-gamepad" },
+            new CategoriaModel { Nome = "Saúde", IconeApresentacao = "fa-solid fa-heart-pulse" },
+            new CategoriaModel { Nome = "Educação", IconeApresentacao = "fa-solid fa-book" },
+            new CategoriaModel { Nome = "Moradia", IconeApresentacao = "fa-solid fa-house" }
+        };
 
             context.Set<CategoriaModel>().AddRange(categoriasIniciais);
             context.SaveChanges();
 
             System.Diagnostics.Debug.WriteLine("[EF DEBUG] Carga inicial concluída.");
-        }
-        else
-        {
-            System.Diagnostics.Debug.WriteLine("[EF DEBUG] O banco já contém categorias. Seed ignorado.");
         }
     }
 
@@ -122,23 +117,21 @@ public partial class App : Application
         // Define o caminho do banco (compatível com Android e Windows)
         string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "smartcash.db");
 
-        // Configura o DbContext aqui, passando a string de conexão
-        services.AddDbContext<MeuDbContext>(options =>
-                options.UseSqlite($"Data Source={dbPath}", x => x.MigrationsAssembly("SmartCash"))); // Nome do seu projeto principal
+        // Configura o DbContextFactory (Essencial para o padrão de repositórios com query única e thread-safety no Android)
+        services.AddDbContextFactory<MeuDbContext>(options =>
+                options.UseSqlite($"Data Source={dbPath}", x => x.MigrationsAssembly("SmartCash")));
 
-        // Registro dos Repositórios Individuais
-        services.AddScoped<IBaseRepository<CategoriaModel>, CategoriaRepository>();
-        services.AddScoped<IBaseRepository<ProdutoModel>, ProdutoRepository>();
-        services.AddScoped<IBaseRepository<TransacaoModel>, TransacaoRepository>();
-        services.AddScoped<IBaseRepository<ItemModel>, ItemRepository>();
+        // Registro dos Repositórios Individuais (Vinculados à IBaseRepository<T>)
+        services.AddTransient<IBaseRepository<CategoriaModel>, CategoriaRepository>();
+        services.AddTransient<IBaseRepository<ProdutoModel>, ProdutoRepository>();
+        services.AddTransient<IBaseRepository<TransacaoModel>, TransacaoRepository>();
+        services.AddTransient<IBaseRepository<ItemModel>, ItemRepository>();
 
         // Registro das ViewModels
-        services.AddSingleton<MainViewModel>(); // Singleton garante que o estado de navegação seja único
-        services.AddTransient<HomeViewModel>();
+        services.AddSingleton<MainViewModel>(); // Singleton para manter o estado global de navegação
         services.AddTransient<CategoriasViewModel>();
 
-        // Registro das Views com Injeção de Dependência
-        services.AddTransient<Home>();
+        // Registro das Views com Injeção de Dependência  
         services.AddTransient<Categorias>();
     }
 }

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using SmartCash.Views;
 using System;
+using System.Diagnostics;
 
 namespace SmartCash.ViewModels
 {
@@ -14,20 +15,26 @@ namespace SmartCash.ViewModels
         [ObservableProperty]
         private bool _exibindoMenuPrincipal = true;
 
+        [ObservableProperty]
+        private bool _isPaneOpen; // Controla o menu lateral direito
+
         public MainViewModel()
         {
             ExibindoMenuPrincipal = true;
         }
 
         [RelayCommand]
+        private void AlternarMenu()
+        {
+            IsPaneOpen = !IsPaneOpen;
+        }
+
+        [RelayCommand]
         private void NavegarCategorias()
         {
-            // Busca a CategoriaView resolvida pelo Injetor de Dependência
-            // Certifique-se de registrar a View e a ViewModel no App.axaml.cs
-            //var view = App.ServiceProvider.GetRequiredService<CategoriaView>();
-            //view.DataContext = App.ServiceProvider.GetRequiredService<CategoriaViewModel>();
-
-            //ViewAtual = view;
+            IsPaneOpen = false; // Fecha o menu ao navegar
+            var view = App.ServiceProvider.GetRequiredService<Categorias>();         
+            ViewAtual = view;
             ExibindoMenuPrincipal = false;
         }
 
@@ -35,13 +42,15 @@ namespace SmartCash.ViewModels
         private void Voltar()
         {
             ViewAtual = null;
-            ExibindoMenuPrincipal = true;
+            ExibindoMenuPrincipal = true; // Isso ativa a visibilidade da Dashboard no MainView.axaml
+            IsPaneOpen = false;
+           
         }
 
         [RelayCommand]
-        private void NavegarProdutos() { /* Implementação futura */ }
+        private void NavegarProdutos() { /* Lógica futura */ }
 
         [RelayCommand]
-        private void NavegarTransacoes() { /* Implementação futura */ }
+        private void NavegarTransacoes() { /* Lógica futura */ }
     }
 }

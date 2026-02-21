@@ -1,18 +1,22 @@
-using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Microsoft.Extensions.DependencyInjection;
 using SmartCash.ViewModels;
+using System;
 
 namespace SmartCash;
 
 public class ViewLocator : IDataTemplate
 {
-    public Control? Build(object? param)
+    public Control? Build(object? data)
     {
-        if (param is null)
-            return null;
+        if (data is null) return null;
 
-        var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
+        // Se o objeto já for uma View injetada, retorne-a diretamente
+        if (data is Control control) return control;
+
+        // Lógica padrão para ViewModels
+        var name = data.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
         var type = Type.GetType(name);
 
         if (type != null)
@@ -25,6 +29,7 @@ public class ViewLocator : IDataTemplate
 
     public bool Match(object? data)
     {
-        return data is ViewModelBase;
+        // Aceita tanto ViewModels quanto as Views injetadas
+        return data is CommunityToolkit.Mvvm.ComponentModel.ObservableObject || data is Control;
     }
 }

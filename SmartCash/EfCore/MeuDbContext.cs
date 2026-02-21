@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using SmartCash.EfCore.Models;
 using System.Reflection;
 
@@ -26,6 +27,24 @@ namespace SmartCash.EfCore
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
+        }
+    }
+
+    /// <summary>
+    /// Fábrica usada pelas ferramentas do EF Core (Console do Gerenciador de Pacotes) 
+    /// para criar o DbContext em tempo de design no Windows.
+    /// </summary>
+    public class MeuDbContextFactory : IDesignTimeDbContextFactory<MeuDbContext>
+    {
+        public MeuDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<MeuDbContext>();
+
+            // Define o provedor SQLite apenas para a geração do esquema (migrações).
+            // Esse arquivo temporário não afetará o banco de dados real do Android.
+            optionsBuilder.UseSqlite("Data Source=design_time_temp.db");
+
+            return new MeuDbContext(optionsBuilder.Options);
         }
     }
 }

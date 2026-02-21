@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:SmartCash.ViewModels"
+             x:DataType="vm:HomeViewModel"
+             x:Class="SmartCash.Views.Home">
+	<Grid RowDefinitions="Auto, *">
+		<Border Background="#2196F3" CornerRadius="0,0,25,25" Padding="20,40,20,30">
+			<StackPanel HorizontalAlignment="Center">
+				<TextBlock Text="SmartCash" Foreground="White" HorizontalAlignment="Center"/>
+				<TextBlock Text="Saldo Atual" Foreground="White" Opacity="0.8" HorizontalAlignment="Center" Margin="0,10,0,5"/>
+				<TextBlock Text="{Binding SaldoTotal}" Foreground="White" FontSize="32" FontWeight="Bold"/>
+			</StackPanel>
+		</Border>
+	</Grid>
+</UserControl>

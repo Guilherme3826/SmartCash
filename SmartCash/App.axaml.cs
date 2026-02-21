@@ -10,7 +10,9 @@ using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
 using SmartCash.EfCore.Repositories;
 using SmartCash.ViewModels;
+using SmartCash.ViewModels.Categorias;
 using SmartCash.Views;
+using SmartCash.Views.Categorias;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -129,9 +131,13 @@ public partial class App : Application
 
         // Registro das ViewModels
         services.AddSingleton<MainViewModel>(); // Singleton para manter o estado global de navegação
-        services.AddTransient<CategoriasViewModel>();
+        services.AddSingleton<CategoriasViewModel>();
+
+        // Telas com ãções pontuais devem ser transientes
+        services.AddTransient<AdicionarCategoriaViewModel>();
 
         // Registro das Views com Injeção de Dependência  
-        services.AddTransient<Categorias>();
+        services.AddTransient<CategoriasView>();
+        services.AddTransient<AdicionarCategoriaView>();
     }
 }

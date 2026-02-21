@@ -8,89 +8,68 @@
              x:DataType="vm:MainViewModel"
              Background="#F5F5F5" x:Class="SmartCash.Views.MainView">
 
-	<SplitView IsPaneOpen="{Binding IsPaneOpen, Mode=TwoWay}"
-               DisplayMode="Overlay"
-               PanePlacement="Right"
-               OpenPaneLength="250">
+	<Grid>
+		<Grid IsVisible="{Binding ExibindoMenuPrincipal}" RowDefinitions="Auto, *">
 
-		<SplitView.Pane>
-			<Border Background="White"
+			<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25"
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-				<Border Padding="20,50,20,20">
-					<StackPanel Spacing="10">
-						<TextBlock Text="Menu" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+				<Border Padding="20,10,20,30">
+					<Grid ColumnDefinitions="*, Auto">
+						<StackPanel Grid.Column="0" HorizontalAlignment="Center">
+							<TextBlock Text="SmartCash" Foreground="White" HorizontalAlignment="Center" FontWeight="Bold"/>
+							<TextBlock Text="Saldo Atual" Foreground="White" Opacity="0.8" HorizontalAlignment="Center" Margin="0,10,0,5"/>
+							<TextBlock Text="R$ 1.801,73" Foreground="White" FontSize="32" FontWeight="Bold"/>
+						</StackPanel>
 
-						<Button Content="Categorias"
-                                Command="{Binding NavegarCategoriasCommand}"
-                                HorizontalAlignment="Stretch"
+						<Button Grid.Column="1"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                HorizontalContentAlignment="Left"
-                                FontSize="16"/>
+                                VerticalAlignment="Top"
+                                Padding="5">
+							<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="White" FontSize="22"/>
 
-						<Button Content="Produtos"
-                                Command="{Binding NavegarProdutosCommand}"
-                                HorizontalAlignment="Stretch"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                HorizontalContentAlignment="Left"
-                                FontSize="16"/>
+							<Button.Flyout>
+								<MenuFlyout Placement="BottomEdgeAlignedRight">
+									<MenuItem Header="Categorias" Command="{Binding NavegarCategoriasCommand}">
+										<MenuItem.Icon>
+											<i:Icon Value="fa-solid fa-tags" FontSize="16"/>
+										</MenuItem.Icon>
+									</MenuItem>
 
-						<Button Content="Transações"
-                                Command="{Binding NavegarTransacoesCommand}"
-                                HorizontalAlignment="Stretch"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                HorizontalContentAlignment="Left"
-                                FontSize="16"/>
-					</StackPanel>
+									<MenuItem Header="Produtos" Command="{Binding NavegarProdutosCommand}">
+										<MenuItem.Icon>
+											<i:Icon Value="fa-solid fa-box" FontSize="16"/>
+										</MenuItem.Icon>
+									</MenuItem>
+
+									<MenuItem Header="Transações" Command="{Binding NavegarTransacoesCommand}">
+										<MenuItem.Icon>
+											<i:Icon Value="fa-solid fa-money-bill-transfer" FontSize="16"/>
+										</MenuItem.Icon>
+									</MenuItem>
+								</MenuFlyout>
+							</Button.Flyout>
+						</Button>
+					</Grid>
 				</Border>
 			</Border>
-		</SplitView.Pane>
 
-		<Grid>
-			<Grid IsVisible="{Binding ExibindoMenuPrincipal}" RowDefinitions="Auto, *">
-
-				<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25"
-                        x:CompileBindings="False"
-                        Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
-
-					<Border Padding="20,10,20,30">
-						<Grid ColumnDefinitions="*, Auto">
-							<StackPanel Grid.Column="0" HorizontalAlignment="Center">
-								<TextBlock Text="SmartCash" Foreground="White" HorizontalAlignment="Center" FontWeight="Bold"/>
-								<TextBlock Text="Saldo Atual" Foreground="White" Opacity="0.8" HorizontalAlignment="Center" Margin="0,10,0,5"/>
-								<TextBlock Text="R$ 1.801,73" Foreground="White" FontSize="32" FontWeight="Bold"/>
-							</StackPanel>
-
-							<Button Grid.Column="1"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    VerticalAlignment="Top"
-                                    Command="{Binding AlternarMenuCommand}">
-								<i:Icon Value="fa-solid fa-bars" Foreground="White" FontSize="20"/>
-							</Button>
-						</Grid>
+			<ScrollViewer Grid.Row="1">
+				<StackPanel Margin="20" Spacing="15">
+					<Border Background="White" Height="100" CornerRadius="15" BoxShadow="0 4 10 0 #20000000">
+						<TextBlock Text="Seu Gráfico/Resumo aqui" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 					</Border>
-				</Border>
 
-				<ScrollViewer Grid.Row="1">
-					<StackPanel Margin="20" Spacing="15">
-						<Border Background="White" Height="100" CornerRadius="15" BoxShadow="0 4 10 0 #20000000">
-							<TextBlock Text="Seu Gráfico/Resumo aqui" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-						</Border>
-
-						<Border Background="White" Height="100" CornerRadius="15" BoxShadow="0 4 10 0 #20000000">
-							<TextBlock Text="Suas últimas transações" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-						</Border>
-					</StackPanel>
-				</ScrollViewer>
-			</Grid>
-
-			<ContentControl Content="{Binding ViewAtual}"
-                            IsVisible="{Binding !ExibindoMenuPrincipal}"/>
+					<Border Background="White" Height="100" CornerRadius="15" BoxShadow="0 4 10 0 #20000000">
+						<TextBlock Text="Suas últimas transações" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+					</Border>
+				</StackPanel>
+			</ScrollViewer>
 		</Grid>
-	</SplitView>
+
+		<ContentControl Content="{Binding ViewAtual}"
+                        IsVisible="{Binding !ExibindoMenuPrincipal}"/>
+	</Grid>
 </UserControl>

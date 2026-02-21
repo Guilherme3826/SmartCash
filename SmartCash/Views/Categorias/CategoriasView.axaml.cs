@@ -2,17 +2,18 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using SmartCash.ViewModels;
+using SmartCash.ViewModels.Categorias;
 
-namespace SmartCash.Views;
+namespace SmartCash.Views.Categorias;
 
-public partial class Categorias : UserControl
+public partial class CategoriasView : UserControl
 {
-    public Categorias(CategoriasViewModel viewModel)
+    public CategoriasView(CategoriasViewModel viewModel)
     {
         InitializeComponent();
         DataContext = viewModel;
     }
-    public Categorias()
+    public CategoriasView()
     {
         InitializeComponent();
     }

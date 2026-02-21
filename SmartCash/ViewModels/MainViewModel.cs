@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using SmartCash.Views;
+using SmartCash.Views.Categorias;
 using System;
 using System.Diagnostics;
 
@@ -24,16 +25,9 @@ namespace SmartCash.ViewModels
         }
 
         [RelayCommand]
-        private void AlternarMenu()
-        {
-            IsPaneOpen = !IsPaneOpen;
-        }
-
-        [RelayCommand]
         private void NavegarCategorias()
-        {
-            IsPaneOpen = false; // Fecha o menu ao navegar
-            var view = App.ServiceProvider.GetRequiredService<Categorias>();         
+        {          
+            var view = App.ServiceProvider.GetRequiredService<CategoriasView>();         
             ViewAtual = view;
             ExibindoMenuPrincipal = false;
         }
@@ -42,9 +36,7 @@ namespace SmartCash.ViewModels
         private void Voltar()
         {
             ViewAtual = null;
-            ExibindoMenuPrincipal = true; // Isso ativa a visibilidade da Dashboard no MainView.axaml
-            IsPaneOpen = false;
-           
+            ExibindoMenuPrincipal = true; // Isso ativa a visibilidade da Dashboard no MainView.axaml 
         }
 
         [RelayCommand]

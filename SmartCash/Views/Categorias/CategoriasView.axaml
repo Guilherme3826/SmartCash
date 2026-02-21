@@ -1,0 +1,106 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:vm="clr-namespace:SmartCash.ViewModels.Categorias"
+             xmlns:mvm="clr-namespace:SmartCash.ViewModels"
+             xmlns:views="clr-namespace:SmartCash.Views"
+             xmlns:models="clr-namespace:SmartCash.EfCore.Models"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
+             x:DataType="vm:CategoriasViewModel"
+             x:Class="SmartCash.Views.Categorias.CategoriasView">
+
+	<Grid>
+		<Grid IsVisible="{Binding ExibindoLista}" RowDefinitions="Auto, *">
+
+			<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25"
+                    x:CompileBindings="False"
+                    Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
+
+				<Border Padding="20,10,20,30">
+					<Grid ColumnDefinitions="Auto, *, Auto">
+						<Button Grid.Column="0"
+                                Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).VoltarCommand}"
+                                Background="Transparent"
+                                BorderThickness="0">
+							<i:Icon Value="fa-solid fa-arrow-left" Foreground="White" FontSize="22"/>
+						</Button>
+
+						<TextBlock Grid.Column="1" Text="Categorias"
+                                   Foreground="White" FontSize="18" FontWeight="SemiBold"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+						<Button Grid.Column="2"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="5">
+							<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="White" FontSize="20"/>
+
+							<Button.Flyout>
+								<MenuFlyout Placement="BottomEdgeAlignedRight">
+									<MenuItem Header="Adicionar Categoria"
+                                              Command="{Binding AdicionarNovaCategoriaCommand}">
+										<MenuItem.Icon>
+											<i:Icon Value="fa-solid fa-plus" FontSize="16"/>
+										</MenuItem.Icon>
+									</MenuItem>
+
+									<MenuItem Header="Atualizar Lista"
+                                              Command="{Binding CarregarCategoriasCommand}">
+										<MenuItem.Icon>
+											<i:Icon Value="fa-solid fa-rotate" FontSize="16"/>
+										</MenuItem.Icon>
+									</MenuItem>
+								</MenuFlyout>
+							</Button.Flyout>
+						</Button>
+					</Grid>
+				</Border>
+			</Border>
+
+			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+				<StackPanel Margin="20,20,20,0">
+
+					<Border Background="White" CornerRadius="15" BoxShadow="0 4 15 0 #10000000" ClipToBounds="True">
+						<ItemsControl ItemsSource="{Binding Categorias}">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate x:DataType="models:CategoriaModel">
+									<Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="20,15">
+										<Grid ColumnDefinitions="Auto, *, Auto">
+											<Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="#E3F2FD">
+												<i:Icon Value="{Binding IconeApresentacao}"
+                                                        FontSize="18"
+                                                        Foreground="#2196F3"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"/>
+											</Border>
+
+											<TextBlock Grid.Column="1"
+                                                       Text="{Binding Nome}"
+                                                       FontSize="16"
+                                                       Foreground="#333333"
+                                                       VerticalAlignment="Center"
+                                                       Margin="15,0,0,0"/>
+
+											<i:Icon Grid.Column="2"
+                                                    Value="fa-solid fa-chevron-right"
+                                                    FontSize="14"
+                                                    Foreground="#BDBDBD"
+                                                    VerticalAlignment="Center"/>
+										</Grid>
+									</Border>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</Border>
+
+					<Rectangle Height="80" Fill="Transparent"/>
+				</StackPanel>
+			</ScrollViewer>
+		</Grid>
+
+		<ContentControl Content="{Binding ViewSubAtual}"
+                        IsVisible="{Binding !ExibindoLista}"/>
+	</Grid>
+</UserControl>

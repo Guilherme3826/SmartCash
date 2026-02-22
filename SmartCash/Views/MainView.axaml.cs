@@ -36,7 +36,7 @@ public partial class MainView : UserControl
     {
         if (DataContext is MainViewModel viewModel)
         {
-            // 1. Se o menu de três pontos ou lateral estiver aberto, apenas fecha
+            // 1. Prioridade: Se o menu lateral estiver aberto, fecha e encerra
             if (viewModel.IsPaneOpen)
             {
                 viewModel.IsPaneOpen = false;
@@ -44,26 +44,40 @@ public partial class MainView : UserControl
                 return;
             }
 
-            // 2. Se o usuário NÃO estiver na Dashboard
-            if (!viewModel.ExibindoMenuPrincipal)
+            // 2. Se já estamos na Dashboard (Menu Principal), deixa o Android 
+            // decidir (provavelmente minimizar o app)
+            if (viewModel.ExibindoMenuPrincipal)
             {
-                // REFERÊNCIA EXPLICITAMENTE À SUB-NAVEGAÇÃO:
-                // Verificamos se a View sendo exibida no momento é a de Categorias
-                // e se ela possui um formulário aberto (ExibindoLista == false)
-                if (viewModel.ViewAtual is Control { DataContext: CategoriasViewModel catVm } && !catVm.ExibindoLista)
-                {
-                    // Em vez de voltar para a MainView, apenas manda a tela de categorias fechar o formulário
-                    catVm.ExibindoLista = true;
-                    catVm.ViewSubAtual = null;
-
-                    e.Handled = true; // Avisa ao Android que o evento foi tratado aqui
-                    return;
-                }
-
-                // 3. Se a tela de categorias já estiver na lista, ou for outra tela, volta para a Dashboard
-                viewModel.VoltarCommand.Execute(null);
-                e.Handled = true;
+                return;
             }
+
+            // 3. LÓGICA DE INTERCEPTAÇÃO DE SUB-VIEWS
+            // Se a View atual for uma tela que possui uma "Sub-View" aberta (ex: formulário de adição),
+            // nós NÃO podemos executar o VoltarCommand da MainViewModel agora.
+
+            if (viewModel.ViewAtual is Control { DataContext: object subVm })
+            {
+                // Verifica dinamicamente se a ViewModel da tela atual tem uma sub-view aberta
+                // Usamos 'dynamic' para evitar espalhar IFs para cada tipo de ViewModel (Categorias, Consumiveis, Transacoes)
+                try
+                {
+                    dynamic vm = subVm;
+                    if (vm.ExibindoLista == false)
+                    {
+                        // Se ExibindoLista for false, significa que há um formulário aberto.
+                        // O próprio formulário (AdicionarConsumivelView, etc) já tem seu 
+                        // código de interceptação que vai disparar e tratar o evento.
+                        // Portanto, a MainView deve ficar quieta.
+                        return;
+                    }
+                }
+                catch { /* A VM não possui a propriedade ExibindoLista, segue o fluxo */ }
+            }
+
+            // 4. Se chegou aqui, significa que estamos em uma tela secundária (ex: Lista de Consumíveis)
+            // mas não há nenhum formulário de adição aberto. Então voltamos para a Dashboard.
+            viewModel.VoltarCommand.Execute(null);
+            e.Handled = true;
         }
     }
 }

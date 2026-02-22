@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using SmartCash.ViewModels.Consumiveis;
 
-namespace SmartCash;
+namespace SmartCash.Views.Consumiveis;
 
 public partial class ConsumiveisView : UserControl
 {

@@ -6,10 +6,11 @@
              xmlns:vm="clr-namespace:SmartCash.ViewModels.Consumiveis"
              xmlns:mvm="clr-namespace:SmartCash.ViewModels"
              xmlns:views="clr-namespace:SmartCash.Views"
+			 xmlns:cviews="clr-namespace:SmartCash.Views.Consumiveis"
              xmlns:models="clr-namespace:SmartCash.EfCore.Models"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:ConsumiveisViewModel"
-             x:Class="SmartCash.ConsumiveisView">
+             x:Class="SmartCash.Views.Consumiveis.ConsumiveisView">
 
 	<Grid>
 		<Grid IsVisible="{Binding ExibindoLista}" RowDefinitions="Auto, *">
@@ -146,6 +147,13 @@
 		</Grid>
 
 		<ContentControl Content="{Binding ViewSubAtual}"
-                        IsVisible="{Binding !ExibindoLista}"/>
+						IsVisible="{Binding !ExibindoLista}">
+			<ContentControl.DataTemplates>
+				<DataTemplate DataType="vm:AdicionarConsumivelViewModel">
+					<cviews:AdicionarConsumivelView />
+				</DataTemplate>
+
+			</ContentControl.DataTemplates>
+		</ContentControl>
 	</Grid>
 </UserControl>

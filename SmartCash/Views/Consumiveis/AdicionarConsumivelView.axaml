@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:vm="clr-namespace:SmartCash.ViewModels.Consumiveis"
+             xmlns:models="clr-namespace:SmartCash.EfCore.Models"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
+             x:DataType="vm:AdicionarConsumivelViewModel"
+             x:Class="SmartCash.Views.Consumiveis.AdicionarConsumivelView">
+
+	<Grid RowDefinitions="Auto, *, Auto">
+		<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25" Padding="20,40,20,20">
+			<Grid ColumnDefinitions="Auto, *, Auto">
+				<Button Grid.Column="0" Command="{Binding VoltarCommand}" Background="Transparent" BorderThickness="0">
+					<i:Icon Value="fa-solid fa-arrow-left" Foreground="White" FontSize="22"/>
+				</Button>
+				<TextBlock Grid.Column="1" Text="Gerenciar Item" Foreground="White"
+                           FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Rectangle Grid.Column="2" Width="22" Fill="Transparent"/>
+			</Grid>
+		</Border>
+
+		<ScrollViewer Grid.Row="1">
+			<StackPanel Margin="20" Spacing="20">
+
+				<StackPanel Spacing="5">
+					<TextBlock Text="Nome do Produto / Serviço" FontSize="13" Foreground="#757575" Margin="5,0"/>
+					<TextBox Text="{Binding Nome}"                     
+                             Height="50" CornerRadius="12" VerticalContentAlignment="Center"
+                             Watermark="Obrigatório"/>
+				</StackPanel>
+
+				<StackPanel Spacing="5">
+					<TextBlock Text="Preço Padrão (R$)" FontSize="13" Foreground="#757575" Margin="5,0"/>
+					<TextBox Text="{Binding Valor}"
+                             Height="50" CornerRadius="12" VerticalContentAlignment="Center"
+                             Watermark="0,00"/>
+				</StackPanel>
+
+				<StackPanel Spacing="5">
+					<TextBlock Text="Categoria" FontSize="13" Foreground="#757575" Margin="5,0"/>
+					<Border Background="White" CornerRadius="12" BorderBrush="#E0E0E0" BorderThickness="1">
+						<ComboBox HorizontalAlignment="Stretch"
+                                  Height="50"
+                                  Padding="10,0"
+                                  ItemsSource="{Binding Categorias}"
+                                  SelectedItem="{Binding CategoriaSelecionada}"
+                                  Background="Transparent"
+                                  BorderThickness="0">
+							<ComboBox.ItemTemplate>
+								<DataTemplate x:DataType="models:CategoriaModel">
+									<StackPanel Orientation="Horizontal" Spacing="12">
+										<i:Icon Value="{Binding IconeApresentacao}" Foreground="#2196F3"/>
+										<TextBlock Text="{Binding Nome}" VerticalAlignment="Center"/>
+									</StackPanel>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Border>
+				</StackPanel>
+
+				<TextBlock Text="Dica: O preço padrão será sugerido automaticamente ao adicionar este item em uma transação."
+                           FontSize="12" Foreground="#BDBDBD" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center"/>
+
+			</StackPanel>
+		</ScrollViewer>
+
+		<Border Grid.Row="2" Padding="20" Background="White" BoxShadow="0 -4 10 0 #08000000">
+			<Button Command="{Binding SalvarCommand}"
+                    Background="#4CAF50" Foreground="White"
+                    HorizontalAlignment="Stretch" Height="55" CornerRadius="15">
+				<StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+					<i:Icon Value="fa-solid fa-floppy-disk"/>
+					<TextBlock Text="Salvar Registro" FontWeight="Bold" VerticalAlignment="Center"/>
+				</StackPanel>
+			</Button>
+		</Border>
+	</Grid>
+</UserControl>

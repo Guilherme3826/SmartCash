@@ -15,6 +15,7 @@ using SmartCash.ViewModels.Consumiveis;
 using SmartCash.ViewModels.Transacoes;
 using SmartCash.Views;
 using SmartCash.Views.Categorias;
+using SmartCash.Views.Consumiveis;
 using SmartCash.Views.Transacoes;
 using System;
 using System.Collections.Generic;
@@ -178,6 +179,7 @@ public partial class App : Application
         services.AddTransient<AdicionarCategoriaViewModel>();
         services.AddTransient<AdicionarTransacaoViewModel>();
         services.AddTransient<TransacaoDetalhesViewModel>();
+        services.AddTransient<AdicionarConsumivelViewModel>();
 
         // Views
         services.AddTransient<CategoriasView>();
@@ -186,6 +188,7 @@ public partial class App : Application
         services.AddTransient<TransacoesView>();
         services.AddTransient<TransacaoDetalhesView>();
         services.AddTransient<AdicionarTransacaoView>();
+        services.AddTransient<AdicionarConsumivelView>();
 
     }
 }

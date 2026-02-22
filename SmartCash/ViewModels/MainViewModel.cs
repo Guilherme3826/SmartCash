@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using SmartCash.Views;
 using SmartCash.Views.Categorias;
+using SmartCash.Views.Consumiveis;
 using SmartCash.Views.Transacoes;
 using System;
 using System.Diagnostics;

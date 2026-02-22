@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ namespace SmartCash.ViewModels.Consumiveis
         {
         }
 
-        private async Task CarregarDadosAsync()
+        public async Task CarregarDadosAsync()
         {
             // 1. Carrega as categorias do repositório
             var categoriasDb = await _categoriaRepository.GetAllAsync();
@@ -107,9 +108,10 @@ namespace SmartCash.ViewModels.Consumiveis
 
         [RelayCommand]
         private async Task AdicionarAsync()
-        {
-            // O comando atrelado ao botão flutuante (FAB) da interface.
-            // Aqui entrará a lógica para abrir a tela de cadastro de um novo Consumível.
+        {            
+            var adicionarVm = App.ServiceProvider.GetRequiredService<AdicionarConsumivelViewModel>();
+            ViewSubAtual = adicionarVm;
+            ExibindoLista = false;
             await Task.CompletedTask;
         }
     }

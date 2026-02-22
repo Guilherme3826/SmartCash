@@ -2,7 +2,7 @@
 
 namespace SmartCash.EfCore.Models
 {
-    public class ProdutoModel
+    public class ConsumiveisModel
     {
         public int IdProduto { get; set; }
         public string Nome { get; set; } = string.Empty;

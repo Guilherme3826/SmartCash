@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartCash.EfCore;
 
@@ -10,9 +11,11 @@ using SmartCash.EfCore;
 namespace SmartCash.Migrations
 {
     [DbContext(typeof(MeuDbContext))]
-    partial class MeuDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260222171608_AlterandoTabelaProduto")]
+    partial class AlterandoTabelaProduto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
@@ -71,7 +74,7 @@ namespace SmartCash.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("IdConsumivel")
+                    b.Property<int>("IdProduto")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("IdTransacao")
@@ -88,7 +91,7 @@ namespace SmartCash.Migrations
 
                     b.HasKey("IdItem");
 
-                    b.HasIndex("IdConsumivel");
+                    b.HasIndex("IdProduto");
 
                     b.HasIndex("IdTransacao");
 
@@ -137,7 +140,7 @@ namespace SmartCash.Migrations
                 {
                     b.HasOne("SmartCash.EfCore.Models.ConsumiveisModel", "Produto")
                         .WithMany("Itens")
-                        .HasForeignKey("IdConsumivel")
+                        .HasForeignKey("IdProduto")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

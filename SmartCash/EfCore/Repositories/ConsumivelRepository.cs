@@ -9,26 +9,25 @@ using SmartCash.EfCore.Models;
 
 namespace SmartCash.EfCore.Repositories
 {
-    public class ProdutoRepository : IBaseRepository<ProdutoModel>
+    public class ConsumivelRepository : IBaseRepository<ConsumiveisModel>
     {
         private readonly IDbContextFactory<MeuDbContext> _contextFactory;
 
-        public ProdutoRepository(IDbContextFactory<MeuDbContext> contextFactory)
+        public ConsumivelRepository(IDbContextFactory<MeuDbContext> contextFactory)
         {
             _contextFactory = contextFactory;
         }
 
-        public async Task<List<ProdutoModel>> GetAllAsync(Func<IQueryable<ProdutoModel>, IQueryable<ProdutoModel>>? include = null)
+        public async Task<List<ConsumiveisModel>> GetAllAsync(Func<IQueryable<ConsumiveisModel>, IQueryable<ConsumiveisModel>>? include = null)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
                 // Includes inseridos diretamente no repositório conforme solicitado
-                var query = db.Produtos
+                var query = db.Consumivel
                     .AsNoTracking()
-                    .Include(p => p.Categoria)
-                    .Include(p => p.Itens)
+                    .Include(p => p.Categoria)              
                     .AsQueryable();
 
                 // Mantém suporte a includes adicionais via parâmetro para respeitar a IBaseRepository
@@ -48,17 +47,16 @@ namespace SmartCash.EfCore.Repositories
             }
         }
 
-        public async Task<ProdutoModel?> GetByIdAsync(int id, Func<IQueryable<ProdutoModel>, IQueryable<ProdutoModel>>? include = null)
+        public async Task<ConsumiveisModel?> GetByIdAsync(int id, Func<IQueryable<ConsumiveisModel>, IQueryable<ConsumiveisModel>>? include = null)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
                 // Includes inseridos diretamente para garantir dados completos na busca por ID
-                var query = db.Produtos
+                var query = db.Consumivel
                     .AsNoTracking()
-                    .Include(p => p.Categoria)
-                    .Include(p => p.Itens)
+                    .Include(p => p.Categoria)                 
                     .AsQueryable();
 
                 if (include != null)
@@ -75,12 +73,12 @@ namespace SmartCash.EfCore.Repositories
             }
         }
 
-        public async Task AddAsync(ProdutoModel entity)
+        public async Task AddAsync(ConsumiveisModel entity)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
             try
             {
-                await db.Produtos.AddAsync(entity);
+                await db.Consumivel.AddAsync(entity);
                 await db.SaveChangesAsync();
             }
             catch (DbUpdateException ex)
@@ -90,14 +88,14 @@ namespace SmartCash.EfCore.Repositories
             }
         }
 
-        public async Task UpdateAsync(ProdutoModel entity)
+        public async Task UpdateAsync(ConsumiveisModel entity)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
                 // Busca o registro no contexto atual para garantir o rastreamento e atualização individual
-                var existente = await db.Produtos
+                var existente = await db.Consumivel
                     .FirstOrDefaultAsync(x => x.IdProduto == entity.IdProduto);
 
                 if (existente == null)
@@ -124,10 +122,10 @@ namespace SmartCash.EfCore.Repositories
             using var db = await _contextFactory.CreateDbContextAsync();
             try
             {
-                var registro = await db.Produtos.FirstOrDefaultAsync(x => x.IdProduto == id);
+                var registro = await db.Consumivel.FirstOrDefaultAsync(x => x.IdProduto == id);
                 if (registro != null)
                 {
-                    db.Produtos.Remove(registro);
+                    db.Consumivel.Remove(registro);
                     await db.SaveChangesAsync();
                 }
             }

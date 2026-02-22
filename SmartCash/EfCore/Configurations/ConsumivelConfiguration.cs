@@ -4,11 +4,11 @@ using SmartCash.EfCore.Models;
 
 namespace SmartCash.EfCore.Configurations
 {
-    public class ProdutoConfiguration : IEntityTypeConfiguration<ProdutoModel>
+    public class ConsumivelConfiguration : IEntityTypeConfiguration<ConsumiveisModel>
     {
-        public void Configure(EntityTypeBuilder<ProdutoModel> builder)
+        public void Configure(EntityTypeBuilder<ConsumiveisModel> builder)
         {
-            builder.ToTable("Produto", t =>
+            builder.ToTable("Consumivel", t =>
             {
                 t.HasCheckConstraint("CHK_Produto_Valor", "Valor >= 0");
             });

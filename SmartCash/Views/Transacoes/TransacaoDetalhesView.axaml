@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:vm="clr-namespace:SmartCash.ViewModels.Transacoes"
+             xmlns:models="clr-namespace:SmartCash.EfCore.Models"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
+             x:DataType="vm:TransacaoDetalhesViewModel"
+             x:Class="SmartCash.Views.Transacoes.TransacaoDetalhesView">
+
+	<Grid RowDefinitions="Auto, *">
+
+		<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25" Padding="20,40,20,30">
+			<StackPanel Spacing="15">
+				<Grid ColumnDefinitions="Auto, *, Auto">
+					<Button Command="{Binding VoltarCommand}" Background="Transparent" BorderThickness="0">
+						<i:Icon Value="fa-solid fa-arrow-left" Foreground="White" FontSize="22"/>
+					</Button>
+					<TextBlock Grid.Column="1" Text="Detalhes" Foreground="White" FontSize="18"
+                               FontWeight="SemiBold" HorizontalAlignment="Center"/>
+				</Grid>
+
+				<StackPanel IsVisible="{Binding !EstaCarregando}" HorizontalAlignment="Center" Spacing="5">
+					<TextBlock Text="{Binding Transacao.ValorTotal, StringFormat='{}{0:C}'}"
+                               Foreground="White" FontSize="32" FontWeight="Bold"/>
+					<TextBlock Text="{Binding Transacao.Data, StringFormat='{}{0:dd/MM/yyyy}'}"
+                               Foreground="#E3F2FD" HorizontalAlignment="Center"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<Grid Grid.Row="1">
+			<ProgressBar IsIndeterminate="True" VerticalAlignment="Top"
+                         IsVisible="{Binding EstaCarregando}" Foreground="#2196F3"/>
+
+			<ScrollViewer IsVisible="{Binding !EstaCarregando}">
+				<StackPanel Margin="20">
+					<Border Background="White" CornerRadius="15" BoxShadow="0 4 15 0 #10000000" ClipToBounds="True">
+						<ListBox ItemsSource="{Binding Transacao.Itens}" Background="Transparent">
+							<ListBox.ItemTemplate>
+								<DataTemplate x:DataType="models:ItemModel">
+									<Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="15">
+										<Grid ColumnDefinitions="Auto, *, Auto">
+											<Border Width="40" Height="40" CornerRadius="20" Background="#F5F5F5">
+												<i:Icon Value="{Binding Produto.Categoria.IconeApresentacao}"
+                                                        Foreground="#2196F3" FontSize="18"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+											</Border>
+											<StackPanel Grid.Column="1" Margin="15,0">
+												<TextBlock Text="{Binding Produto.Nome}" FontWeight="SemiBold"/>
+												<TextBlock Text="{Binding Quantidade, StringFormat='{}{0} unidades'}"
+                                                           FontSize="12" Foreground="#9E9E9E"/>
+											</StackPanel>
+											<TextBlock Grid.Column="2" Text="{Binding ValorTotal, StringFormat='{}{0:C}'}"
+                                                       FontWeight="Bold" VerticalAlignment="Center"/>
+										</Grid>
+									</Border>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</Border>
+				</StackPanel>
+			</ScrollViewer>
+		</Grid>
+	</Grid>
+</UserControl>

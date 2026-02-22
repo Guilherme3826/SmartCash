@@ -42,8 +42,10 @@ namespace SmartCash.ViewModels.Categorias
         [RelayCommand]
         private void AdicionarNovaCategoria()
         {
-            var view = App.ServiceProvider.GetRequiredService<AdicionarCategoriaView>();
-            ViewSubAtual = view;
+            ViewSubAtual = null;
+
+            var vm = App.ServiceProvider.GetRequiredService<AdicionarCategoriaViewModel>();
+            ViewSubAtual = vm;
             ExibindoLista = false;
         }
 

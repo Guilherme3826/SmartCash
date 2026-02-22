@@ -27,7 +27,7 @@ namespace SmartCash.EfCore.Configurations
 
             builder.HasOne(d => d.Produto)
                 .WithMany(p => p.Itens)
-                .HasForeignKey(d => d.IdProduto)
+                .HasForeignKey(d => d.IdConsumivel)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

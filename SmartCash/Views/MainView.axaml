@@ -38,7 +38,7 @@
 										</MenuItem.Icon>
 									</MenuItem>
 
-									<MenuItem Header="Produtos" Command="{Binding NavegarProdutosCommand}">
+									<MenuItem Header="Consumiveis" Command="{Binding NavegarConsumiveisCommand}">
 										<MenuItem.Icon>
 											<i:Icon Value="fa-solid fa-box" FontSize="16"/>
 										</MenuItem.Icon>

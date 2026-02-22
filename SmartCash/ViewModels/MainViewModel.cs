@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using SmartCash.Views;
 using SmartCash.Views.Categorias;
+using SmartCash.Views.Transacoes;
 using System;
 using System.Diagnostics;
 
@@ -40,9 +41,20 @@ namespace SmartCash.ViewModels
         }
 
         [RelayCommand]
-        private void NavegarProdutos() { /* Lógica futura */ }
+        private void NavegarConsumiveis()         
+        {
+            var view = App.ServiceProvider.GetRequiredService<ConsumiveisView>();
+            ViewAtual = view;
+            ExibindoMenuPrincipal= false;     
+        
+        }
 
         [RelayCommand]
-        private void NavegarTransacoes() { /* Lógica futura */ }
+        private void NavegarTransacoes()
+        {
+            var view = App.ServiceProvider.GetRequiredService<TransacoesView>();
+            ViewAtual = view;
+            ExibindoMenuPrincipal = false;
+        }
     }
 }

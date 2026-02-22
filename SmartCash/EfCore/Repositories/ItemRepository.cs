@@ -112,7 +112,7 @@ namespace SmartCash.EfCore.Repositories
                 existente.ValorUnit = entity.ValorUnit;
                 existente.ValorTotal = entity.ValorTotal;
                 existente.IdTransacao = entity.IdTransacao;
-                existente.IdProduto = entity.IdProduto;
+                existente.IdConsumivel = entity.IdConsumivel;
 
                 await db.SaveChangesAsync();
             }

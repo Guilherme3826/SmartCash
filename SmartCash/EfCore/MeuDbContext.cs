@@ -13,7 +13,7 @@ namespace SmartCash.EfCore
         }
 
         public DbSet<CategoriaModel> Categorias { get; set; }
-        public DbSet<ProdutoModel> Produtos { get; set; }
+        public DbSet<ConsumiveisModel> Consumivel { get; set; }
         public DbSet<TransacaoModel> Transacoes { get; set; }
         public DbSet<ItemModel> Itens { get; set; }
 

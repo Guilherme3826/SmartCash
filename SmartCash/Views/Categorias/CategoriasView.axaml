@@ -6,6 +6,7 @@
              xmlns:vm="clr-namespace:SmartCash.ViewModels.Categorias"
              xmlns:mvm="clr-namespace:SmartCash.ViewModels"
              xmlns:views="clr-namespace:SmartCash.Views"
+			 xmlns:cviews="clr-namespace:SmartCash.Views.Categorias"
              xmlns:models="clr-namespace:SmartCash.EfCore.Models"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:CategoriasViewModel"
@@ -101,6 +102,12 @@
 		</Grid>
 
 		<ContentControl Content="{Binding ViewSubAtual}"
-                        IsVisible="{Binding !ExibindoLista}"/>
+						IsVisible="{Binding !ExibindoLista}">
+			<ContentControl.DataTemplates>
+				<DataTemplate DataType="vm:AdicionarCategoriaViewModel">
+					<cviews:AdicionarCategoriaView />
+				</DataTemplate>
+			</ContentControl.DataTemplates>
+		</ContentControl>
 	</Grid>
 </UserControl>

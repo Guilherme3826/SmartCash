@@ -11,12 +11,16 @@ using SmartCash.EfCore.Models;
 using SmartCash.EfCore.Repositories;
 using SmartCash.ViewModels;
 using SmartCash.ViewModels.Categorias;
+using SmartCash.ViewModels.Consumiveis;
+using SmartCash.ViewModels.Transacoes;
 using SmartCash.Views;
 using SmartCash.Views.Categorias;
+using SmartCash.Views.Transacoes;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SmartCash;
 
@@ -32,52 +36,40 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         IconProvider.Current.Register<FontAwesomeIconProvider>();
+
         var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
 
         ServiceProvider = serviceCollection.BuildServiceProvider();
 
-        // Debug de Migrações e Carga Inicial
-        using (var scope = ServiceProvider.CreateScope())
+        // Executa migrações e Seed em segundo plano para não travar a UI no Android
+        Task.Run(async () =>
         {
-            var context = scope.ServiceProvider.GetRequiredService<MeuDbContext>();
-
-            try
+            using (var scope = ServiceProvider.CreateScope())
             {
-                // 1. Verifica quais migrações o EF Core consegue "enxergar" no Assembly
-                var allMigrations = context.Database.GetMigrations().ToList();
-                System.Diagnostics.Debug.WriteLine($"[EF DEBUG] Migrações encontradas no código: {string.Join(", ", allMigrations)}");
+                var context = scope.ServiceProvider.GetRequiredService<MeuDbContext>();
 
-                // 2. Verifica quais migrações já estão marcadas como aplicadas no banco
-                var appliedMigrations = context.Database.GetAppliedMigrations().ToList();
-                System.Diagnostics.Debug.WriteLine($"[EF DEBUG] Migrações já aplicadas no banco: {string.Join(", ", appliedMigrations)}");
-
-                // 3. Verifica o que falta aplicar
-                var pendingMigrations = context.Database.GetPendingMigrations().ToList();
-                System.Diagnostics.Debug.WriteLine($"[EF DEBUG] Migrações pendentes: {string.Join(", ", pendingMigrations)}");
-
-                if (pendingMigrations.Any())
+                try
                 {
-                    System.Diagnostics.Debug.WriteLine("[EF DEBUG] Aplicando migrações pendentes...");
-                    context.Database.Migrate();
-                    context.Database.ExecuteSqlRaw("PRAGMA journal_mode=DELETE;");
-                    System.Diagnostics.Debug.WriteLine("[EF DEBUG] Migração concluída com sucesso.");
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("[EF DEBUG] Nenhuma migração pendente encontrada.");
-                }
+                    // Aplica migrações pendentes de forma assíncrona
+                    var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+                    if (pendingMigrations.Any())
+                    {
+                        System.Diagnostics.Debug.WriteLine("[EF DEBUG] Aplicando migrações pendentes...");
+                        await context.Database.MigrateAsync();
+                        // Garante que o SQLite finalize a escrita imediatamente
+                        await context.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=DELETE;");
+                    }
 
-                // Executa a carga inicial de categorias
-                SeedDatabase(context);
+                    // Popula o banco de dados seguindo a ordem lógica
+                    SeedDatabase(context);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[EF ERROR] Erro ao processar banco: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[EF ERROR] Erro ao migrar ou popular: {ex.Message}");
-                if (ex.InnerException != null)
-                    System.Diagnostics.Debug.WriteLine($"[EF ERROR] Inner: {ex.InnerException.Message}");
-            }
-        }
+        });
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -93,51 +85,106 @@ public partial class App : Application
 
     private void SeedDatabase(MeuDbContext context)
     {
+        // 1. CARGA DE CATEGORIAS
         if (!context.Set<CategoriaModel>().Any())
         {
-            System.Diagnostics.Debug.WriteLine("[EF DEBUG] Iniciando carga inicial de categorias...");
-
-            var categoriasIniciais = new List<CategoriaModel>
-        {
-            new CategoriaModel { Nome = "Alimentação", IconeApresentacao = "fa-solid fa-utensils" },
-            new CategoriaModel { Nome = "Transporte", IconeApresentacao = "fa-solid fa-car" },
-            new CategoriaModel { Nome = "Lazer", IconeApresentacao = "fa-solid fa-gamepad" },
-            new CategoriaModel { Nome = "Saúde", IconeApresentacao = "fa-solid fa-heart-pulse" },
-            new CategoriaModel { Nome = "Educação", IconeApresentacao = "fa-solid fa-book" },
-            new CategoriaModel { Nome = "Moradia", IconeApresentacao = "fa-solid fa-house" }
-        };
-
-            context.Set<CategoriaModel>().AddRange(categoriasIniciais);
+            var categorias = new List<CategoriaModel>
+            {
+                new CategoriaModel { Nome = "Alimentação", IconeApresentacao = "fa-solid fa-utensils" },
+                new CategoriaModel { Nome = "Transporte", IconeApresentacao = "fa-solid fa-car" },
+                new CategoriaModel { Nome = "Lazer", IconeApresentacao = "fa-solid fa-gamepad" }
+            };
+            context.Set<CategoriaModel>().AddRange(categorias);
             context.SaveChanges();
+            System.Diagnostics.Debug.WriteLine("[EF DEBUG] Categorias populadas.");
+        }
 
-            System.Diagnostics.Debug.WriteLine("[EF DEBUG] Carga inicial concluída.");
+        // 2. CARGA DE CONSUMÍVEIS
+        if (!context.Set<ConsumiveisModel>().Any())
+        {
+            var catAlimentacao = context.Set<CategoriaModel>().FirstOrDefault(c => c.Nome == "Alimentação");
+            var catTransporte = context.Set<CategoriaModel>().FirstOrDefault(c => c.Nome == "Transporte");
+
+            if (catAlimentacao != null && catTransporte != null)
+            {
+                var consumiveis = new List<ConsumiveisModel>
+                {
+                    new ConsumiveisModel { Nome = "Mercado Mensal", Valor = 450.00m, IdCategoria = catAlimentacao.IdCategoria },
+                    new ConsumiveisModel { Nome = "Combustível", Valor = 200.00m, IdCategoria = catTransporte.IdCategoria }
+                };
+                context.Set<ConsumiveisModel>().AddRange(consumiveis);
+                context.SaveChanges();
+                System.Diagnostics.Debug.WriteLine("[EF DEBUG] Consumíveis populados.");
+            }
+        }
+
+        // 3. CARGA DE TRANSAÇÕES (Cabeçalho)
+        if (!context.Set<TransacaoModel>().Any())
+        {
+            var transacoes = new List<TransacaoModel>
+            {
+                new TransacaoModel { Data = new DateTime(2026, 2, 15, 14, 30, 0), ValorTotal = 450.00m },
+                new TransacaoModel { Data = new DateTime(2026, 1, 20, 10, 0, 0), ValorTotal = 200.00m }
+            };
+
+            context.Set<TransacaoModel>().AddRange(transacoes);
+            context.SaveChanges();
+            System.Diagnostics.Debug.WriteLine("[EF DEBUG] Tabela Transacao populada.");
+        }
+
+        // 4. CARGA DE ITENS (Relacional)
+        if (!context.Set<ItemModel>().Any())
+        {
+            var tFevereiro = context.Set<TransacaoModel>().FirstOrDefault(t => t.Data.Month == 2);
+            var tJaneiro = context.Set<TransacaoModel>().FirstOrDefault(t => t.Data.Month == 1);
+            var prodMercado = context.Set<ConsumiveisModel>().FirstOrDefault(p => p.Nome == "Mercado Mensal");
+            var prodCombustivel = context.Set<ConsumiveisModel>().FirstOrDefault(p => p.Nome == "Combustível");
+
+            if (tFevereiro != null && tJaneiro != null && prodMercado != null && prodCombustivel != null)
+            {
+                var itens = new List<ItemModel>
+                {
+                    new ItemModel { IdTransacao = tFevereiro.IdTransacao, IdConsumivel = prodMercado.IdProduto, Quantidade = 1, ValorUnit = 450.00m, ValorTotal = 450.00m },
+                    new ItemModel { IdTransacao = tJaneiro.IdTransacao, IdConsumivel = prodCombustivel.IdProduto, Quantidade = 1, ValorUnit = 200.00m, ValorTotal = 200.00m }
+                };
+
+                context.Set<ItemModel>().AddRange(itens);
+                context.SaveChanges();
+                System.Diagnostics.Debug.WriteLine("[EF DEBUG] Tabela Item populada com sucesso.");
+            }
         }
     }
 
     private void ConfigureServices(IServiceCollection services)
     {
-        // Define o caminho do banco (compatível com Android e Windows)
+        // Caminho do banco para Android
         string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "smartcash.db");
 
-        // Configura o DbContextFactory (Essencial para o padrão de repositórios com query única e thread-safety no Android)
         services.AddDbContextFactory<MeuDbContext>(options =>
                 options.UseSqlite($"Data Source={dbPath}", x => x.MigrationsAssembly("SmartCash")));
 
-        // Registro dos Repositórios Individuais (Vinculados à IBaseRepository<T>)
+        // Repositórios
         services.AddTransient<IBaseRepository<CategoriaModel>, CategoriaRepository>();
-        services.AddTransient<IBaseRepository<ProdutoModel>, ProdutoRepository>();
+        services.AddTransient<IBaseRepository<ConsumiveisModel>, ConsumivelRepository>();
         services.AddTransient<IBaseRepository<TransacaoModel>, TransacaoRepository>();
         services.AddTransient<IBaseRepository<ItemModel>, ItemRepository>();
 
-        // Registro das ViewModels
-        services.AddSingleton<MainViewModel>(); // Singleton para manter o estado global de navegação
+        // ViewModels
+        services.AddSingleton<MainViewModel>();
         services.AddSingleton<CategoriasViewModel>();
+        services.AddSingleton<ConsumiveisViewModel>();
+        services.AddSingleton<TransacoesViewModel>();
 
-        // Telas com ãções pontuais devem ser transientes
         services.AddTransient<AdicionarCategoriaViewModel>();
+        services.AddTransient<TransacaoDetalhesView>();
+        services.AddTransient<TransacaoDetalhesViewModel>();
 
-        // Registro das Views com Injeção de Dependência  
+        // Views
         services.AddTransient<CategoriasView>();
         services.AddTransient<AdicionarCategoriaView>();
+        services.AddTransient<ConsumiveisView>();
+        services.AddTransient<TransacoesView>();
+        services.AddTransient<TransacaoDetalhesView>();
+
     }
 }

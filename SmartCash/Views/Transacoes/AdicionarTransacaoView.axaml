@@ -1,0 +1,148 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:vm="clr-namespace:SmartCash.ViewModels.Transacoes"
+             xmlns:models="clr-namespace:SmartCash.EfCore.Models"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
+             x:DataType="vm:AdicionarTransacaoViewModel"
+             x:Class="SmartCash.Views.Transacoes.AdicionarTransacaoView">
+
+	<Grid RowDefinitions="Auto, Auto, *, Auto">
+
+		<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25" Padding="20,40,20,20">
+			<StackPanel Spacing="10">
+				<Grid ColumnDefinitions="Auto, *, Auto">
+					<Button Command="{Binding VoltarCommand}" Background="Transparent" BorderThickness="0">
+						<i:Icon Value="fa-solid fa-arrow-left" Foreground="White" FontSize="22"/>
+					</Button>
+					<TextBlock Grid.Column="1" Text="Nova Transação" Foreground="White"
+                               FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+				</Grid>
+
+				<StackPanel HorizontalAlignment="Center">
+					<TextBlock Text="Total da Compra" Foreground="#BBDEFB" FontSize="12" HorizontalAlignment="Center"/>
+					<TextBlock Text="{Binding ValorTotalTemp, StringFormat='{}{0:C}'}"
+                               Foreground="White" FontSize="36" FontWeight="Bold"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<StackPanel Grid.Row="1" Margin="20,15,20,0" Spacing="10">
+			<TextBlock Text="O que você comprou?" FontSize="14" FontWeight="Medium" Foreground="#757575"/>
+
+			<Grid ColumnDefinitions="*, Auto">
+				<AutoCompleteBox x:Name="AutoCompleteProdutos"
+								 SelectionChanged="AutoComplete_SelectionChanged"
+								 Grid.Column="0"
+								 ItemsSource="{Binding ProdutosSugestao}"
+								 SelectedItem="{Binding ProdutoSelecionado}"
+								 Text="{Binding BuscaTexto, Mode=TwoWay}"
+								 ValueMemberBinding="{Binding Nome}"
+								 FilterMode="Contains"
+								 Background="White"
+								 CornerRadius="10,0,0,10"
+								 Height="50">
+					<AutoCompleteBox.ItemTemplate>
+						<DataTemplate x:DataType="models:ConsumiveisModel">
+							<Border Padding="5">
+								<StackPanel Orientation="Horizontal" Spacing="10">
+									<i:Icon Value="{Binding Categoria.IconeApresentacao}"
+											FontSize="16"
+											Foreground="#2196F3"
+											VerticalAlignment="Center"/>
+									<StackPanel VerticalAlignment="Center">
+										<TextBlock Text="{Binding Nome}" FontWeight="Medium" FontSize="14"/>
+										<TextBlock Text="{Binding Valor, StringFormat='{}{0:C}'}" FontSize="11" Foreground="#757575"/>
+									</StackPanel>
+								</StackPanel>
+							</Border>
+						</DataTemplate>
+					</AutoCompleteBox.ItemTemplate>
+				</AutoCompleteBox>
+
+				<Button x:Name="BtnAdicionar"
+						Grid.Column="1"
+                        Command="{Binding AdicionarItemCommand}"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        Width="60" Height="50"
+                        CornerRadius="0,10,10,0">
+					<i:Icon Value="fa-solid fa-plus"/>
+				</Button>
+			</Grid>
+
+			<Grid ColumnDefinitions="*, 1.2*">
+				<StackPanel Grid.Column="0" Margin="0,0,5,0">
+					<TextBlock Text="Qtd." FontSize="12" Foreground="#9E9E9E" Margin="5,0,0,2"/>
+					<Grid ColumnDefinitions="*, Auto">
+						<TextBox Text="{Binding QuantidadeInput}"
+                                 Height="45"
+                                 CornerRadius="10,0,0,10"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"/>
+						<Button Grid.Column="1"
+                                Command="{Binding IncrementarQuantidadeCommand}"
+                                Width="40" Height="45"
+                                Background="#F5F5F5"
+                                CornerRadius="0,10,10,0"
+                                BorderBrush="#E0E0E0"
+                                BorderThickness="0,1,1,1">
+							<i:Icon Value="fa-solid fa-plus" FontSize="12" Foreground="#616161"/>
+						</Button>
+					</Grid>
+				</StackPanel>
+
+				<StackPanel Grid.Column="1" Margin="5,0,0,0">
+					<TextBlock Text="Preço Unit. (Opcional)" FontSize="12" Foreground="#9E9E9E" Margin="5,0,0,2"/>
+					<TextBox x:Name="TxtPreco"
+							 Text="{Binding PrecoUnitarioInput}"
+                             Watermark="R$ 0,00"
+                             Height="45"
+                             CornerRadius="10"
+                             VerticalContentAlignment="Center"/>
+				</StackPanel>
+			</Grid>
+		</StackPanel>
+
+		<Border Grid.Row="2" Margin="20,15" Background="#F5F5F5" CornerRadius="15">
+			<ListBox ItemsSource="{Binding ItensTemporarios}" Background="Transparent">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="models:ItemModel">
+						<Border Padding="10" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+							<Grid ColumnDefinitions="*, Auto, Auto">
+								<StackPanel Grid.Column="0">
+									<TextBlock Text="{Binding Produto.Nome}" FontWeight="SemiBold"/>
+									<TextBlock Text="{Binding ValorUnit, StringFormat='{}un: {0:C}'}" FontSize="11" Foreground="#9E9E9E"/>
+								</StackPanel>
+
+								<TextBlock Grid.Column="1" Text="{Binding Quantidade, StringFormat='{}x{0}'}"
+                                           VerticalAlignment="Center" Margin="10,0"/>
+
+								<Button Grid.Column="2"
+                                        Command="{Binding $parent[UserControl].((vm:AdicionarTransacaoViewModel)DataContext).RemoverItemCommand}"
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent" BorderThickness="0">
+									<i:Icon Value="fa-solid fa-trash-can" Foreground="#F44336" FontSize="16"/>
+								</Button>
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</Border>
+
+		<Border Grid.Row="3" Padding="20" Background="White" BoxShadow="0 -4 10 0 #08000000">
+			<Button Command="{Binding SalvarTransacaoCommand}"
+                    Background="#2196F3" Foreground="White"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                    Height="55" CornerRadius="15">
+				<StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+					<i:Icon Value="fa-solid fa-check-double"/>
+					<TextBlock Text="Finalizar Lançamento" FontWeight="Bold" VerticalAlignment="Center"/>
+				</StackPanel>
+			</Button>
+		</Border>
+	</Grid>
+</UserControl>

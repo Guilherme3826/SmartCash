@@ -119,8 +119,10 @@ namespace SmartCash.ViewModels.Transacoes
         [RelayCommand]
         private void Adicionar()
         {
+            // O ServiceProvider resolve as dependências (repositórios) automaticamente
+            var vm = App.ServiceProvider.GetRequiredService<AdicionarTransacaoViewModel>();
+            ViewSubAtual = vm;
             ExibindoLista = false;
-            // ViewSubAtual = new CadastroTransacaoView(); // Exemplo de navegação futura
         }
         partial void OnTransacaoSelecionadaChanged(TransacaoModel? value)
         {

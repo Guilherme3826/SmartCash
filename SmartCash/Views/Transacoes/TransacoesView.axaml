@@ -163,6 +163,10 @@
 				<DataTemplate DataType="vm:TransacaoDetalhesViewModel">
 					<tviews:TransacaoDetalhesView />
 				</DataTemplate>
+
+				<DataTemplate DataType="vm:AdicionarTransacaoViewModel">
+					<tviews:AdicionarTransacaoView />
+				</DataTemplate>
 			</ContentControl.DataTemplates>
 		</ContentControl>
 	</Grid>

@@ -13,7 +13,7 @@ namespace SmartCash.EfCore.Configurations
                 t.HasCheckConstraint("CHK_Produto_Valor", "Valor >= 0");
             });
 
-            builder.HasKey(e => e.IdProduto);
+            builder.HasKey(e => e.IdConsumivel);
             builder.Property(e => e.Nome).IsRequired().HasMaxLength(50);
             builder.Property(e => e.Valor).IsRequired();
 

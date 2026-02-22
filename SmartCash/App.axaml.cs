@@ -144,8 +144,8 @@ public partial class App : Application
             {
                 var itens = new List<ItemModel>
                 {
-                    new ItemModel { IdTransacao = tFevereiro.IdTransacao, IdConsumivel = prodMercado.IdProduto, Quantidade = 1, ValorUnit = 450.00m, ValorTotal = 450.00m },
-                    new ItemModel { IdTransacao = tJaneiro.IdTransacao, IdConsumivel = prodCombustivel.IdProduto, Quantidade = 1, ValorUnit = 200.00m, ValorTotal = 200.00m }
+                    new ItemModel { IdTransacao = tFevereiro.IdTransacao, IdConsumivel = prodMercado.IdConsumivel, Quantidade = 1, ValorUnit = 450.00m, ValorTotal = 450.00m },
+                    new ItemModel { IdTransacao = tJaneiro.IdTransacao, IdConsumivel = prodCombustivel.IdConsumivel, Quantidade = 1, ValorUnit = 200.00m, ValorTotal = 200.00m }
                 };
 
                 context.Set<ItemModel>().AddRange(itens);
@@ -176,7 +176,7 @@ public partial class App : Application
         services.AddSingleton<TransacoesViewModel>();
 
         services.AddTransient<AdicionarCategoriaViewModel>();
-        services.AddTransient<TransacaoDetalhesView>();
+        services.AddTransient<AdicionarTransacaoViewModel>();
         services.AddTransient<TransacaoDetalhesViewModel>();
 
         // Views
@@ -185,6 +185,7 @@ public partial class App : Application
         services.AddTransient<ConsumiveisView>();
         services.AddTransient<TransacoesView>();
         services.AddTransient<TransacaoDetalhesView>();
+        services.AddTransient<AdicionarTransacaoView>();
 
     }
 }

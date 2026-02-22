@@ -64,7 +64,7 @@ namespace SmartCash.EfCore.Repositories
                     query = include(query);
                 }
 
-                return await query.FirstOrDefaultAsync(x => x.IdProduto == id);
+                return await query.FirstOrDefaultAsync(x => x.IdConsumivel == id);
             }
             catch (Exception ex)
             {
@@ -96,11 +96,11 @@ namespace SmartCash.EfCore.Repositories
             {
                 // Busca o registro no contexto atual para garantir o rastreamento e atualização individual
                 var existente = await db.Consumivel
-                    .FirstOrDefaultAsync(x => x.IdProduto == entity.IdProduto);
+                    .FirstOrDefaultAsync(x => x.IdConsumivel == entity.IdConsumivel);
 
                 if (existente == null)
                 {
-                    throw new InvalidOperationException($"Produto ID {entity.IdProduto} não localizado para atualização.");
+                    throw new InvalidOperationException($"Produto ID {entity.IdConsumivel} não localizado para atualização.");
                 }
 
                 // Atualização individual de cada campo para evitar problemas com navegação
@@ -112,7 +112,7 @@ namespace SmartCash.EfCore.Repositories
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Erro ao atualizar produto {entity.IdProduto}: {ex.Message}");
+                Debug.WriteLine($"Erro ao atualizar produto {entity.IdConsumivel}: {ex.Message}");
                 throw;
             }
         }
@@ -122,7 +122,7 @@ namespace SmartCash.EfCore.Repositories
             using var db = await _contextFactory.CreateDbContextAsync();
             try
             {
-                var registro = await db.Consumivel.FirstOrDefaultAsync(x => x.IdProduto == id);
+                var registro = await db.Consumivel.FirstOrDefaultAsync(x => x.IdConsumivel == id);
                 if (registro != null)
                 {
                     db.Consumivel.Remove(registro);

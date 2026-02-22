@@ -4,7 +4,7 @@ namespace SmartCash.EfCore.Models
 {
     public class ConsumiveisModel
     {
-        public int IdProduto { get; set; }
+        public int IdConsumivel { get; set; }
         public string Nome { get; set; } = string.Empty;
         public int IdCategoria { get; set; }
         public decimal Valor { get; set; }

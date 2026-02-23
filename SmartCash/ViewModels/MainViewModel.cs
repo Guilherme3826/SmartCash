@@ -11,6 +11,7 @@ using SkiaSharp;
 using SmartCash.EfCore.Interfaces;
 
 using SmartCash.EfCore.Models;
+using SmartCash.Views;
 using SmartCash.Views.Categorias;
 using SmartCash.Views.Consumiveis;
 using SmartCash.Views.Transacoes;
@@ -230,6 +231,13 @@ namespace SmartCash.ViewModels
         private void NavegarTransacoes()
         {
             var view = App.ServiceProvider.GetRequiredService<TransacoesView>();
+            ViewAtual = view;
+            ExibindoMenuPrincipal = false;
+        }
+        [RelayCommand]
+        private void NavegarConfiguracoes()
+        {
+            var view = App.ServiceProvider.GetRequiredService<ConfiguracoesView>();
             ViewAtual = view;
             ExibindoMenuPrincipal = false;
         }

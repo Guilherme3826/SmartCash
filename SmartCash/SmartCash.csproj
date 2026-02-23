@@ -40,6 +40,9 @@
 		<Compile Update="Views\Categorias\CategoriasView.axaml.cs">
 			<DependentUpon>CategoriasView.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\ConfiguracoesView.axaml.cs">
+		  <DependentUpon>ConfiguracoesView.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\Consumiveis\AdicionarConsumivelView.axaml.cs">
 			<DependentUpon>AdicionarConsumivelView.axaml</DependentUpon>
 		</Compile>

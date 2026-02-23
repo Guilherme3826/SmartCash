@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:vm="clr-namespace:SmartCash.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
+             x:DataType="vm:ConfiguracoesViewModel"
+             x:Class="SmartCash.Views.ConfiguracoesView"
+             Background="{DynamicResource SystemRegionBrush}">
+
+	<Grid RowDefinitions="Auto, *">
+
+		<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25"
+                Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
+			<Border Padding="20,15,20,25">
+				<Grid ColumnDefinitions="Auto, *">
+					<TextBlock Grid.Column="1" Text="Configurações" Foreground="White"
+                               FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+				</Grid>
+			</Border>
+		</Border>
+
+		<ScrollViewer Grid.Row="1" Margin="20" VerticalScrollBarVisibility="Auto">
+			<StackPanel Spacing="20">
+
+				<Border Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                        CornerRadius="15" Padding="20" BoxShadow="0 4 10 0 #15000000">
+					<StackPanel Spacing="15">
+						<StackPanel Orientation="Horizontal" Spacing="10">
+							<i:Icon Value="fa-solid fa-palette" FontSize="18" Foreground="#2196F3"/>
+							<TextBlock Text="Aparência" FontSize="18" FontWeight="SemiBold" />
+						</StackPanel>
+
+						<Grid ColumnDefinitions="*, Auto" Margin="0,5,0,0">
+							<StackPanel Grid.Column="0" VerticalAlignment="Center">
+								<TextBlock Text="Modo Escuro" FontSize="16" FontWeight="Medium"/>
+								<TextBlock Text="Altera o tema de cores do aplicativo" FontSize="12" Opacity="0.6"/>
+							</StackPanel>
+
+							<ToggleSwitch Grid.Column="1"
+                                          IsChecked="{Binding IsTemaEscuro}"
+                                          OnContent=""
+                                          OffContent=""
+                                          VerticalAlignment="Center"/>
+						</Grid>
+					</StackPanel>
+				</Border>
+
+				<Border Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                        CornerRadius="15" Padding="20" BoxShadow="0 4 10 0 #15000000">
+					<StackPanel Spacing="15">
+						<StackPanel Orientation="Horizontal" Spacing="10">
+							<i:Icon Value="fa-solid fa-database" FontSize="18" Foreground="#2196F3"/>
+							<TextBlock Text="Banco de Dados" FontSize="18" FontWeight="SemiBold"/>
+						</StackPanel>
+
+						<TextBlock Text="Selecione o ambiente em que o aplicativo irá operar. Necessita reiniciar para aplicar."
+                                   FontSize="13" Opacity="0.7" TextWrapping="Wrap"/>
+
+						<ComboBox ItemsSource="{Binding AmbientesBd}"
+                                  SelectedItem="{Binding AmbienteSelecionado}"
+                                  HorizontalAlignment="Stretch"
+                                  CornerRadius="8"
+                                  Padding="15,10">
+						</ComboBox>
+					</StackPanel>
+				</Border>
+
+				<Button Command="{Binding SalvarConfiguracoesCommand}"
+                        Background="#2196F3" Foreground="White"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Padding="15" CornerRadius="10" Margin="0,10,0,0">
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						<i:Icon Value="fa-solid fa-floppy-disk" FontSize="16"/>
+						<TextBlock Text="Salvar Alterações" FontSize="16" FontWeight="Bold"/>
+					</StackPanel>
+				</Button>
+
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</UserControl>

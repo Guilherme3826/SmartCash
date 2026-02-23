@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SmartCash;
@@ -174,14 +175,33 @@ public partial class App : Application
             }
         }
     }
+    private string GetDatabasePath()
+    {
+        string pastaLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        string configPath = Path.Combine(pastaLocal, "settings.json");
+        string ambiente = "Produção";
+
+        if (File.Exists(configPath))
+        {
+            try
+            {
+                string json = File.ReadAllText(configPath);
+                var settings = JsonSerializer.Deserialize<AppSettingsModel>(json);
+                ambiente = settings?.Ambiente ?? "Produção";
+            }
+            catch { /* Se o JSON estiver corrompido, usa Produção */ }
+        }
+
+        string nomeBanco = ambiente == "Homologação" ? "smartcash_homolog.db" : "smartcash.db";
+        return Path.Combine(pastaLocal, nomeBanco);
+    }
+
 
     private void ConfigureServices(IServiceCollection services)
     {
-        // Caminho do banco para Android
-        string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "smartcash.db");
 
         services.AddDbContextFactory<MeuDbContext>(options =>
-                options.UseSqlite($"Data Source={dbPath}", x => x.MigrationsAssembly("SmartCash")));
+                options.UseSqlite($"Data Source={GetDatabasePath()}", x => x.MigrationsAssembly("SmartCash")));
 
         // Repositórios
         services.AddTransient<IBaseRepository<CategoriaModel>, CategoriaRepository>();
@@ -194,6 +214,7 @@ public partial class App : Application
         services.AddSingleton<CategoriasViewModel>();
         services.AddSingleton<ConsumiveisViewModel>();
         services.AddSingleton<TransacoesViewModel>();
+        services.AddSingleton<ConfiguracoesViewModel>();
 
         services.AddTransient<AdicionarCategoriaViewModel>();
         services.AddTransient<AdicionarTransacaoViewModel>();
@@ -208,6 +229,7 @@ public partial class App : Application
         services.AddTransient<TransacaoDetalhesView>();
         services.AddTransient<AdicionarTransacaoView>();
         services.AddTransient<AdicionarConsumivelView>();
+        services.AddTransient<ConfiguracoesView>();
 
     }
 }

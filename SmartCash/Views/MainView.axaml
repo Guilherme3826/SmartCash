@@ -41,6 +41,11 @@
 									<MenuItem Header="Transações" Command="{Binding NavegarTransacoesCommand}">
 										<MenuItem.Icon>
 											<i:Icon Value="fa-solid fa-money-bill-transfer" FontSize="16"/>
+										</MenuItem.Icon>							
+									</MenuItem>
+									<MenuItem Header="Configurações" Command="{Binding NavegarConfiguracoesCommand}">
+										<MenuItem.Icon>
+											<i:Icon Value="fa-solid fa-gear" FontSize="16"/>
 										</MenuItem.Icon>
 									</MenuItem>
 								</MenuFlyout>

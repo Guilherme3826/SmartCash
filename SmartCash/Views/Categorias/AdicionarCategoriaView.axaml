@@ -6,15 +6,16 @@
              xmlns:vm="clr-namespace:SmartCash.ViewModels.Categorias"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:AdicionarCategoriaViewModel"
+             Background="{DynamicResource WaBackground}"
              x:Class="SmartCash.Views.Categorias.AdicionarCategoriaView">
 
 	<Grid RowDefinitions="Auto, *">
 
-		<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25"
+		<Border Grid.Row="0" Background="{DynamicResource WaPrimary}"
                 x:CompileBindings="False"
                 Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-			<Border Padding="20,10,20,30">
+			<Border Padding="20,15,20,20">
 				<Grid ColumnDefinitions="Auto, *, Auto">
 					<Button Grid.Column="0"
                             Command="{Binding CancelarCommand}"
@@ -44,14 +45,15 @@
 					<TextBlock Text="Nome da Categoria"
                                FontSize="14"
                                FontWeight="Medium"
-                               Foreground="#666666"
+                               Foreground="{DynamicResource WaTextSecondary}"
                                Margin="5,0,0,0"/>
 
-					<Border Background="White" CornerRadius="12" BoxShadow="0 2 8 0 #15000000">
+					<Border Background="{DynamicResource WaSurface}" CornerRadius="12" BoxShadow="0 2 5 0 #10000000">
 						<TextBox Text="{Binding NovoNome, Mode=TwoWay}"
                                  Watermark="Ex: Mercado, Viagens..."
                                  BorderThickness="0"
                                  Background="Transparent"
+                                 Foreground="{DynamicResource WaTextPrimary}"
                                  Height="54"
                                  Padding="15,0"
                                  VerticalContentAlignment="Center"
@@ -63,14 +65,13 @@
 					<TextBlock Text="Selecione um Ícone"
                                FontSize="14"
                                FontWeight="Medium"
-                               Foreground="#666666"
+                               Foreground="{DynamicResource WaTextSecondary}"
                                Margin="5,0,0,0"/>
 
-					<Border Background="White" CornerRadius="15" Padding="10" BoxShadow="0 2 8 0 #15000000">
+					<Border Background="{DynamicResource WaSurface}" CornerRadius="15" Padding="10" BoxShadow="0 2 5 0 #10000000">
+
 						<ListBox ItemsSource="{Binding IconesDisponiveis}"
-                                 SelectedItem="{Binding IconeSelecionado, Mode=TwoWay}"
-                                 Background="Transparent"
-                                 BorderThickness="0">
+                                 SelectedItem="{Binding IconeSelecionado, Mode=TwoWay}">
 
 							<ListBox.ItemsPanel>
 								<ItemsPanelTemplate>
@@ -78,23 +79,12 @@
 								</ItemsPanelTemplate>
 							</ListBox.ItemsPanel>
 
-							<ListBox.Styles>
-								<Style Selector="ListBoxItem">
-									<Setter Property="Padding" Value="8"/>
-									<Setter Property="Background" Value="Transparent"/>
-									<Setter Property="CornerRadius" Value="12"/>
-								</Style>
-								<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-									<Setter Property="Background" Value="#E3F2FD"/>
-								</Style>
-							</ListBox.Styles>
-
 							<ListBox.ItemTemplate>
 								<DataTemplate x:DataType="x:String">
-									<Border Width="50" Height="50" CornerRadius="10">
+									<Border Width="50" Height="50" CornerRadius="10" Margin="5">
 										<i:Icon Value="{Binding}"
                                                 FontSize="22"
-                                                Foreground="#2196F3"
+                                                Foreground="{DynamicResource WaPrimary}"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"/>
 									</Border>

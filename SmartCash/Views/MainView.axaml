@@ -8,84 +8,48 @@
              xmlns:models="clr-namespace:SmartCash.EfCore.Models"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:MainViewModel"
-             Background="#F5F5F5" x:Class="SmartCash.Views.MainView">
+             Background="{DynamicResource WaBackground}" x:Class="SmartCash.Views.MainView">
 
 	<Grid>
-		<Grid IsVisible="{Binding ExibindoMenuPrincipal}" RowDefinitions="Auto, *">
+		<Grid IsVisible="{Binding ExibindoMenuPrincipal}" RowDefinitions="Auto, *, Auto">
 
-			<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25"
+			<Border Grid.Row="0" Background="{DynamicResource WaPrimary}"
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-				<Border Padding="20,5,20,15">
+				<Border Padding="20,15,20,20">
 					<Grid ColumnDefinitions="*, Auto">
-						<StackPanel Grid.Column="0" HorizontalAlignment="Center">
-							<TextBlock Text="Gasto Mês Atual" Foreground="White" Opacity="0.8" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-							<TextBlock Text="{Binding TotalMesAtual}" Foreground="White" FontSize="26" FontWeight="Bold"/>
+						<StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">
+							<TextBlock Text="SmartCash" Foreground="White" FontSize="20" FontWeight="Bold"/>
+							<StackPanel Orientation="Horizontal" Spacing="5" Margin="0,5,0,0">
+								<TextBlock Text="Mês Atual:" Foreground="White" Opacity="0.8" FontSize="14" VerticalAlignment="Center"/>
+								<TextBlock Text="{Binding TotalMesAtual}" Foreground="White" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+							</StackPanel>
 						</StackPanel>
-
-						<Button Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Top" Padding="5">
-							<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="White" FontSize="22"/>
-							<Button.Flyout>
-								<MenuFlyout Placement="BottomEdgeAlignedRight">
-									<MenuItem Header="Categorias" Command="{Binding NavegarCategoriasCommand}">
-										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-tags" FontSize="16"/>
-										</MenuItem.Icon>
-									</MenuItem>
-									<MenuItem Header="Consumíveis" Command="{Binding NavegarConsumiveisCommand}">
-										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-box" FontSize="16"/>
-										</MenuItem.Icon>
-									</MenuItem>
-									<MenuItem Header="Transações" Command="{Binding NavegarTransacoesCommand}">
-										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-money-bill-transfer" FontSize="16"/>
-										</MenuItem.Icon>							
-									</MenuItem>
-									<MenuItem Header="Configurações" Command="{Binding NavegarConfiguracoesCommand}">
-										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-gear" FontSize="16"/>
-										</MenuItem.Icon>
-									</MenuItem>
-								</MenuFlyout>
-							</Button.Flyout>
-						</Button>
 					</Grid>
 				</Border>
 			</Border>
 
 			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsScrollChainingEnabled="False">
-				<StackPanel Margin="20" Spacing="15">
+				<StackPanel Margin="15" Spacing="15">
 
-					<Border Background="White" CornerRadius="15" BoxShadow="0 4 10 0 #20000000" Padding="15">
+					<Border Background="{DynamicResource WaSurface}" CornerRadius="15" BoxShadow="0 2 5 0 #10000000" Padding="15">
 						<StackPanel>
-							<TextBlock Text="Histórico de Gastos" FontWeight="SemiBold" FontSize="16" Foreground="#333" Margin="0,0,0,15"/>
+							<TextBlock Text="Histórico de Gastos" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource WaTextPrimary}" Margin="0,0,0,15"/>
 
 							<ListBox ItemsSource="{Binding HistoricoMensal}" SelectedItem="{Binding MesSelecionado}"
-                                     Background="Transparent" BorderThickness="0"
                                      ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled">
 								<ListBox.ItemsPanel>
 									<ItemsPanelTemplate>
 										<StackPanel Orientation="Horizontal" Spacing="15"/>
 									</ItemsPanelTemplate>
 								</ListBox.ItemsPanel>
-								<ListBox.Styles>
-									<Style Selector="ListBoxItem">
-										<Setter Property="Padding" Value="5"/>
-										<Setter Property="FocusAdorner" Value="{x:Null}"/>
-										<Setter Property="CornerRadius" Value="10"/>
-									</Style>
-									<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-										<Setter Property="Background" Value="#E3F2FD"/>
-									</Style>
-								</ListBox.Styles>
 								<ListBox.ItemTemplate>
 									<DataTemplate x:DataType="models:ResumoMesModel">
-										<StackPanel VerticalAlignment="Bottom" Spacing="5" Width="70">
-											<TextBlock Text="{Binding Total, StringFormat='{}{0:N0}'}" FontSize="11" Foreground="#666" HorizontalAlignment="Center"/>
-											<Border Background="#2196F3" CornerRadius="4" Height="{Binding AlturaBarra}" MinHeight="4"/>
-											<TextBlock Text="{Binding MesAnoApresentacao}" FontSize="12" FontWeight="SemiBold" Foreground="#333" HorizontalAlignment="Center"/>
+										<StackPanel VerticalAlignment="Bottom" Spacing="5" Width="70" Margin="5">
+											<TextBlock Text="{Binding Total, StringFormat='{}{0:N0}'}" FontSize="11" Foreground="{DynamicResource WaTextSecondary}" HorizontalAlignment="Center"/>
+											<Border Background="{DynamicResource WaPrimary}" CornerRadius="4" Height="{Binding AlturaBarra}" MinHeight="4"/>
+											<TextBlock Text="{Binding MesAnoApresentacao}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource WaTextPrimary}" HorizontalAlignment="Center"/>
 										</StackPanel>
 									</DataTemplate>
 								</ListBox.ItemTemplate>
@@ -93,13 +57,13 @@
 						</StackPanel>
 					</Border>
 
-					<Border x:Name="CardInferior" Background="White" CornerRadius="15" BoxShadow="0 4 10 0 #20000000" ClipToBounds="True">
+					<Border x:Name="CardInferior" Background="{DynamicResource WaSurface}" CornerRadius="15" BoxShadow="0 2 5 0 #10000000" ClipToBounds="True">
 						<StackPanel>
 							<Grid Margin="20,15,20,10" ColumnDefinitions="*, Auto">
-								<TextBlock Grid.Column="0" Text="Detalhes do Mês" FontWeight="SemiBold" FontSize="16" Foreground="#333"/>
+								<TextBlock Grid.Column="0" Text="Detalhes do Mês" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource WaTextPrimary}"/>
 								<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
-									<TextBlock Text="Deslize" FontSize="11" Foreground="#999" VerticalAlignment="Center"/>
-									<i:Icon Value="fa-solid fa-arrows-left-right" FontSize="12" Foreground="#CCC" VerticalAlignment="Center"/>
+									<TextBlock Text="Deslize" FontSize="11" Foreground="{DynamicResource WaTextSecondary}" VerticalAlignment="Center"/>
+									<i:Icon Value="fa-solid fa-arrows-left-right" FontSize="12" Foreground="{DynamicResource WaDivider}" VerticalAlignment="Center"/>
 								</StackPanel>
 							</Grid>
 
@@ -111,28 +75,22 @@
 
 									<Grid Width="{Binding #CardInferior.Bounds.Width}">
 										<StackPanel>
-											<TextBlock Text="Lançamentos" FontSize="13" FontWeight="Medium" Foreground="#888" Margin="20,0,20,10"/>
-											<ListBox ItemsSource="{Binding ItensMesSelecionado}" Background="Transparent" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled">
-												<ListBox.Styles>
-													<Style Selector="ListBoxItem">
-														<Setter Property="Padding" Value="0"/>
-														<Setter Property="FocusAdorner" Value="{x:Null}"/>
-													</Style>
-												</ListBox.Styles>
+											<TextBlock Text="Lançamentos" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource WaTextSecondary}" Margin="20,0,20,10"/>
+											<ListBox ItemsSource="{Binding ItensMesSelecionado}" ScrollViewer.VerticalScrollBarVisibility="Disabled">
 												<ListBox.ItemTemplate>
 													<DataTemplate x:DataType="models:ItemModel">
-														<Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="20,12">
+														<Border BorderBrush="{DynamicResource WaDivider}" BorderThickness="0,0,0,1" Padding="20,12">
 															<Grid ColumnDefinitions="Auto, *, Auto">
-																<Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="#F5F5F5">
-																	<i:Icon Value="{Binding Produto.Categoria.IconeApresentacao}" FontSize="16" Foreground="#757575" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+																<Border Grid.Column="0" Width="45" Height="45" CornerRadius="22.5" Background="{DynamicResource WaBackground}">
+																	<i:Icon Value="{Binding Produto.Categoria.IconeApresentacao}" FontSize="18" Foreground="{DynamicResource WaIconLight}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 																</Border>
 																<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="15,0,0,0">
-																	<TextBlock Text="{Binding Produto.Nome}" FontSize="15" Foreground="#333333" FontWeight="SemiBold"/>
-																	<TextBlock Text="{Binding Transacao.Data, StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="12" Foreground="#888888"/>
+																	<TextBlock Text="{Binding Produto.Nome}" FontSize="16" Foreground="{DynamicResource WaTextPrimary}" FontWeight="SemiBold"/>
+																	<TextBlock Text="{Binding Transacao.Data, StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="13" Foreground="{DynamicResource WaTextSecondary}"/>
 																</StackPanel>
 																<StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
-																	<TextBlock Text="{Binding ValorTotal, StringFormat='{}{0:C2}'}" FontSize="15" FontWeight="Bold" Foreground="#F44336" HorizontalAlignment="Right"/>
-																	<TextBlock Text="{Binding Quantidade, StringFormat='Qtd: {0}'}" FontSize="12" Foreground="#888888" HorizontalAlignment="Right"/>
+																	<TextBlock Text="{Binding ValorTotal, StringFormat='{}{0:C2}'}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}" HorizontalAlignment="Right"/>
+																	<TextBlock Text="{Binding Quantidade, StringFormat='Qtd: {0}'}" FontSize="13" Foreground="{DynamicResource WaTextSecondary}" HorizontalAlignment="Right"/>
 																</StackPanel>
 															</Grid>
 														</Border>
@@ -144,7 +102,7 @@
 
 									<Grid Width="{Binding #CardInferior.Bounds.Width}">
 										<StackPanel>
-											<TextBlock Text="Participação por Categoria" FontSize="13" FontWeight="Medium" Foreground="#888" Margin="20,0,20,0"/>
+											<TextBlock Text="Participação por Categoria" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource WaTextSecondary}" Margin="20,0,20,0"/>
 
 											<lvc:PieChart Series="{Binding SeriesGraficoPizza}"
                                                           Height="330"
@@ -154,22 +112,16 @@
                                                           MaxValue="{Binding ValorMaximoGauge}"
                                                           LegendPosition="Hidden"/>
 
-											<ListBox ItemsSource="{Binding CategoriasMesSelecionado}" Background="Transparent" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled">
-												<ListBox.Styles>
-													<Style Selector="ListBoxItem">
-														<Setter Property="Padding" Value="0"/>
-														<Setter Property="FocusAdorner" Value="{x:Null}"/>
-													</Style>
-												</ListBox.Styles>
+											<ListBox ItemsSource="{Binding CategoriasMesSelecionado}" ScrollViewer.VerticalScrollBarVisibility="Disabled">
 												<ListBox.ItemTemplate>
 													<DataTemplate x:DataType="models:ResumoCategoriaModel">
-														<Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="20,12">
+														<Border BorderBrush="{DynamicResource WaDivider}" BorderThickness="0,0,0,1" Padding="20,12">
 															<Grid ColumnDefinitions="Auto, *, Auto">
-																<Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="#F5F5F5">
-																	<i:Icon Value="{Binding Categoria.IconeApresentacao}" FontSize="16" Foreground="{Binding CorHex}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+																<Border Grid.Column="0" Width="45" Height="45" CornerRadius="22.5" Background="{DynamicResource WaBackground}">
+																	<i:Icon Value="{Binding Categoria.IconeApresentacao}" FontSize="18" Foreground="{Binding CorHex}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 																</Border>
-																<TextBlock Grid.Column="1" Text="{Binding Categoria.Nome}" FontSize="15" Foreground="#333333" FontWeight="SemiBold" VerticalAlignment="Center" Margin="15,0,0,0"/>
-																<TextBlock Grid.Column="2" Text="{Binding Total, StringFormat='{}{0:C2}'}" FontSize="15" FontWeight="Bold" Foreground="#F44336" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+																<TextBlock Grid.Column="1" Text="{Binding Categoria.Nome}" FontSize="16" Foreground="{DynamicResource WaTextPrimary}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="15,0,0,0"/>
+																<TextBlock Grid.Column="2" Text="{Binding Total, StringFormat='{}{0:C2}'}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 															</Grid>
 														</Border>
 													</DataTemplate>
@@ -183,6 +135,41 @@
 					</Border>
 				</StackPanel>
 			</ScrollViewer>
+
+			<Border Grid.Row="2" Background="{DynamicResource WaSurface}" BorderBrush="{DynamicResource WaDivider}" BorderThickness="0,1,0,0" Padding="0,10,0,10">
+				<Grid ColumnDefinitions="*, *, *, *">
+
+					<Button Grid.Column="0" Command="{Binding NavegarCategoriasCommand}" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+						<StackPanel Spacing="5" HorizontalAlignment="Center">
+							<i:Icon Value="fa-solid fa-tags" FontSize="20" Foreground="{DynamicResource WaIconLight}" HorizontalAlignment="Center"/>
+							<TextBlock Text="Categorias" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource WaTextSecondary}" HorizontalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+
+					<Button Grid.Column="1" Command="{Binding NavegarConsumiveisCommand}" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+						<StackPanel Spacing="5" HorizontalAlignment="Center">
+							<i:Icon Value="fa-solid fa-box" FontSize="20" Foreground="{DynamicResource WaIconLight}" HorizontalAlignment="Center"/>
+							<TextBlock Text="Consumíveis" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource WaTextSecondary}" HorizontalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+
+					<Button Grid.Column="2" Command="{Binding NavegarTransacoesCommand}" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+						<StackPanel Spacing="5" HorizontalAlignment="Center">
+							<i:Icon Value="fa-solid fa-money-bill-transfer" FontSize="20" Foreground="{DynamicResource WaIconLight}" HorizontalAlignment="Center"/>
+							<TextBlock Text="Transações" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource WaTextSecondary}" HorizontalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+
+					<Button Grid.Column="3" Command="{Binding NavegarConfiguracoesCommand}" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+						<StackPanel Spacing="5" HorizontalAlignment="Center">
+							<i:Icon Value="fa-solid fa-gear" FontSize="20" Foreground="{DynamicResource WaIconLight}" HorizontalAlignment="Center"/>
+							<TextBlock Text="Configurações" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource WaTextSecondary}" HorizontalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+
+				</Grid>
+			</Border>
+
 		</Grid>
 
 		<ContentControl Content="{Binding ViewAtual}" IsVisible="{Binding !ExibindoMenuPrincipal}"/>

@@ -12,4 +12,8 @@ public partial class ConfiguracoesView : UserControl
         InitializeComponent();
         DataContext = viewModel;
     }
+    public ConfiguracoesView()
+    {
+        InitializeComponent();
+    }
 }

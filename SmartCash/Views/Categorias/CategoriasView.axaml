@@ -10,17 +10,19 @@
              xmlns:models="clr-namespace:SmartCash.EfCore.Models"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:CategoriasViewModel"
+             Background="{DynamicResource WaBackground}"
              x:Class="SmartCash.Views.Categorias.CategoriasView">
 
 	<Grid>
 		<Grid IsVisible="{Binding ExibindoLista}" RowDefinitions="Auto, *">
 
-			<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25"
+			<Border Grid.Row="0" Background="{DynamicResource WaPrimary}"
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-				<Border Padding="20,10,20,30">
+				<Border Padding="20,15,20,20">
 					<Grid ColumnDefinitions="Auto, *, Auto">
+
 						<Button Grid.Column="0"
                                 Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).VoltarCommand}"
                                 Background="Transparent"
@@ -29,8 +31,8 @@
 						</Button>
 
 						<TextBlock Grid.Column="1" Text="Categorias"
-                                   Foreground="White" FontSize="18" FontWeight="SemiBold"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                   Foreground="White" FontSize="20" FontWeight="SemiBold"
+                                   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
 
 						<Button Grid.Column="2"
                                 Background="Transparent"
@@ -60,29 +62,17 @@
 				</Border>
 			</Border>
 
-			<Border Grid.Row="1" Margin="20,20,20,20" Background="White" CornerRadius="15" BoxShadow="0 4 15 0 #10000000" ClipToBounds="True">
+			<Border Grid.Row="1" Margin="15" Background="{DynamicResource WaSurface}" CornerRadius="15" BoxShadow="0 2 5 0 #10000000" ClipToBounds="True">
 
 				<ListBox ItemsSource="{Binding Categorias}"
-                         Background="Transparent"
-                         BorderThickness="0"
                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
                          ScrollViewer.IsScrollInertiaEnabled="True"
                          ScrollViewer.IsScrollChainingEnabled="False">
 
-					<ListBox.Styles>
-						<Style Selector="ListBoxItem">
-							<Setter Property="Padding" Value="0"/>
-							<Setter Property="FocusAdorner" Value="{x:Null}"/>
-						</Style>
-						<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-							<Setter Property="Background" Value="#F5F5F5"/>
-						</Style>
-					</ListBox.Styles>
-
 					<ListBox.ItemTemplate>
 						<DataTemplate x:DataType="models:CategoriaModel">
 
-							<Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="20,15" Background="Transparent">
+							<Border BorderBrush="{DynamicResource WaDivider}" BorderThickness="0,0,0,1" Padding="20,15" Background="Transparent">
 
 								<Border.ContextFlyout>
 									<MenuFlyout>
@@ -97,10 +87,10 @@
 								</Border.ContextFlyout>
 
 								<Grid ColumnDefinitions="Auto, *, Auto">
-									<Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="#E3F2FD">
+									<Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="{DynamicResource WaBackground}">
 										<i:Icon Value="{Binding IconeApresentacao}"
                                                 FontSize="18"
-                                                Foreground="#2196F3"
+                                                Foreground="{DynamicResource WaPrimary}"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"/>
 									</Border>
@@ -108,14 +98,15 @@
 									<TextBlock Grid.Column="1"
                                                Text="{Binding Nome}"
                                                FontSize="16"
-                                               Foreground="#333333"
+                                               Foreground="{DynamicResource WaTextPrimary}"
+                                               FontWeight="SemiBold"
                                                VerticalAlignment="Center"
                                                Margin="15,0,0,0"/>
 
 									<i:Icon Grid.Column="2"
                                             Value="fa-solid fa-chevron-right"
                                             FontSize="14"
-                                            Foreground="#BDBDBD"
+                                            Foreground="{DynamicResource WaIconLight}"
                                             VerticalAlignment="Center"/>
 								</Grid>
 							</Border>

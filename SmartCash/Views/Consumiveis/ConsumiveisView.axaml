@@ -6,20 +6,21 @@
              xmlns:vm="clr-namespace:SmartCash.ViewModels.Consumiveis"
              xmlns:mvm="clr-namespace:SmartCash.ViewModels"
              xmlns:views="clr-namespace:SmartCash.Views"
-			 xmlns:cviews="clr-namespace:SmartCash.Views.Consumiveis"
+             xmlns:cviews="clr-namespace:SmartCash.Views.Consumiveis"
              xmlns:models="clr-namespace:SmartCash.EfCore.Models"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:ConsumiveisViewModel"
+             Background="{DynamicResource WaBackground}"
              x:Class="SmartCash.Views.Consumiveis.ConsumiveisView">
 
 	<Grid>
 		<Grid IsVisible="{Binding ExibindoLista}" RowDefinitions="Auto, *">
 
-			<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25"
+			<Border Grid.Row="0" Background="{DynamicResource WaPrimary}"
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-				<Border Padding="20,10,20,30">
+				<Border Padding="20,15,20,20">
 					<Grid ColumnDefinitions="Auto, *, Auto">
 
 						<Button Grid.Column="0"
@@ -30,8 +31,8 @@
 						</Button>
 
 						<TextBlock Grid.Column="1" Text="Consumíveis"
-                                   Foreground="White" FontSize="18" FontWeight="SemiBold"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                   Foreground="White" FontSize="20" FontWeight="SemiBold"
+                                   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
 
 						<Button Grid.Column="2"
                                 Background="Transparent"
@@ -62,77 +63,68 @@
 			</Border>
 
 			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-				<StackPanel Margin="20,20,20,0">
+				<StackPanel Margin="15,15,15,0" Spacing="15">
 
-					<ComboBox HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding Categorias}"
-                              SelectedItem="{Binding CategoriaSelecionada}"
-                              PlaceholderText="Filtrar por Categoria"
-                              Background="White"
-                              CornerRadius="10"
-                              BorderBrush="#E0E0E0"
-                              BorderThickness="1"
-                              Margin="0,0,0,15"
-                              MinHeight="48">
-						<ComboBox.ItemTemplate>
-							<DataTemplate x:DataType="models:CategoriaModel">
-								<TextBlock Text="{Binding Nome}" VerticalAlignment="Center"/>
-							</DataTemplate>
-						</ComboBox.ItemTemplate>
-					</ComboBox>
+					<Border Background="{DynamicResource WaSurface}" CornerRadius="12" BoxShadow="0 2 5 0 #10000000">
+						<ComboBox HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding Categorias}"
+                                  SelectedItem="{Binding CategoriaSelecionada}"
+                                  PlaceholderText="Filtrar por Categoria"
+                                  Height="54"
+                                  Foreground="{DynamicResource WaTextPrimary}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate x:DataType="models:CategoriaModel">
+									<TextBlock Text="{Binding Nome}" FontSize="16" VerticalAlignment="Center" Foreground="{DynamicResource WaTextPrimary}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Border>
 
-					<Border Background="White" CornerRadius="15" BoxShadow="0 4 15 0 #10000000" ClipToBounds="True">
+					<Border Background="{DynamicResource WaSurface}" CornerRadius="15" BoxShadow="0 2 5 0 #10000000" ClipToBounds="True">
 
 						<ListBox ItemsSource="{Binding Consumiveis}"
                                  SelectedItem="{Binding ConsumivelSelecionado}"
                                  SelectionMode="Single"
-                                 Background="Transparent">
-
-							<ListBox.Styles>
-								<Style Selector="ListBoxItem">
-									<Setter Property="Padding" Value="0"/>
-									<Setter Property="Margin" Value="0"/>
-								</Style>
-							</ListBox.Styles>
+                                 ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
 							<ListBox.ItemTemplate>
 								<DataTemplate x:DataType="models:ConsumiveisModel">
-									<Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="20,15">
+									<Border BorderBrush="{DynamicResource WaDivider}" BorderThickness="0,0,0,1" Padding="20,15">
 										<Grid ColumnDefinitions="Auto, *, Auto, Auto">
 
-											<Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="#E8F5E9">
+											<Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="{DynamicResource WaBackground}">
 												<i:Icon Value="{Binding Categoria.IconeApresentacao}"
-														FontSize="18"
-														Foreground="#4CAF50"
-														HorizontalAlignment="Center"
-														VerticalAlignment="Center"/>
+                                                        FontSize="18"
+                                                        Foreground="{DynamicResource WaPrimary}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"/>
 											</Border>
 
 											<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="15,0,10,0">
 												<TextBlock Text="{Binding Nome}"
-														   FontSize="16"
-														   Foreground="#333333"
-														   FontWeight="SemiBold"
-														   TextTrimming="CharacterEllipsis"/>
+                                                           FontSize="16"
+                                                           Foreground="{DynamicResource WaTextPrimary}"
+                                                           FontWeight="SemiBold"
+                                                           TextTrimming="CharacterEllipsis"/>
 
 												<TextBlock Text="{Binding Categoria.Nome}"
-														   FontSize="13"
-														   Foreground="#BDBDBD"/>
+                                                           FontSize="13"
+                                                           Foreground="{DynamicResource WaTextSecondary}"/>
 											</StackPanel>
 
 											<TextBlock Grid.Column="2"
-													   Text="{Binding Valor, StringFormat='{}{0:C}'}"
-													   FontSize="15"
-													   FontWeight="Bold"
-													   Foreground="#2196F3"
-													   VerticalAlignment="Center"
-													   Margin="0,0,15,0"/>
+                                                       Text="{Binding Valor, StringFormat='{}{0:C}'}"
+                                                       FontSize="15"
+                                                       FontWeight="Bold"
+                                                       Foreground="{DynamicResource WaPrimary}"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,15,0"/>
 
 											<i:Icon Grid.Column="3"
-													Value="fa-solid fa-chevron-right"
-													FontSize="14"
-													Foreground="#BDBDBD"
-													VerticalAlignment="Center"/>
+                                                    Value="fa-solid fa-chevron-right"
+                                                    FontSize="14"
+                                                    Foreground="{DynamicResource WaIconLight}"
+                                                    VerticalAlignment="Center"/>
 										</Grid>
 									</Border>
 								</DataTemplate>
@@ -140,19 +132,17 @@
 						</ListBox>
 					</Border>
 
-					<Rectangle Height="80" Fill="Transparent"/>
+					<Rectangle Height="40" Fill="Transparent"/>
 				</StackPanel>
 			</ScrollViewer>
-			
 		</Grid>
 
 		<ContentControl Content="{Binding ViewSubAtual}"
-						IsVisible="{Binding !ExibindoLista}">
+                        IsVisible="{Binding !ExibindoLista}">
 			<ContentControl.DataTemplates>
 				<DataTemplate DataType="vm:AdicionarConsumivelViewModel">
 					<cviews:AdicionarConsumivelView />
 				</DataTemplate>
-
 			</ContentControl.DataTemplates>
 		</ContentControl>
 	</Grid>

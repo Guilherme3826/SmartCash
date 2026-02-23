@@ -11,6 +11,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AvaloniaXaml Remove="Assets\AppColors.axaml" />
+	  <AvaloniaXaml Remove="Assets\AppStyles.axaml" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Avalonia" />
 		<PackageReference Include="Avalonia.Controls.ItemsRepeater" />
 		<PackageReference Include="Avalonia.Themes.Fluent" />
@@ -34,6 +39,15 @@
 
 	<ItemGroup>
 		<Folder Include="Migrations\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AvaloniaResource Update="Assets\AppColors.axaml">
+	    <SubType>Designer</SubType>
+	  </AvaloniaResource>
+	  <AvaloniaResource Update="Assets\AppStyles.axaml">
+	    <SubType>Designer</SubType>
+	  </AvaloniaResource>
 	</ItemGroup>
 
 	<ItemGroup>

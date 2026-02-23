@@ -119,6 +119,7 @@
                                                           Height="330"
                                                           InitialRotation="45"
                                                           MaxAngle="270"
+														  Background="{DynamicResource WaSurface}"
                                                           MinValue="0"
                                                           MaxValue="{Binding ValorMaximoGauge}"
                                                           LegendPosition="Hidden"/>

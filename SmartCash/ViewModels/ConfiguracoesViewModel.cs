@@ -2,7 +2,9 @@
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using SmartCash.EfCore.Models;
+using SmartCash.Mensageiros;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -41,6 +43,9 @@ namespace SmartCash.ViewModels
                         // Aplicamos o tema manualmente uma vez no início
                         AplicarTema(_isTemaEscuro);
 
+                        // ENVIAR MENSAGEM: Notifica o sistema que o tema foi definido/alterado
+                        WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(_isTemaEscuro));
+
                         // Notificamos a UI sobre as mudanças
                         OnPropertyChanged(nameof(AmbienteSelecionado));
                         OnPropertyChanged(nameof(IsTemaEscuro));
@@ -52,13 +57,14 @@ namespace SmartCash.ViewModels
                 }
             }
         }
-
         /// <summary>
         /// Método disparado automaticamente pelo CommunityToolkit.Mvvm quando IsTemaEscuro muda.
         /// </summary>
         partial void OnIsTemaEscuroChanged(bool value)
         {
             AplicarTema(value);
+            // ENVIAR MENSAGEM: Essencial para quando o usuário clica no toggle em tempo real
+            WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(value));
         }
 
         private void AplicarTema(bool escuro)
@@ -66,6 +72,7 @@ namespace SmartCash.ViewModels
             if (Application.Current is { } app)
             {
                 app.RequestedThemeVariant = escuro ? ThemeVariant.Dark : ThemeVariant.Light;
+               
             }
         }
 
@@ -79,7 +86,7 @@ namespace SmartCash.ViewModels
                     Ambiente = AmbienteSelecionado,
                     ModoEscuro = IsTemaEscuro
                 };
-
+                WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(IsTemaEscuro));
                 string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(_configPath, json);
             }

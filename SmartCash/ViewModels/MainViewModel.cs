@@ -1,6 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia;
+using Avalonia.Styling;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using LiveChartsCore;
+using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Avalonia;
@@ -9,8 +13,8 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.Extensions.DependencyInjection;
 using SkiaSharp;
 using SmartCash.EfCore.Interfaces;
-
 using SmartCash.EfCore.Models;
+using SmartCash.Mensageiros;
 using SmartCash.Views;
 using SmartCash.Views.Categorias;
 using SmartCash.Views.Consumiveis;
@@ -18,6 +22,7 @@ using SmartCash.Views.Transacoes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -70,10 +75,32 @@ namespace SmartCash.ViewModels
         [ObservableProperty]
         private double _ana;
 
+        [ObservableProperty]
+        bool isTemaEscuro = false;
+
+        private LvcColor _graficoBackground;
+        public LvcColor GraficoBackground
+        {
+            get => _graficoBackground;
+            set => SetProperty(ref _graficoBackground, value);
+        }
+
         public Func<ChartPoint, string> LabelFormatter { get; set; }
 
         public MainViewModel(ITransacaoRepository transacaoRepository, IItemRepository itemRepository)
         {
+            WeakReferenceMessenger.Default.Register<TemaAlteradoMessage>(this, (r, m) =>
+            {
+                IsTemaEscuro = m.Value;
+                // m.Value contém o bool isDark enviado
+                AtualizarCoresDoTemaDoGrafico(IsTemaEscuro);
+            });
+
+            if (Application.Current != null)
+            {
+                IsTemaEscuro = Application.Current.ActualThemeVariant == ThemeVariant.Dark;
+            }
+
             _transacaoRepository = transacaoRepository;
             _itemRepository = itemRepository;
             ExibindoMenuPrincipal = true;
@@ -181,23 +208,59 @@ namespace SmartCash.ViewModels
                     Fill = new SolidColorPaint(SKColor.Parse(cat.CorHex)),
                     Stroke = null,
                     DataLabelsSize = 12,
-                    DataLabelsPaint = new SolidColorPaint(SKColors.Black),
                     IsHoverable = true,
                     Pushout = 2
+                    // DataLabelsPaint foi removido daqui e transferido para a lógica central de tema
                 };
 
                 series.Add(gaugeSeries);
             }
 
-            // Adiciona o fundo
             series.Add(new XamlGaugeBackgroundSeries
             {
-                InnerRadius = 5,
-                Fill = new SolidColorPaint(SKColors.LightGray.WithAlpha(100))
+                InnerRadius = 5
+                // Fill foi removido daqui e transferido para a lógica central de tema
             });
 
             SeriesGraficoPizza = series;
             TotalMesAtual = mes.Total.ToString("C2");
+
+            // Chama o método para aplicar as cores do tema logo após a criação da série
+            AtualizarCoresDoTemaDoGrafico(IsTemaEscuro);
+        }
+
+        private void AtualizarCoresDoTemaDoGrafico(bool isTemaEscuro)
+        {
+            Debug.WriteLine($"Evento de alteração de cor do gráfico ativado cor: Escura {IsTemaEscuro}");
+
+            if (SeriesGraficoPizza == null || !SeriesGraficoPizza.Any()) return;
+
+            // 1. Fundo do controle de gráfico (O "quadrado")
+            GraficoBackground = isTemaEscuro
+                ? LvcColor.FromArgb(255, 17, 27, 33)   // WaSurface Dark (#111B21)
+                : LvcColor.FromArgb(255, 255, 255, 255); // Branco puro no Light
+
+            // 2. Cor do texto das legendas
+            var corTextoLegenda = isTemaEscuro
+                ? new SolidColorPaint(new SKColor(233, 237, 239)) // Branco Gelo opaco
+                : new SolidColorPaint(new SKColor(17, 27, 33));   // WaSurface opaco
+
+            // 3. Cor do trilho (fundo) do Gauge
+            var corFundoGrafico = isTemaEscuro
+                ? new SolidColorPaint(new SKColor(31, 44, 52).WithAlpha(100)) // WaPrimary com transparência
+                : new SolidColorPaint(SKColors.LightGray.WithAlpha(100));     // Cinza claro original
+
+            foreach (var serie in SeriesGraficoPizza)
+            {
+                if (serie is XamlGaugeSeries gaugeSeries)
+                {
+                    gaugeSeries.DataLabelsPaint = corTextoLegenda;
+                }
+                else if (serie is XamlGaugeBackgroundSeries bgSeries)
+                {
+                    bgSeries.Fill = corFundoGrafico;
+                }
+            }
         }
 
         // Se quiser criar as séries programaticamente em vez de usar o XAML
@@ -212,11 +275,27 @@ namespace SmartCash.ViewModels
         }
 
         [RelayCommand]
-        private void Voltar()
+        private async Task Voltar()
         {
+            // 1. Volta para a tela principal
             ViewAtual = null;
             ExibindoMenuPrincipal = true;
-            _ = CarregarDashboardAsync();
+
+            // 2. Limpa a lista para destruir o cache visual antigo do LiveCharts
+            SeriesGraficoPizza = Enumerable.Empty<ISeries>();
+
+            // 3. Dá um respiro de 50ms para a UI Thread do Avalonia aplicar 
+            // a visibilidade (IsVisible="True") antes de desenharmos o gráfico
+            await Task.Delay(50);
+
+            // 4. Recarrega os dados do cabeçalho
+            await CarregarDashboardAsync();
+
+            // 5. Reconstrói o gráfico do zero, agora com a tela já visível
+            if (MesSelecionado != null)
+            {
+                await CarregarItensDoMesSelecionadoAsync(MesSelecionado);
+            }
         }
 
         [RelayCommand]
@@ -234,6 +313,7 @@ namespace SmartCash.ViewModels
             ViewAtual = view;
             ExibindoMenuPrincipal = false;
         }
+
         [RelayCommand]
         private void NavegarConfiguracoes()
         {

@@ -13,4 +13,10 @@ namespace SmartCash.Mensageiros
         {
         }
     }
+    public class TemaAlteradoMessage : ValueChangedMessage<bool>
+    {
+        public TemaAlteradoMessage(bool isDark) : base(isDark)
+        {
+        }
+    }
 }

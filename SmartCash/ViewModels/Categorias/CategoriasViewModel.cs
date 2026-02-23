@@ -75,5 +75,31 @@ namespace SmartCash.ViewModels.Categorias
                 Categorias.Add(item);
             }
         }
+        [RelayCommand]
+        private async Task ExcluirCategoriaAsync(CategoriaModel categoria)
+        {
+            if (categoria == null) return;
+
+            try
+            {
+                // 1. Remove da base de dados através do seu repositório
+                // Substitua "DeleteAsync" pelo nome exato do método no seu IBaseRepository
+                await _categoriaRepository.DeleteAsync(categoria.IdCategoria);
+
+                // 2. Remove da lista visual para atualizar o ecrã instantaneamente
+                // Se estiver a utilizar uma ObservableCollection, pode fazer:
+                Categorias.Remove(categoria);
+
+                // Em alternativa, pode recarregar a lista inteira se preferir:
+                // await CarregarCategorias();
+            }
+            catch (Exception ex)
+            {
+                // NOTA: Se esta categoria já estiver vinculada a "Consumíveis", o Entity Framework 
+                // pode gerar uma exceção de restrição de chave estrangeira (Foreign Key).
+                // É aconselhável ter aqui um aviso para o utilizador, caso não use "Cascade Delete".
+                System.Diagnostics.Debug.WriteLine($"[ERRO AO EXCLUIR] {ex.Message}");
+            }
+        }
     }
 }

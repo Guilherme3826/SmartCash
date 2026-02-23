@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
@@ -18,24 +17,14 @@ namespace SmartCash.EfCore.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<List<CategoriaModel>> GetAllAsync(Func<IQueryable<CategoriaModel>, IQueryable<CategoriaModel>>? include = null)
+        public async Task<List<CategoriaModel>> GetAllAsync()
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
-                // Inicializa a query com AsNoTracking para performance
                 var query = db.Categorias.AsNoTracking();
-
-                // Aplica os Includes dinâmicos se fornecidos
-                if (include != null)
-                {
-                    query = include(query);
-                }
-
-                // Log da Query para debug no console (útil no desenvolvimento Android/Desktop)
                 Debug.WriteLine($"Executando Query SQLite (Categorias): \n{query.ToQueryString()}");
-
                 return await query.ToListAsync();
             }
             catch (Exception ex)
@@ -45,21 +34,15 @@ namespace SmartCash.EfCore.Repositories
             }
         }
 
-        public async Task<CategoriaModel?> GetByIdAsync(int id, Func<IQueryable<CategoriaModel>, IQueryable<CategoriaModel>>? include = null)
+        public async Task<CategoriaModel?> GetByIdAsync(int id)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
-                var query = db.Categorias.AsNoTracking();
-
-                if (include != null)
-                {
-                    query = include(query);
-                }
-
-                // Busca utilizando a PK específica da sua Model: IdCategoria
-                return await query.FirstOrDefaultAsync(x => x.IdCategoria == id);
+                return await db.Categorias
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.IdCategoria == id);
             }
             catch (Exception ex)
             {
@@ -89,7 +72,6 @@ namespace SmartCash.EfCore.Repositories
 
             try
             {
-                // Busca o registro no contexto atual para garantir o rastreamento individual
                 var existente = await db.Categorias
                     .FirstOrDefaultAsync(x => x.IdCategoria == entity.IdCategoria);
 
@@ -98,7 +80,6 @@ namespace SmartCash.EfCore.Repositories
                     throw new InvalidOperationException($"Categoria ID {entity.IdCategoria} não localizada para atualização.");
                 }
 
-                // Atualização individual dos campos conforme solicitado
                 existente.Nome = entity.Nome;
                 existente.IconeApresentacao = entity.IconeApresentacao;
 

@@ -9,7 +9,7 @@ using SmartCash.EfCore.Models;
 
 namespace SmartCash.EfCore.Repositories
 {
-    public class ItemRepository : IBaseRepository<ItemModel>
+    public class ItemRepository : IItemRepository
     {
         private readonly IDbContextFactory<MeuDbContext> _contextFactory;
 
@@ -18,28 +18,19 @@ namespace SmartCash.EfCore.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<List<ItemModel>> GetAllAsync(Func<IQueryable<ItemModel>, IQueryable<ItemModel>>? include = null)
+        public async Task<List<ItemModel>> GetAllAsync()
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
-                // Query única com Includes fixos diretamente no repositório
                 var query = db.Itens
                     .AsNoTracking()
                     .Include(i => i.Transacao)
                     .Include(i => i.Produto)
-                        .ThenInclude(p => p.Categoria)
-                    .AsQueryable();
-
-                // Aplica Includes adicionais se fornecidos via parâmetro
-                if (include != null)
-                {
-                    query = include(query);
-                }
+                        .ThenInclude(p => p.Categoria);
 
                 Debug.WriteLine($"Executando Query SQLite (Itens com Produto e Transação): \n{query.ToQueryString()}");
-
                 return await query.ToListAsync();
             }
             catch (Exception ex)
@@ -49,26 +40,18 @@ namespace SmartCash.EfCore.Repositories
             }
         }
 
-        public async Task<ItemModel?> GetByIdAsync(int id, Func<IQueryable<ItemModel>, IQueryable<ItemModel>>? include = null)
+        public async Task<ItemModel?> GetByIdAsync(int id)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
-                var query = db.Itens
+                return await db.Itens
                     .AsNoTracking()
                     .Include(i => i.Transacao)
                     .Include(i => i.Produto)
                         .ThenInclude(p => p.Categoria)
-                    .AsQueryable();
-
-                if (include != null)
-                {
-                    query = include(query);
-                }
-
-                // Busca utilizando a PK específica: IdItem
-                return await query.FirstOrDefaultAsync(x => x.IdItem == id);
+                    .FirstOrDefaultAsync(x => x.IdItem == id);
             }
             catch (Exception ex)
             {
@@ -98,7 +81,6 @@ namespace SmartCash.EfCore.Repositories
 
             try
             {
-                // Busca o registro no contexto atual para garantir o rastreamento e atualização individual
                 var existente = await db.Itens
                     .FirstOrDefaultAsync(x => x.IdItem == entity.IdItem);
 
@@ -107,7 +89,6 @@ namespace SmartCash.EfCore.Repositories
                     throw new InvalidOperationException($"Item ID {entity.IdItem} não localizado para atualização.");
                 }
 
-                // Atualização individual de cada campo conforme solicitado
                 existente.Quantidade = entity.Quantidade;
                 existente.ValorUnit = entity.ValorUnit;
                 existente.ValorTotal = entity.ValorTotal;
@@ -140,6 +121,19 @@ namespace SmartCash.EfCore.Repositories
                 Debug.WriteLine($"Erro ao deletar item {id}: {ex.Message}");
                 throw;
             }
+        }
+
+        public async Task<List<ItemModel>> GetItensPorMesAnoAsync(int mes, int ano)
+        {
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Itens
+                .AsNoTracking()
+                .Include(i => i.Transacao)
+                .Include(i => i.Produto)
+                    .ThenInclude(p => p.Categoria)
+                .Where(i => i.Transacao.Data.Month == mes && i.Transacao.Data.Year == ano)
+                .OrderByDescending(i => i.Transacao.Data)
+                .ToListAsync();
         }
     }
 }

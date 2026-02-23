@@ -157,7 +157,7 @@ namespace SmartCash.ViewModels.Transacoes
 
         private async Task CarregarProdutosSugestaoAsync()
         {
-            var produtos = await _produtoRepository.GetAllAsync(q => q.Include(p => p.Categoria));
+            var produtos = await _produtoRepository.GetAllAsync();
             ProdutosSugestao = produtos.ToList();
         }
     }

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
@@ -18,26 +17,17 @@ namespace SmartCash.EfCore.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<List<ConsumiveisModel>> GetAllAsync(Func<IQueryable<ConsumiveisModel>, IQueryable<ConsumiveisModel>>? include = null)
+        public async Task<List<ConsumiveisModel>> GetAllAsync()
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
-                // Includes inseridos diretamente no repositório conforme solicitado
                 var query = db.Consumivel
                     .AsNoTracking()
-                    .Include(p => p.Categoria)              
-                    .AsQueryable();
-
-                // Mantém suporte a includes adicionais via parâmetro para respeitar a IBaseRepository
-                if (include != null)
-                {
-                    query = include(query);
-                }
+                    .Include(p => p.Categoria);
 
                 Debug.WriteLine($"Executando Query SQLite (Produtos com Includes): \n{query.ToQueryString()}");
-
                 return await query.ToListAsync();
             }
             catch (Exception ex)
@@ -47,24 +37,16 @@ namespace SmartCash.EfCore.Repositories
             }
         }
 
-        public async Task<ConsumiveisModel?> GetByIdAsync(int id, Func<IQueryable<ConsumiveisModel>, IQueryable<ConsumiveisModel>>? include = null)
+        public async Task<ConsumiveisModel?> GetByIdAsync(int id)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
-                // Includes inseridos diretamente para garantir dados completos na busca por ID
-                var query = db.Consumivel
+                return await db.Consumivel
                     .AsNoTracking()
-                    .Include(p => p.Categoria)                 
-                    .AsQueryable();
-
-                if (include != null)
-                {
-                    query = include(query);
-                }
-
-                return await query.FirstOrDefaultAsync(x => x.IdConsumivel == id);
+                    .Include(p => p.Categoria)
+                    .FirstOrDefaultAsync(x => x.IdConsumivel == id);
             }
             catch (Exception ex)
             {
@@ -94,7 +76,6 @@ namespace SmartCash.EfCore.Repositories
 
             try
             {
-                // Busca o registro no contexto atual para garantir o rastreamento e atualização individual
                 var existente = await db.Consumivel
                     .FirstOrDefaultAsync(x => x.IdConsumivel == entity.IdConsumivel);
 
@@ -103,7 +84,6 @@ namespace SmartCash.EfCore.Repositories
                     throw new InvalidOperationException($"Produto ID {entity.IdConsumivel} não localizado para atualização.");
                 }
 
-                // Atualização individual de cada campo para evitar problemas com navegação
                 existente.Nome = entity.Nome;
                 existente.IdCategoria = entity.IdCategoria;
                 existente.Valor = entity.Valor;

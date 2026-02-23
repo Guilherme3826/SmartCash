@@ -12,6 +12,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Avalonia" />
+		<PackageReference Include="Avalonia.Controls.ItemsRepeater" />
 		<PackageReference Include="Avalonia.Themes.Fluent" />
 		<PackageReference Include="Avalonia.Fonts.Inter" />
 		<PackageReference Include="Avalonia.Controls.DataGrid" />
@@ -20,6 +21,7 @@
 			<PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
 			<PrivateAssets>all</PrivateAssets>
@@ -31,18 +33,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Migrations\" />
+		<Folder Include="Migrations\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\Categorias\CategoriasView.axaml.cs">
-	    <DependentUpon>CategoriasView.axaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\Consumiveis\AdicionarConsumivelView.axaml.cs">
-	    <DependentUpon>AdicionarConsumivelView.axaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\Consumiveis\ConsumiveisView.axaml.cs">
-	    <DependentUpon>ConsumiveisView.axaml</DependentUpon>
-	  </Compile>
+		<Compile Update="Views\Categorias\CategoriasView.axaml.cs">
+			<DependentUpon>CategoriasView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Consumiveis\AdicionarConsumivelView.axaml.cs">
+			<DependentUpon>AdicionarConsumivelView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Consumiveis\ConsumiveisView.axaml.cs">
+			<DependentUpon>ConsumiveisView.axaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
 </Project>

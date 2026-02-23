@@ -52,9 +52,7 @@ namespace SmartCash.ViewModels.Transacoes
         public async Task CarregarDadosAsync()
         {
             // Busca as transações com Include dos Itens e Produtos para exibir o total e detalhes
-            var dados = await _transacaoRepository.GetAllAsync(query =>
-                query.Include(t => t.Itens)
-                     .ThenInclude(i => i.Produto));
+            var dados = await _transacaoRepository.GetAllAsync();
 
             _todasTransacoes = dados.OrderByDescending(t => t.Data).ToList();
 

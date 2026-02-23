@@ -9,7 +9,7 @@ using SmartCash.EfCore.Models;
 
 namespace SmartCash.EfCore.Repositories
 {
-    public class TransacaoRepository : IBaseRepository<TransacaoModel>
+    public class TransacaoRepository : ITransacaoRepository
     {
         private readonly IDbContextFactory<MeuDbContext> _contextFactory;
 
@@ -18,26 +18,18 @@ namespace SmartCash.EfCore.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<List<TransacaoModel>> GetAllAsync(Func<IQueryable<TransacaoModel>, IQueryable<TransacaoModel>>? include = null)
+        public async Task<List<TransacaoModel>> GetAllAsync()
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
-                // Query única trazendo toda a árvore de dados: Transação -> Itens -> Produto
                 var query = db.Transacoes
                     .AsNoTracking()
                     .Include(t => t.Itens)
-                        .ThenInclude(i => i.Produto)
-                    .AsQueryable();
-
-                if (include != null)
-                {
-                    query = include(query);
-                }
+                        .ThenInclude(i => i.Produto);
 
                 Debug.WriteLine($"Executando Query SQLite (Transações Completas): \n{query.ToQueryString()}");
-
                 return await query.ToListAsync();
             }
             catch (Exception ex)
@@ -47,24 +39,17 @@ namespace SmartCash.EfCore.Repositories
             }
         }
 
-        public async Task<TransacaoModel?> GetByIdAsync(int id, Func<IQueryable<TransacaoModel>, IQueryable<TransacaoModel>>? include = null)
+        public async Task<TransacaoModel?> GetByIdAsync(int id)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
 
             try
             {
-                var query = db.Transacoes
+                return await db.Transacoes
                     .AsNoTracking()
                     .Include(t => t.Itens)
                         .ThenInclude(i => i.Produto)
-                    .AsQueryable();
-
-                if (include != null)
-                {
-                    query = include(query);
-                }
-
-                return await query.FirstOrDefaultAsync(x => x.IdTransacao == id);
+                    .FirstOrDefaultAsync(x => x.IdTransacao == id);
             }
             catch (Exception ex)
             {
@@ -94,7 +79,6 @@ namespace SmartCash.EfCore.Repositories
 
             try
             {
-                // Busca o registro para garantir o rastreamento individual e atualização campo a campo
                 var existente = await db.Transacoes
                     .FirstOrDefaultAsync(x => x.IdTransacao == entity.IdTransacao);
 
@@ -103,7 +87,6 @@ namespace SmartCash.EfCore.Repositories
                     throw new InvalidOperationException($"Transação ID {entity.IdTransacao} não localizada.");
                 }
 
-                // Atualização individual das propriedades de dados
                 existente.Data = entity.Data;
                 existente.ValorTotal = entity.ValorTotal;
 
@@ -133,6 +116,28 @@ namespace SmartCash.EfCore.Repositories
                 Debug.WriteLine($"Erro ao deletar transação {id}: {ex.Message}");
                 throw;
             }
+        }
+
+        public async Task<List<ResumoMesModel>> GetHistoricoMensalAsync()
+        {
+            using var db = await _contextFactory.CreateDbContextAsync();
+
+            var transacoes = await db.Transacoes.AsNoTracking().ToListAsync();
+
+            var historico = transacoes
+                .GroupBy(t => new { t.Data.Year, t.Data.Month })
+                .Select(g => new ResumoMesModel
+                {
+                    Ano = g.Key.Year,
+                    Mes = g.Key.Month,
+                    MesAnoApresentacao = $"{g.Key.Month:D2}/{g.Key.Year}",
+                    Total = g.Sum(x => x.ValorTotal)
+                })
+                .OrderByDescending(x => x.Ano)
+                .ThenByDescending(x => x.Mes)
+                .ToList();
+
+            return historico;
         }
     }
 }

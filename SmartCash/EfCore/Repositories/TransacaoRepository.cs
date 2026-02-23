@@ -49,6 +49,7 @@ namespace SmartCash.EfCore.Repositories
                     .AsNoTracking()
                     .Include(t => t.Itens)
                         .ThenInclude(i => i.Produto)
+                            .ThenInclude(i => i.Categoria)
                     .FirstOrDefaultAsync(x => x.IdTransacao == id);
             }
             catch (Exception ex)

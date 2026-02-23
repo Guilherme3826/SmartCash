@@ -160,8 +160,8 @@
 													<DataTemplate x:DataType="models:ResumoCategoriaModel">
 														<Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="20,12">
 															<Grid ColumnDefinitions="Auto, *, Auto">
-																<Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="#E3F2FD">
-																	<i:Icon Value="{Binding Categoria.IconeApresentacao}" FontSize="16" Foreground="#2196F3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+																<Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="#F5F5F5">
+																	<i:Icon Value="{Binding Categoria.IconeApresentacao}" FontSize="16" Foreground="{Binding CorHex}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 																</Border>
 																<TextBlock Grid.Column="1" Text="{Binding Categoria.Nome}" FontSize="15" Foreground="#333333" FontWeight="SemiBold" VerticalAlignment="Center" Margin="15,0,0,0"/>
 																<TextBlock Grid.Column="2" Text="{Binding Total, StringFormat='{}{0:C2}'}" FontSize="15" FontWeight="Bold" Foreground="#F44336" VerticalAlignment="Center" HorizontalAlignment="Right"/>

@@ -152,19 +152,20 @@ namespace SmartCash.ViewModels
             }
 
             var series = new List<ISeries>();
-            var cores = new[]
+            var coresHex = new[]
             {
-        SKColor.Parse("#2196F3"), // Azul
-        SKColor.Parse("#F44336"), // Vermelho
-        SKColor.Parse("#8BC34A"), // Verde
-        SKColor.Parse("#FF9800"), // Laranja
-        SKColor.Parse("#9C27B0"), // Roxo
-        SKColor.Parse("#00BCD4")  // Ciano
-    };
+                "#2196F3", // Azul
+                "#F44336", // Vermelho
+                "#8BC34A", // Verde
+                "#FF9800", // Laranja
+                "#9C27B0", // Roxo
+                "#00BCD4"  // Ciano
+            };
 
             for (int i = 0; i < resumo.Count; i++)
             {
                 var cat = resumo[i];
+                cat.CorHex = coresHex[i % coresHex.Length];
 
                 var gaugeSeries = new XamlGaugeSeries
                 {
@@ -176,9 +177,9 @@ namespace SmartCash.ViewModels
                     InnerRadius = 10,
                     RelativeOuterRadius = 20,
                     RelativeInnerRadius = 20,
-                    Fill = new SolidColorPaint(cores[i % cores.Length]),
+                    Fill = new SolidColorPaint(SKColor.Parse(cat.CorHex)),
                     Stroke = null,
-                    DataLabelsSize = 16,
+                    DataLabelsSize = 12,
                     DataLabelsPaint = new SolidColorPaint(SKColors.Black),
                     IsHoverable = true,
                     Pushout = 2

@@ -10,7 +10,7 @@ namespace SmartCash.ViewModels.Transacoes
 {
     public partial class TransacaoDetalhesViewModel : ObservableObject, IRecipient<TransacaoSelecionadaMessage>
     {
-        private readonly IBaseRepository<TransacaoModel> _transacaoRepository;
+        private readonly ITransacaoRepository _transacaoRepository;
         private readonly TransacoesViewModel _parentViewModel;
 
         [ObservableProperty]
@@ -19,7 +19,7 @@ namespace SmartCash.ViewModels.Transacoes
         [ObservableProperty]
         private bool _estaCarregando;
 
-        public TransacaoDetalhesViewModel(IBaseRepository<TransacaoModel> transacaoRepository, TransacoesViewModel parentViewModel)
+        public TransacaoDetalhesViewModel(ITransacaoRepository transacaoRepository, TransacoesViewModel parentViewModel)
         {
             _transacaoRepository = transacaoRepository;
             _parentViewModel = parentViewModel;

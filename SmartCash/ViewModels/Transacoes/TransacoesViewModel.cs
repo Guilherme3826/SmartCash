@@ -18,7 +18,7 @@ namespace SmartCash.ViewModels.Transacoes
 {
     public partial class TransacoesViewModel : ObservableObject
     {
-        private readonly IBaseRepository<TransacaoModel> _transacaoRepository;
+        private readonly ITransacaoRepository _transacaoRepository;
         private List<TransacaoModel> _todasTransacoes = new List<TransacaoModel>();
 
         [ObservableProperty]
@@ -39,7 +39,7 @@ namespace SmartCash.ViewModels.Transacoes
         [ObservableProperty]
         private object? _viewSubAtual;
 
-        public TransacoesViewModel(IBaseRepository<TransacaoModel> transacaoRepository)
+        public TransacoesViewModel(ITransacaoRepository transacaoRepository)
         {
             _transacaoRepository = transacaoRepository;
             _ = CarregarDadosAsync();

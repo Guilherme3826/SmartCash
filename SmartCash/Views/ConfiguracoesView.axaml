@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              xmlns:vm="clr-namespace:SmartCash.ViewModels"
+             xmlns:views="clr-namespace:SmartCash.Views"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:ConfiguracoesViewModel"
              x:Class="SmartCash.Views.ConfiguracoesView"
@@ -12,10 +13,15 @@
 	<Grid RowDefinitions="Auto, *">
 
 		<Border Grid.Row="0" Classes="HeaderBox"
+                x:CompileBindings="False"
                 Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 			
 			<Border Classes="HeaderContent">
 				<Grid ColumnDefinitions="Auto, *, Auto">
+					
+					<Button Grid.Column="0" Command="{Binding $parent[views:MainView].((vm:MainViewModel)DataContext).VoltarCommand}" Classes="IconButton">
+						<i:Icon Value="fa-solid fa-arrow-left" Classes="HeaderIcon"/>
+					</Button>
 					
 					<TextBlock Grid.Column="1" Text="Configurações" Classes="HeaderTitle"/>
 					

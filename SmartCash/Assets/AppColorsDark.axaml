@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<SolidColorBrush x:Key="WaPrimary">#1F2C34</SolidColorBrush> 
+	<SolidColorBrush x:Key="WaAccent">#00A884</SolidColorBrush>
+	
+	<SolidColorBrush x:Key="WaBackground">#0B141A</SolidColorBrush>
+	<SolidColorBrush x:Key="WaSurface">#111B21</SolidColorBrush>
+	
+	<SolidColorBrush x:Key="WaTextPrimary">#E9EDEF</SolidColorBrush>
+	<SolidColorBrush x:Key="WaTextSecondary">#8696A0</SolidColorBrush>
+	
+	<SolidColorBrush x:Key="WaDivider">#222D34</SolidColorBrush>
+	<SolidColorBrush x:Key="WaIconLight">#8696A0</SolidColorBrush>
+	<SolidColorBrush x:Key="WaSelection">#202C33</SolidColorBrush>
+
+	<SolidColorBrush x:Key="WaHeaderIcon">#E9EDEF</SolidColorBrush>
+	<SolidColorBrush x:Key="WaDanger">#FF5252</SolidColorBrush>
+	<SolidColorBrush x:Key="WaWarningBackground">#2D221A</SolidColorBrush>
+	<SolidColorBrush x:Key="WaWarningForeground">#FFB74D</SolidColorBrush>
+
+</ResourceDictionary>

@@ -8,9 +8,10 @@
              xmlns:models="clr-namespace:SmartCash.EfCore.Models"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:MainViewModel"
-             Background="{DynamicResource WaBackground}" x:Class="SmartCash.Views.MainView">
+             Background="{DynamicResource WaBackground}" 
+             x:Class="SmartCash.Views.MainView">
 
-	<Grid>
+	<Grid Classes="MainViewLayout">
 		<Grid IsVisible="{Binding ExibindoMenuPrincipal}" RowDefinitions="Auto, *, Auto">
 
 			<Border Grid.Row="0" Classes="HeaderBox"
@@ -38,8 +39,11 @@
 						<StackPanel>
 							<TextBlock Text="Histórico de Gastos" Classes="SectionTitle"/>
 
-							<ListBox ItemsSource="{Binding HistoricoMensal}" SelectedItem="{Binding MesSelecionado}"
-                                     ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+							<ListBox Classes="ChartListBox" ItemsSource="{Binding HistoricoMensal}" 
+                                     SelectedItem="{Binding MesSelecionado}"
+                                     Background="Transparent"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+                                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
 								<ListBox.ItemsPanel>
 									<ItemsPanelTemplate>
 										<StackPanel Orientation="Horizontal" Spacing="15"/>
@@ -78,7 +82,9 @@
 									<Grid Width="{Binding #CardInferior.Bounds.Width}">
 										<StackPanel>
 											<TextBlock Text="Lançamentos" Classes="TabSectionTitle"/>
-											<ListBox ItemsSource="{Binding ItensMesSelecionado}" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+											<ListBox ItemsSource="{Binding ItensMesSelecionado}" 
+                                                     Background="Transparent"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
 												<ListBox.ItemTemplate>
 													<DataTemplate x:DataType="models:ItemModel">
 														<Border Classes="ListItemBorder">
@@ -117,7 +123,9 @@
                                                           MaxValue="{Binding ValorMaximoGauge}"
                                                           LegendPosition="Hidden"/>
 
-											<ListBox ItemsSource="{Binding CategoriasMesSelecionado}" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+											<ListBox ItemsSource="{Binding CategoriasMesSelecionado}" 
+                                                     Background="Transparent"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
 												<ListBox.ItemTemplate>
 													<DataTemplate x:DataType="models:ResumoCategoriaModel">
 														<Border Classes="ListItemBorder">
@@ -140,6 +148,7 @@
 							</ScrollViewer>
 						</StackPanel>
 					</Border>
+                    <Rectangle Height="20" Fill="Transparent"/>
 				</StackPanel>
 			</ScrollViewer>
 

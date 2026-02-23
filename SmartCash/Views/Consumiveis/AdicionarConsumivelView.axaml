@@ -12,21 +12,21 @@
 
 	<Grid RowDefinitions="Auto, *">
 
-		<Border Grid.Row="0" Background="{DynamicResource WaPrimary}"
+		<Border Grid.Row="0" Classes="HeaderBox"
                 x:CompileBindings="False"
                 Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-			<Border Padding="20,15,20,20">
+			<Border Classes="HeaderContent">
 				<Grid ColumnDefinitions="Auto, *, Auto">
 					
 					<Button Grid.Column="0" Command="{Binding VoltarCommand}" Classes="IconButton">
-						<i:Icon Value="fa-solid fa-arrow-left" Foreground="White" FontSize="22"/>
+						<i:Icon Value="fa-solid fa-arrow-left" Foreground="{DynamicResource WaHeaderIcon}" FontSize="22"/>
 					</Button>
 
 					<TextBlock Grid.Column="1" Text="Gerenciar Item" Classes="HeaderTitle"/>
 
 					<Button Grid.Column="2" Command="{Binding SalvarCommand}" Classes="IconButton">
-						<i:Icon Value="fa-solid fa-check" Foreground="White" FontSize="22"/>
+						<i:Icon Value="fa-solid fa-check" Foreground="{DynamicResource WaHeaderIcon}" FontSize="22"/>
 					</Button>
 					
 				</Grid>
@@ -34,7 +34,7 @@
 		</Border>
 
 		<ScrollViewer Grid.Row="1">
-			<StackPanel Margin="20" Spacing="25">
+			<StackPanel Classes="FormArea">
 
 				<StackPanel Classes="FieldContainer">
 					<TextBlock Text="Nome do Produto / Serviço" Classes="FieldLabel"/>
@@ -59,8 +59,12 @@
 							<ComboBox.ItemTemplate>
 								<DataTemplate x:DataType="models:CategoriaModel">
 									<StackPanel Orientation="Horizontal" Spacing="12">
-										<i:Icon Value="{Binding IconeApresentacao}" Foreground="{DynamicResource WaPrimary}" FontSize="16" VerticalAlignment="Center"/>
-										<TextBlock Text="{Binding Nome}" VerticalAlignment="Center" FontSize="16" Foreground="{DynamicResource WaTextPrimary}"/>
+										<i:Icon Value="{Binding IconeApresentacao}" 
+                                                Foreground="{DynamicResource WaPrimary}" 
+                                                FontSize="16" 
+                                                VerticalAlignment="Center"/>
+										<TextBlock Text="{Binding Nome}" 
+                                                   Classes="ComboBoxItemText"/>
 									</StackPanel>
 								</DataTemplate>
 							</ComboBox.ItemTemplate>

@@ -1,24 +1,25 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:SmartCash"
-             xmlns:fluent="clr-namespace:Avalonia.Themes.Fluent;assembly=Avalonia.Themes.Fluent"
              x:Class="SmartCash.App"
              RequestedThemeVariant="Light">
-	<Application.DataTemplates>
-		<local:ViewLocator/>
-	</Application.DataTemplates>
+    
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
 
-	<Application.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="avares://SmartCash/Assets/AppColors.axaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</Application.Resources>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceInclude x:Key="Default" Source="avares://SmartCash/Assets/AppColorsLight.axaml" />
+                <ResourceInclude x:Key="Dark" Source="avares://SmartCash/Assets/AppColorsDark.axaml" />
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 
-	<Application.Styles>
-		<FluentTheme />
-		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
-		<StyleInclude Source="avares://SmartCash/Assets/AppStyles.axaml" />
-	</Application.Styles>
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        <StyleInclude Source="avares://SmartCash/Assets/AppStyles.axaml" />
+    </Application.Styles>
 </Application>

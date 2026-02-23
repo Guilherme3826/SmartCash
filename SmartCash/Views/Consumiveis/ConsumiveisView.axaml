@@ -16,7 +16,7 @@
 	<Grid>
 		<Grid IsVisible="{Binding ExibindoLista}" RowDefinitions="Auto, *">
 
-			<Border Grid.Row="0" Classes="HeaderBox"
+			<Border Grid.Row="0" Classes="HeaderBox" CornerRadius="0"
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
@@ -36,13 +36,13 @@
 								<MenuFlyout Placement="BottomEdgeAlignedRight">
 									<MenuItem Header="Adicionar Consumível" Command="{Binding AdicionarCommand}">
 										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-plus" FontSize="16"/>
+											<i:Icon Value="fa-solid fa-plus" Classes="MenuIcon"/>
 										</MenuItem.Icon>
 									</MenuItem>
 
 									<MenuItem Header="Atualizar Lista" Command="{Binding CarregarDadosCommand}">
 										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-rotate" FontSize="16"/>
+											<i:Icon Value="fa-solid fa-rotate" Classes="MenuIcon"/>
 										</MenuItem.Icon>
 									</MenuItem>
 								</MenuFlyout>
@@ -53,7 +53,8 @@
 			</Border>
 
 			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-				<StackPanel Classes="ListArea">
+				
+				<StackPanel Classes="MainContentArea">
 
 					<Border Classes="FieldCard">
 						<ComboBox HorizontalAlignment="Stretch"
@@ -69,9 +70,11 @@
 					</Border>
 
 					<Border Classes="ListContainerCard">
+						
 						<ListBox ItemsSource="{Binding Consumiveis}"
                                  SelectedItem="{Binding ConsumivelSelecionado}"
                                  SelectionMode="Single"
+                                 Background="Transparent"
                                  ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
 							<ListBox.ItemTemplate>

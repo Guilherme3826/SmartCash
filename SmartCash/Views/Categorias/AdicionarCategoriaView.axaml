@@ -19,13 +19,13 @@
 				<Grid ColumnDefinitions="Auto, *, Auto">
 					
 					<Button Grid.Column="0" Command="{Binding CancelarCommand}" Classes="IconButton">
-						<i:Icon Value="fa-solid fa-xmark" Foreground="White" FontSize="24"/>
+						<i:Icon Value="fa-solid fa-xmark" Classes="HeaderIcon"/>
 					</Button>
 
 					<TextBlock Grid.Column="1" Text="Nova Categoria" Classes="HeaderTitle"/>
 
 					<Button Grid.Column="2" Command="{Binding SalvarCommand}" Classes="IconButton">
-						<i:Icon Value="fa-solid fa-check" Foreground="White" FontSize="24"/>
+						<i:Icon Value="fa-solid fa-check" Classes="HeaderIcon"/>
 					</Button>
 					
 				</Grid>
@@ -49,7 +49,8 @@
 					<TextBlock Text="Selecione um Ícone" Classes="FieldLabel"/>
 					
 					<Border Classes="IconSelectorCard">
-						<ListBox ItemsSource="{Binding IconesDisponiveis}"
+						<ListBox Classes="IconListBox"
+                                 ItemsSource="{Binding IconesDisponiveis}"
                                  SelectedItem="{Binding IconeSelecionado, Mode=TwoWay}">
 
 							<ListBox.ItemsPanel>

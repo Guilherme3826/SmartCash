@@ -16,7 +16,7 @@
 	<Grid>
 		<Grid IsVisible="{Binding ExibindoLista}" RowDefinitions="Auto, *">
 
-			<Border Grid.Row="0" Classes="HeaderBox"
+			<Border Grid.Row="0" Classes="HeaderBox" CornerRadius="0"
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
@@ -54,7 +54,7 @@
 			</Border>
 
 			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-				<StackPanel Classes="ListArea">
+				<StackPanel Classes="MainContentArea">
 
 					<Border Classes="FieldCard">
 						<ComboBox HorizontalAlignment="Stretch"
@@ -71,6 +71,7 @@
 
 					<Border Classes="ListContainerCard">
 						<ListBox ItemsSource="{Binding Transacoes}"
+                                 Background="Transparent"
                                  SelectionMode="Single"
                                  ScrollViewer.VerticalScrollBarVisibility="Hidden">
 

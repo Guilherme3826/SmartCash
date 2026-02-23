@@ -3,7 +3,6 @@ using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SmartCash.EfCore.Models;
-
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -35,34 +34,59 @@ namespace SmartCash.ViewModels
 
                     if (settings != null)
                     {
-                        AmbienteSelecionado = settings.Ambiente;
-                        IsTemaEscuro = settings.ModoEscuro;
-                        AplicarTema(IsTemaEscuro);
+                        // Alteramos o campo privado para evitar disparar o OnChanged durante o carregamento
+                        _ambienteSelecionado = settings.Ambiente;
+                        _isTemaEscuro = settings.ModoEscuro;
+
+                        // Aplicamos o tema manualmente uma vez no início
+                        AplicarTema(_isTemaEscuro);
+
+                        // Notificamos a UI sobre as mudanças
+                        OnPropertyChanged(nameof(AmbienteSelecionado));
+                        OnPropertyChanged(nameof(IsTemaEscuro));
                     }
                 }
-                catch { /* Fallback para padrões em caso de erro no JSON */ }
+                catch
+                {
+                    /* Fallback para padrões em caso de erro no JSON */
+                }
             }
         }
 
-        partial void OnIsTemaEscuroChanged(bool value) => AplicarTema(value);
+        /// <summary>
+        /// Método disparado automaticamente pelo CommunityToolkit.Mvvm quando IsTemaEscuro muda.
+        /// </summary>
+        partial void OnIsTemaEscuroChanged(bool value)
+        {
+            AplicarTema(value);
+        }
 
         private void AplicarTema(bool escuro)
         {
-            if (Application.Current != null)
-                Application.Current.RequestedThemeVariant = escuro ? ThemeVariant.Dark : ThemeVariant.Light;
+            if (Application.Current is { } app)
+            {
+                app.RequestedThemeVariant = escuro ? ThemeVariant.Dark : ThemeVariant.Light;
+            }
         }
 
         [RelayCommand]
         private void SalvarConfiguracoes()
         {
-            var settings = new AppSettingsModel
+            try
             {
-                Ambiente = AmbienteSelecionado,
-                ModoEscuro = IsTemaEscuro
-            };
+                var settings = new AppSettingsModel
+                {
+                    Ambiente = AmbienteSelecionado,
+                    ModoEscuro = IsTemaEscuro
+                };
 
-            string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_configPath, json);
+                string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(_configPath, json);
+            }
+            catch (Exception)
+            {
+                // Aqui você pode adicionar um log ou notificação de erro ao salvar
+            }
         }
     }
 }

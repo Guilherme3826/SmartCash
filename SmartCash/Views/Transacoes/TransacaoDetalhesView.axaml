@@ -45,7 +45,9 @@
 				<StackPanel Classes="ListArea">
 					
 					<Border Classes="ListContainerCard">
-						<ListBox ItemsSource="{Binding Transacao.Itens}" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+						<ListBox ItemsSource="{Binding Transacao.Itens}" 
+                                 Background="Transparent"
+                                 ScrollViewer.VerticalScrollBarVisibility="Hidden">
 							<ListBox.ItemTemplate>
 								<DataTemplate x:DataType="models:ItemModel">
 									<Border Classes="ListItemBorder">
@@ -68,7 +70,8 @@
 							</ListBox.ItemTemplate>
 						</ListBox>
 					</Border>
-					
+
+                    <Rectangle Height="20" Fill="Transparent"/>
 				</StackPanel>
 			</ScrollViewer>
 		</Grid>

@@ -19,7 +19,9 @@
 			<Border Classes="HeaderContent">
 				<Grid ColumnDefinitions="Auto, *, Auto">
 					
-					<Button Grid.Column="0" Command="{Binding $parent[views:MainView].((vm:MainViewModel)DataContext).VoltarCommand}" Classes="IconButton">
+					<Button Grid.Column="0" 
+                            Command="{Binding $parent[views:MainView].((vm:MainViewModel)DataContext).VoltarCommand}" 
+                            Classes="IconButton">
 						<i:Icon Value="fa-solid fa-arrow-left" Classes="HeaderIcon"/>
 					</Button>
 					

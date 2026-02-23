@@ -16,37 +16,37 @@
 	<Grid>
 		<Grid IsVisible="{Binding ExibindoLista}" RowDefinitions="Auto, *">
 
-			<Border Grid.Row="0" Background="{DynamicResource WaPrimary}"
+			<Border Grid.Row="0" Classes="HeaderBox" CornerRadius="0"
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-				<Border Padding="20,15,20,20">
+				<Border Classes="HeaderContent">
 					<Grid ColumnDefinitions="Auto, *, Auto">
 
 						<Button Grid.Column="0"
                                 Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).VoltarCommand}"
                                 Classes="IconButton">
-							<i:Icon Value="fa-solid fa-arrow-left" Foreground="White" FontSize="22"/>
+							<i:Icon Value="fa-solid fa-arrow-left" Foreground="{DynamicResource WaHeaderIcon}" FontSize="22"/>
 						</Button>
 
 						<TextBlock Grid.Column="1" Text="Categorias" Classes="HeaderTitle"/>
 
 						<Button Grid.Column="2" Classes="IconButton">
-							<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="White" FontSize="22"/>
+							<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="{DynamicResource WaHeaderIcon}" FontSize="22"/>
 
 							<Button.Flyout>
 								<MenuFlyout Placement="BottomEdgeAlignedRight">
 									<MenuItem Header="Adicionar Categoria"
                                               Command="{Binding AdicionarNovaCategoriaCommand}">
 										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-plus" FontSize="16"/>
+											<i:Icon Value="fa-solid fa-plus" Classes="MenuIcon"/>
 										</MenuItem.Icon>
 									</MenuItem>
 
 									<MenuItem Header="Atualizar Lista"
                                               Command="{Binding CarregarCategoriasCommand}">
 										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-rotate" FontSize="16"/>
+											<i:Icon Value="fa-solid fa-rotate" Classes="MenuIcon"/>
 										</MenuItem.Icon>
 									</MenuItem>
 								</MenuFlyout>
@@ -56,17 +56,14 @@
 				</Border>
 			</Border>
 
-			<Border Grid.Row="1" Classes="ListContainerCard">
-
+			<Border Grid.Row="1" Classes="ListContainerCard" Margin="15">
 				<ListBox ItemsSource="{Binding Categorias}"
-                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                         ScrollViewer.IsScrollInertiaEnabled="True"
-                         ScrollViewer.IsScrollChainingEnabled="False">
+                         Background="Transparent"
+                         ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
 					<ListBox.ItemTemplate>
 						<DataTemplate x:DataType="models:CategoriaModel">
-
-							<Border BorderBrush="{DynamicResource WaDivider}" BorderThickness="0,0,0,1" Padding="20,15" Background="Transparent">
+							<Border Classes="ListItemBorder">
 
 								<Border.ContextFlyout>
 									<MenuFlyout>
@@ -74,34 +71,22 @@
                                                   Command="{Binding $parent[UserControl].((vm:CategoriasViewModel)DataContext).ExcluirCategoriaCommand}"
                                                   CommandParameter="{Binding}">
 											<MenuItem.Icon>
-												<i:Icon Value="fa-solid fa-trash-can" Foreground="#F44336"/>
+												<i:Icon Value="fa-solid fa-trash-can" Classes="IconDanger"/>
 											</MenuItem.Icon>
 										</MenuItem>
 									</MenuFlyout>
 								</Border.ContextFlyout>
 
 								<Grid ColumnDefinitions="Auto, *, Auto">
-									<Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="{DynamicResource WaBackground}">
-										<i:Icon Value="{Binding IconeApresentacao}"
-                                                FontSize="18"
-                                                Foreground="{DynamicResource WaPrimary}"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"/>
+									<Border Grid.Column="0" Classes="IconAvatarCard">
+										<i:Icon Value="{Binding IconeApresentacao}" Classes="IconAvatarGraphic"/>
 									</Border>
 
-									<TextBlock Grid.Column="1"
-                                               Text="{Binding Nome}"
-                                               FontSize="16"
-                                               Foreground="{DynamicResource WaTextPrimary}"
-                                               FontWeight="SemiBold"
-                                               VerticalAlignment="Center"
-                                               Margin="15,0,0,0"/>
+									<StackPanel Grid.Column="1" Classes="ListItemTextContainer">
+										<TextBlock Text="{Binding Nome}" Classes="ListItemTitle"/>
+									</StackPanel>
 
-									<i:Icon Grid.Column="2"
-                                            Value="fa-solid fa-chevron-right"
-                                            FontSize="14"
-                                            Foreground="{DynamicResource WaIconLight}"
-                                            VerticalAlignment="Center"/>
+									<i:Icon Grid.Column="2" Value="fa-solid fa-chevron-right" Classes="ChevronRight"/>
 								</Grid>
 							</Border>
 						</DataTemplate>
@@ -110,8 +95,7 @@
 			</Border>
 		</Grid>
 
-		<ContentControl Content="{Binding ViewSubAtual}"
-						IsVisible="{Binding !ExibindoLista}">
+		<ContentControl Content="{Binding ViewSubAtual}" IsVisible="{Binding !ExibindoLista}">
 			<ContentControl.DataTemplates>
 				<DataTemplate DataType="vm:AdicionarCategoriaViewModel">
 					<cviews:AdicionarCategoriaView />

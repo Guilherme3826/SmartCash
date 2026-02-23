@@ -11,7 +11,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AvaloniaXaml Remove="Assets\AppColors.axaml" />
+	  <AvaloniaXaml Remove="Assets\AppColorsDark.axaml" />
+	  <AvaloniaXaml Remove="Assets\AppColorsLight.axaml" />
 	  <AvaloniaXaml Remove="Assets\AppStyles.axaml" />
 	</ItemGroup>
 
@@ -42,7 +43,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AvaloniaResource Update="Assets\AppColors.axaml">
+	  <AvaloniaResource Update="Assets\AppColorsDark.axaml">
+	    <SubType>Designer</SubType>
+	  </AvaloniaResource>
+	  <AvaloniaResource Update="Assets\AppColorsLight.axaml">
 	    <SubType>Designer</SubType>
 	  </AvaloniaResource>
 	  <AvaloniaResource Update="Assets\AppStyles.axaml">

@@ -14,7 +14,7 @@ namespace SmartCash.ViewModels.Transacoes
     public partial class AdicionarTransacaoViewModel : ObservableObject
     {
         private readonly IBaseRepository<ConsumiveisModel> _produtoRepository;
-        private readonly IBaseRepository<TransacaoModel> _transacaoRepository;
+        private readonly ITransacaoRepository _transacaoRepository;
         private readonly TransacoesViewModel _parentViewModel;
 
         [ObservableProperty] private List<ConsumiveisModel> _produtosSugestao = new();
@@ -30,7 +30,7 @@ namespace SmartCash.ViewModels.Transacoes
 
         public AdicionarTransacaoViewModel(
             IBaseRepository<ConsumiveisModel> produtoRepository,
-            IBaseRepository<TransacaoModel> transacaoRepository,
+            ITransacaoRepository transacaoRepository,
             TransacoesViewModel parent)
         {
             _produtoRepository = produtoRepository;

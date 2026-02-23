@@ -6,51 +6,44 @@
              xmlns:vm="clr-namespace:SmartCash.ViewModels.Transacoes"
              xmlns:mvm="clr-namespace:SmartCash.ViewModels"
              xmlns:views="clr-namespace:SmartCash.Views"
-			 xmlns:tviews="clr-namespace:SmartCash.Views.Transacoes"
+             xmlns:tviews="clr-namespace:SmartCash.Views.Transacoes"
              xmlns:models="clr-namespace:SmartCash.EfCore.Models"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:TransacoesViewModel"
+             Background="{DynamicResource WaBackground}"
              x:Class="SmartCash.Views.Transacoes.TransacoesView">
 
 	<Grid>
 		<Grid IsVisible="{Binding ExibindoLista}" RowDefinitions="Auto, *">
 
-			<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25"
+			<Border Grid.Row="0" Classes="HeaderBox"
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-				<Border Padding="20,10,20,30">
+				<Border Classes="HeaderContent">
 					<Grid ColumnDefinitions="Auto, *, Auto">
 
 						<Button Grid.Column="0"
                                 Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).VoltarCommand}"
-                                Background="Transparent"
-                                BorderThickness="0">
-							<i:Icon Value="fa-solid fa-arrow-left" Foreground="White" FontSize="22"/>
+                                Classes="IconButton">
+							<i:Icon Value="fa-solid fa-arrow-left" Classes="HeaderIcon"/>
 						</Button>
 
-						<TextBlock Grid.Column="1" Text="Transações"
-                                   Foreground="White" FontSize="18" FontWeight="SemiBold"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="1" Text="Transações" Classes="HeaderTitle"/>
 
-						<Button Grid.Column="2"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Padding="5">
-							<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="White" FontSize="20"/>
+						<Button Grid.Column="2" Classes="IconButton">
+							<i:Icon Value="fa-solid fa-ellipsis-vertical" Classes="HeaderIcon"/>
 
 							<Button.Flyout>
 								<MenuFlyout Placement="BottomEdgeAlignedRight">
-									<MenuItem Header="Nova Transação"
-                                              Command="{Binding AdicionarCommand}">
+									<MenuItem Header="Nova Transação" Command="{Binding AdicionarCommand}">
 										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-plus" FontSize="16"/>
+											<i:Icon Value="fa-solid fa-plus" Classes="MenuIcon"/>
 										</MenuItem.Icon>
 									</MenuItem>
-									<MenuItem Header="Atualizar"
-                                              Command="{Binding CarregarDadosCommand}">
+									<MenuItem Header="Atualizar" Command="{Binding CarregarDadosCommand}">
 										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-rotate" FontSize="16"/>
+											<i:Icon Value="fa-solid fa-rotate" Classes="MenuIcon"/>
 										</MenuItem.Icon>
 									</MenuItem>
 								</MenuFlyout>
@@ -61,51 +54,37 @@
 			</Border>
 
 			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-				<StackPanel Margin="20,20,20,0">
+				<StackPanel Classes="ListArea">
 
-					<ComboBox HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding MesesFiltro}"
-                              SelectedItem="{Binding MesSelecionado}"
-                              PlaceholderText="Selecionar Mês"
-                              Background="White"
-                              CornerRadius="10"
-                              BorderBrush="#E0E0E0"
-                              BorderThickness="1"
-                              Margin="0,0,0,15"
-                              MinHeight="48">
-						<ComboBox.ItemTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding}" VerticalAlignment="Center"/>
-							</DataTemplate>
-						</ComboBox.ItemTemplate>
-					</ComboBox>
+					<Border Classes="FieldCard">
+						<ComboBox HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding MesesFiltro}"
+                                  SelectedItem="{Binding MesSelecionado}"
+                                  PlaceholderText="Selecionar Mês">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding}" Classes="ComboBoxItemText"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Border>
 
-					<Border Background="White" CornerRadius="15" BoxShadow="0 4 15 0 #10000000" ClipToBounds="True">
+					<Border Classes="ListContainerCard">
 						<ListBox ItemsSource="{Binding Transacoes}"
                                  SelectionMode="Single"
-                                 Background="Transparent">
-
-							<ListBox.Styles>
-								<Style Selector="ListBoxItem">
-									<Setter Property="Padding" Value="0"/>
-									<Setter Property="Margin" Value="0"/>
-								</Style>
-							</ListBox.Styles>
+                                 ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
 							<ListBox.ItemTemplate>
 								<DataTemplate x:DataType="models:TransacaoModel">
-									<Border BorderBrush="#F0F0F0"
-											BorderThickness="0,0,0,1"
-											Padding="20,15"
-											Background="Transparent">
+									<Border Classes="ListItemBorder">
 
 										<Border.ContextFlyout>
 											<MenuFlyout>
 												<MenuItem Header="Ver Itens"
-														  Command="{Binding $parent[ListBox].((vm:TransacoesViewModel)DataContext).AbrirDetalhesCommand}"
-														  CommandParameter="{Binding}">
+                                                          Command="{Binding $parent[ListBox].((vm:TransacoesViewModel)DataContext).AbrirDetalhesCommand}"
+                                                          CommandParameter="{Binding}">
 													<MenuItem.Icon>
-														<i:Icon Value="fa-solid fa-list-ul" FontSize="16"/>
+														<i:Icon Value="fa-solid fa-list-ul" Classes="MenuIcon"/>
 													</MenuItem.Icon>
 												</MenuItem>
 											</MenuFlyout>
@@ -113,38 +92,18 @@
 
 										<Grid ColumnDefinitions="Auto, *, Auto, Auto">
 
-											<Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="#FFF3E0">
-												<i:Icon Value="fa-solid fa-calendar-day"
-														FontSize="18"
-														Foreground="#FF9800"
-														HorizontalAlignment="Center"
-														VerticalAlignment="Center"/>
+											<Border Grid.Column="0" Classes="IconAvatarCardWarning">
+												<i:Icon Value="fa-solid fa-calendar-day" Classes="IconAvatarGraphicWarning"/>
 											</Border>
 
-											<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="15,0,10,0">
-												<TextBlock Text="{Binding Data, StringFormat='{}{0:dd/MM/yyyy}'}"
-														   FontSize="16"
-														   Foreground="#333333"
-														   FontWeight="SemiBold"/>
-
-												<TextBlock Text="{Binding Itens.Count, StringFormat='{}{0} itens registrados'}"
-														   FontSize="13"
-														   Foreground="#BDBDBD"/>
+											<StackPanel Grid.Column="1" Classes="ListItemTextContainer">
+												<TextBlock Text="{Binding Data, StringFormat='{}{0:dd/MM/yyyy}'}" Classes="ListItemTitle"/>
+												<TextBlock Text="{Binding Itens.Count, StringFormat='{}{0} itens registrados'}" Classes="ListItemSubtitle"/>
 											</StackPanel>
 
-											<TextBlock Grid.Column="2"
-													   Text="{Binding ValorTotal, StringFormat='{}{0:C}'}"
-													   FontSize="15"
-													   FontWeight="Bold"
-													   Foreground="#F44336"
-													   VerticalAlignment="Center"
-													   Margin="0,0,15,0"/>
+											<TextBlock Grid.Column="2" Text="{Binding ValorTotal, StringFormat='{}{0:C}'}" Classes="ListItemValueDanger"/>
 
-											<i:Icon Grid.Column="3"
-													Value="fa-solid fa-chevron-right"
-													FontSize="14"
-													Foreground="#BDBDBD"
-													VerticalAlignment="Center"/>
+											<i:Icon Grid.Column="3" Value="fa-solid fa-chevron-right" Classes="ChevronRight"/>
 										</Grid>
 									</Border>
 								</DataTemplate>
@@ -152,13 +111,12 @@
 						</ListBox>
 					</Border>
 
-					<Rectangle Height="80" Fill="Transparent"/>
+					<Rectangle Height="40" Fill="Transparent"/>
 				</StackPanel>
 			</ScrollViewer>
 		</Grid>
 
-		<ContentControl Content="{Binding ViewSubAtual}"
-						IsVisible="{Binding !ExibindoLista}">
+		<ContentControl Content="{Binding ViewSubAtual}" IsVisible="{Binding !ExibindoLista}">
 			<ContentControl.DataTemplates>
 				<DataTemplate DataType="vm:TransacaoDetalhesViewModel">
 					<tviews:TransacaoDetalhesView />

@@ -7,124 +7,142 @@
              xmlns:models="clr-namespace:SmartCash.EfCore.Models"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:DataType="vm:AdicionarTransacaoViewModel"
+             Background="{DynamicResource WaBackground}"
              x:Class="SmartCash.Views.Transacoes.AdicionarTransacaoView">
 
-	<Grid RowDefinitions="Auto, Auto, *, Auto">
+	<Grid RowDefinitions="Auto, Auto, *">
 
-		<Border Grid.Row="0" Background="#2196F3" CornerRadius="0,0,25,25" Padding="20,40,20,20">
-			<StackPanel Spacing="10">
-				<Grid ColumnDefinitions="Auto, *, Auto">
-					<Button Command="{Binding VoltarCommand}" Background="Transparent" BorderThickness="0">
-						<i:Icon Value="fa-solid fa-arrow-left" Foreground="White" FontSize="22"/>
-					</Button>
-					<TextBlock Grid.Column="1" Text="Nova Transação" Foreground="White"
-                               FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-				</Grid>
+		<Border Grid.Row="0" Classes="HeaderBox"
+                x:CompileBindings="False"
+                Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-				<StackPanel HorizontalAlignment="Center">
-					<TextBlock Text="Total da Compra" Foreground="#BBDEFB" FontSize="12" HorizontalAlignment="Center"/>
-					<TextBlock Text="{Binding ValorTotalTemp, StringFormat='{}{0:C}'}"
-                               Foreground="White" FontSize="36" FontWeight="Bold"/>
+			<Border Classes="HeaderContent">
+				<StackPanel Spacing="15">
+					<Grid ColumnDefinitions="Auto, *, Auto">
+						
+						<Button Grid.Column="0" Command="{Binding VoltarCommand}" Classes="IconButton">
+							<i:Icon Value="fa-solid fa-arrow-left" Classes="HeaderIcon"/>
+						</Button>
+
+						<TextBlock Grid.Column="1" Text="Nova Transação" Classes="HeaderTitle"/>
+
+						<Button Grid.Column="2" Command="{Binding SalvarTransacaoCommand}" Classes="IconButton">
+							<i:Icon Value="fa-solid fa-check-double" Classes="HeaderIcon"/>
+						</Button>
+					</Grid>
+
+					<StackPanel HorizontalAlignment="Center">
+						<TextBlock Text="Total da Compra" Foreground="{DynamicResource WaSurface}" Opacity="0.8" FontSize="14" HorizontalAlignment="Center"/>
+						<TextBlock Text="{Binding ValorTotalTemp, StringFormat='{}{0:C}'}" Foreground="White" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
+					</StackPanel>
 				</StackPanel>
-			</StackPanel>
+			</Border>
 		</Border>
 
-		<StackPanel Grid.Row="1" Margin="20,15,20,0" Spacing="10">
-			<TextBlock Text="O que você comprou?" FontSize="14" FontWeight="Medium" Foreground="#757575"/>
+		<StackPanel Grid.Row="1" Classes="FormArea">
+			
+			<StackPanel Classes="FieldContainer">
+				<TextBlock Text="O que você comprou?" Classes="FieldLabel"/>
 
-			<Grid ColumnDefinitions="*, Auto">
-				<AutoCompleteBox x:Name="AutoCompleteProdutos"
-								 SelectionChanged="AutoComplete_SelectionChanged"
-								 Grid.Column="0"
-								 ItemsSource="{Binding ProdutosSugestao}"
-								 SelectedItem="{Binding ProdutoSelecionado}"
-								 Text="{Binding BuscaTexto, Mode=TwoWay}"
-								 ValueMemberBinding="{Binding Nome}"
-								 FilterMode="Contains"
-								 Background="White"
-								 CornerRadius="10,0,0,10"
-								 Height="50">
-					<AutoCompleteBox.ItemTemplate>
-						<DataTemplate x:DataType="models:ConsumiveisModel">
-							<Border Padding="5">
-								<StackPanel Orientation="Horizontal" Spacing="10">
-									<i:Icon Value="{Binding Categoria.IconeApresentacao}"
-											FontSize="16"
-											Foreground="#2196F3"
-											VerticalAlignment="Center"/>
-									<StackPanel VerticalAlignment="Center">
-										<TextBlock Text="{Binding Nome}" FontWeight="Medium" FontSize="14"/>
-										<TextBlock Text="{Binding Valor, StringFormat='{}{0:C}'}" FontSize="11" Foreground="#757575"/>
-									</StackPanel>
-								</StackPanel>
-							</Border>
-						</DataTemplate>
-					</AutoCompleteBox.ItemTemplate>
-				</AutoCompleteBox>
+				<Grid ColumnDefinitions="*, Auto">
+					<Border Grid.Column="0" Classes="FieldCard" CornerRadius="12,0,0,12" Margin="0,0,1,0">
+						<AutoCompleteBox x:Name="AutoCompleteProdutos"
+										 SelectionChanged="AutoComplete_SelectionChanged"
+										 ItemsSource="{Binding ProdutosSugestao}"
+										 SelectedItem="{Binding ProdutoSelecionado}"
+										 Text="{Binding BuscaTexto, Mode=TwoWay}"
+										 ValueMemberBinding="{Binding Nome}"
+										 FilterMode="Contains"
+										 Classes="InputBase"
+										 Background="Transparent"
+										 BorderThickness="0"
+										 Foreground="{DynamicResource WaTextPrimary}"
+                                         Watermark="Buscar item...">
+							<AutoCompleteBox.ItemTemplate>
+								<DataTemplate x:DataType="models:ConsumiveisModel">
+									<Border Padding="10">
+										<StackPanel Orientation="Horizontal" Spacing="12">
+											<i:Icon Value="{Binding Categoria.IconeApresentacao}" FontSize="16" Foreground="{DynamicResource WaPrimary}" VerticalAlignment="Center"/>
+											<StackPanel VerticalAlignment="Center">
+												<TextBlock Text="{Binding Nome}" FontSize="15" Foreground="{DynamicResource WaTextPrimary}" FontWeight="SemiBold"/>
+												<TextBlock Text="{Binding Valor, StringFormat='{}{0:C}'}" FontSize="13" Foreground="{DynamicResource WaTextSecondary}"/>
+											</StackPanel>
+										</StackPanel>
+									</Border>
+								</DataTemplate>
+							</AutoCompleteBox.ItemTemplate>
+						</AutoCompleteBox>
+					</Border>
 
-				<Button x:Name="BtnAdicionar"
-						Grid.Column="1"
-                        Command="{Binding AdicionarItemCommand}"
-                        Background="#4CAF50"
-                        Foreground="White"
-                        Width="60" Height="50"
-                        CornerRadius="0,10,10,0">
-					<i:Icon Value="fa-solid fa-plus"/>
-				</Button>
-			</Grid>
+					<Button x:Name="BtnAdicionar"
+							Grid.Column="1"
+                            Command="{Binding AdicionarItemCommand}"
+                            Background="{DynamicResource WaAccent}"
+                            Foreground="White"
+                            Width="60" Height="54"
+                            CornerRadius="0,12,12,0">
+						<i:Icon Value="fa-solid fa-plus" FontSize="18"/>
+					</Button>
+				</Grid>
+			</StackPanel>
 
 			<Grid ColumnDefinitions="*, 1.2*">
-				<StackPanel Grid.Column="0" Margin="0,0,5,0">
-					<TextBlock Text="Qtd." FontSize="12" Foreground="#9E9E9E" Margin="5,0,0,2"/>
+				
+				<StackPanel Grid.Column="0" Classes="FieldContainer" Margin="0,0,10,0">
+					<TextBlock Text="Qtd." Classes="FieldLabel"/>
+					
 					<Grid ColumnDefinitions="*, Auto">
-						<TextBox Text="{Binding QuantidadeInput}"
-                                 Height="45"
-                                 CornerRadius="10,0,0,10"
-                                 VerticalContentAlignment="Center"
-                                 HorizontalContentAlignment="Center"/>
+						<Border Grid.Column="0" Classes="FieldCard" CornerRadius="12,0,0,12" Margin="0,0,1,0">
+							<TextBox Text="{Binding QuantidadeInput}"
+                                     Classes="InputBase"
+                                     HorizontalContentAlignment="Center"/>
+						</Border>
+						
 						<Button Grid.Column="1"
                                 Command="{Binding IncrementarQuantidadeCommand}"
-                                Width="40" Height="45"
-                                Background="#F5F5F5"
-                                CornerRadius="0,10,10,0"
-                                BorderBrush="#E0E0E0"
-                                BorderThickness="0,1,1,1">
-							<i:Icon Value="fa-solid fa-plus" FontSize="12" Foreground="#616161"/>
+                                Width="50" Height="54"
+                                Background="{DynamicResource WaDivider}"
+                                CornerRadius="0,12,12,0"
+                                BorderThickness="0">
+							<i:Icon Value="fa-solid fa-plus" FontSize="14" Foreground="{DynamicResource WaTextSecondary}"/>
 						</Button>
 					</Grid>
 				</StackPanel>
 
-				<StackPanel Grid.Column="1" Margin="5,0,0,0">
-					<TextBlock Text="Preço Unit. (Opcional)" FontSize="12" Foreground="#9E9E9E" Margin="5,0,0,2"/>
-					<TextBox x:Name="TxtPreco"
-							 Text="{Binding PrecoUnitarioInput}"
-                             Watermark="R$ 0,00"
-                             Height="45"
-                             CornerRadius="10"
-                             VerticalContentAlignment="Center"/>
+				<StackPanel Grid.Column="1" Classes="FieldContainer">
+					<TextBlock Text="Preço Unit. (Opcional)" Classes="FieldLabel"/>
+					
+					<Border Classes="FieldCard">
+						<TextBox x:Name="TxtPreco"
+								 Text="{Binding PrecoUnitarioInput}"
+                                 Classes="InputBase"
+                                 Watermark="R$ 0,00"/>
+					</Border>
 				</StackPanel>
 			</Grid>
 		</StackPanel>
 
-		<Border Grid.Row="2" Margin="20,15" Background="#F5F5F5" CornerRadius="15">
-			<ListBox ItemsSource="{Binding ItensTemporarios}" Background="Transparent">
+		<Border Grid.Row="2" Classes="ListContainerCard" Margin="20,5,20,20">
+			<ListBox ItemsSource="{Binding ItensTemporarios}" ScrollViewer.VerticalScrollBarVisibility="Auto">
 				<ListBox.ItemTemplate>
 					<DataTemplate x:DataType="models:ItemModel">
-						<Border Padding="10" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+						<Border Classes="ListItemBorder">
 							<Grid ColumnDefinitions="*, Auto, Auto">
-								<StackPanel Grid.Column="0">
-									<TextBlock Text="{Binding Produto.Nome}" FontWeight="SemiBold"/>
-									<TextBlock Text="{Binding ValorUnit, StringFormat='{}un: {0:C}'}" FontSize="11" Foreground="#9E9E9E"/>
+								
+								<StackPanel Grid.Column="0" VerticalAlignment="Center">
+									<TextBlock Text="{Binding Produto.Nome}" Classes="ListItemTitle"/>
+									<TextBlock Text="{Binding ValorUnit, StringFormat='{}un: {0:C}'}" Classes="ListItemSubtitle"/>
 								</StackPanel>
 
 								<TextBlock Grid.Column="1" Text="{Binding Quantidade, StringFormat='{}x{0}'}"
-                                           VerticalAlignment="Center" Margin="10,0"/>
+                                           FontSize="15" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}"
+                                           VerticalAlignment="Center" Margin="15,0"/>
 
 								<Button Grid.Column="2"
                                         Command="{Binding $parent[UserControl].((vm:AdicionarTransacaoViewModel)DataContext).RemoverItemCommand}"
                                         CommandParameter="{Binding}"
-                                        Background="Transparent" BorderThickness="0">
-									<i:Icon Value="fa-solid fa-trash-can" Foreground="#F44336" FontSize="16"/>
+                                        Classes="IconButton">
+									<i:Icon Value="fa-solid fa-trash-can" />
 								</Button>
 							</Grid>
 						</Border>
@@ -133,16 +151,5 @@
 			</ListBox>
 		</Border>
 
-		<Border Grid.Row="3" Padding="20" Background="White" BoxShadow="0 -4 10 0 #08000000">
-			<Button Command="{Binding SalvarTransacaoCommand}"
-                    Background="#2196F3" Foreground="White"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                    Height="55" CornerRadius="15">
-				<StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-					<i:Icon Value="fa-solid fa-check-double"/>
-					<TextBlock Text="Finalizar Lançamento" FontWeight="Bold" VerticalAlignment="Center"/>
-				</StackPanel>
-			</Button>
-		</Border>
 	</Grid>
 </UserControl>

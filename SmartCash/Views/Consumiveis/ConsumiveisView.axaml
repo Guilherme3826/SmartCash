@@ -16,41 +16,31 @@
 	<Grid>
 		<Grid IsVisible="{Binding ExibindoLista}" RowDefinitions="Auto, *">
 
-			<Border Grid.Row="0" Background="{DynamicResource WaPrimary}"
+			<Border Grid.Row="0" Classes="HeaderBox"
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-				<Border Padding="20,15,20,20">
+				<Border Classes="HeaderContent">
 					<Grid ColumnDefinitions="Auto, *, Auto">
 
-						<Button Grid.Column="0"
-                                Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).VoltarCommand}"
-                                Background="Transparent"
-                                BorderThickness="0">
-							<i:Icon Value="fa-solid fa-arrow-left" Foreground="White" FontSize="22"/>
+						<Button Grid.Column="0" Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).VoltarCommand}" Classes="IconButton">
+							<i:Icon Value="fa-solid fa-arrow-left" Classes="HeaderIcon"/>
 						</Button>
 
-						<TextBlock Grid.Column="1" Text="Consumíveis"
-                                   Foreground="White" FontSize="20" FontWeight="SemiBold"
-                                   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
+						<TextBlock Grid.Column="1" Text="Consumíveis" Classes="HeaderTitle"/>
 
-						<Button Grid.Column="2"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Padding="5">
-							<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="White" FontSize="20"/>
+						<Button Grid.Column="2" Classes="IconButton">
+							<i:Icon Value="fa-solid fa-ellipsis-vertical" Classes="HeaderIcon"/>
 
 							<Button.Flyout>
 								<MenuFlyout Placement="BottomEdgeAlignedRight">
-									<MenuItem Header="Adicionar Consumível"
-                                              Command="{Binding AdicionarCommand}">
+									<MenuItem Header="Adicionar Consumível" Command="{Binding AdicionarCommand}">
 										<MenuItem.Icon>
 											<i:Icon Value="fa-solid fa-plus" FontSize="16"/>
 										</MenuItem.Icon>
 									</MenuItem>
 
-									<MenuItem Header="Atualizar Lista"
-                                              Command="{Binding CarregarDadosCommand}">
+									<MenuItem Header="Atualizar Lista" Command="{Binding CarregarDadosCommand}">
 										<MenuItem.Icon>
 											<i:Icon Value="fa-solid fa-rotate" FontSize="16"/>
 										</MenuItem.Icon>
@@ -63,25 +53,22 @@
 			</Border>
 
 			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-				<StackPanel Margin="15,15,15,0" Spacing="15">
+				<StackPanel Classes="ListArea">
 
-					<Border Background="{DynamicResource WaSurface}" CornerRadius="12" BoxShadow="0 2 5 0 #10000000">
+					<Border Classes="FieldCard">
 						<ComboBox HorizontalAlignment="Stretch"
                                   ItemsSource="{Binding Categorias}"
                                   SelectedItem="{Binding CategoriaSelecionada}"
-                                  PlaceholderText="Filtrar por Categoria"
-                                  Height="54"
-                                  Foreground="{DynamicResource WaTextPrimary}">
+                                  PlaceholderText="Filtrar por Categoria">
 							<ComboBox.ItemTemplate>
 								<DataTemplate x:DataType="models:CategoriaModel">
-									<TextBlock Text="{Binding Nome}" FontSize="16" VerticalAlignment="Center" Foreground="{DynamicResource WaTextPrimary}"/>
+									<TextBlock Text="{Binding Nome}" Classes="ComboBoxItemText"/>
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
 						</ComboBox>
 					</Border>
 
-					<Border Background="{DynamicResource WaSurface}" CornerRadius="15" BoxShadow="0 2 5 0 #10000000" ClipToBounds="True">
-
+					<Border Classes="ListContainerCard">
 						<ListBox ItemsSource="{Binding Consumiveis}"
                                  SelectedItem="{Binding ConsumivelSelecionado}"
                                  SelectionMode="Single"
@@ -89,42 +76,21 @@
 
 							<ListBox.ItemTemplate>
 								<DataTemplate x:DataType="models:ConsumiveisModel">
-									<Border BorderBrush="{DynamicResource WaDivider}" BorderThickness="0,0,0,1" Padding="20,15">
+									<Border Classes="ListItemBorder">
 										<Grid ColumnDefinitions="Auto, *, Auto, Auto">
 
-											<Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="{DynamicResource WaBackground}">
-												<i:Icon Value="{Binding Categoria.IconeApresentacao}"
-                                                        FontSize="18"
-                                                        Foreground="{DynamicResource WaPrimary}"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"/>
+											<Border Grid.Column="0" Classes="IconAvatarCard">
+												<i:Icon Value="{Binding Categoria.IconeApresentacao}" Classes="IconAvatarGraphic"/>
 											</Border>
 
-											<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="15,0,10,0">
-												<TextBlock Text="{Binding Nome}"
-                                                           FontSize="16"
-                                                           Foreground="{DynamicResource WaTextPrimary}"
-                                                           FontWeight="SemiBold"
-                                                           TextTrimming="CharacterEllipsis"/>
-
-												<TextBlock Text="{Binding Categoria.Nome}"
-                                                           FontSize="13"
-                                                           Foreground="{DynamicResource WaTextSecondary}"/>
+											<StackPanel Grid.Column="1" Classes="ListItemTextContainer">
+												<TextBlock Text="{Binding Nome}" Classes="ListItemTitle"/>
+												<TextBlock Text="{Binding Categoria.Nome}" Classes="ListItemSubtitle"/>
 											</StackPanel>
 
-											<TextBlock Grid.Column="2"
-                                                       Text="{Binding Valor, StringFormat='{}{0:C}'}"
-                                                       FontSize="15"
-                                                       FontWeight="Bold"
-                                                       Foreground="{DynamicResource WaPrimary}"
-                                                       VerticalAlignment="Center"
-                                                       Margin="0,0,15,0"/>
+											<TextBlock Grid.Column="2" Text="{Binding Valor, StringFormat='{}{0:C}'}" Classes="ListItemValue"/>
 
-											<i:Icon Grid.Column="3"
-                                                    Value="fa-solid fa-chevron-right"
-                                                    FontSize="14"
-                                                    Foreground="{DynamicResource WaIconLight}"
-                                                    VerticalAlignment="Center"/>
+											<i:Icon Grid.Column="3" Value="fa-solid fa-chevron-right" Classes="ChevronRight"/>
 										</Grid>
 									</Border>
 								</DataTemplate>
@@ -137,13 +103,13 @@
 			</ScrollViewer>
 		</Grid>
 
-		<ContentControl Content="{Binding ViewSubAtual}"
-                        IsVisible="{Binding !ExibindoLista}">
+		<ContentControl Content="{Binding ViewSubAtual}" IsVisible="{Binding !ExibindoLista}">
 			<ContentControl.DataTemplates>
 				<DataTemplate DataType="vm:AdicionarConsumivelViewModel">
 					<cviews:AdicionarConsumivelView />
 				</DataTemplate>
 			</ContentControl.DataTemplates>
 		</ContentControl>
+		
 	</Grid>
 </UserControl>

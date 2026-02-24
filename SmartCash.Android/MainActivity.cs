@@ -23,7 +23,13 @@ public class MainActivity : AvaloniaMainActivity<App>
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         return base.CustomizeAppBuilder(builder)
-            .WithInterFont();
+            .WithInterFont()
+            .With(new AndroidPlatformOptions
+            {
+                // No Avalonia 11, usamos RenderingMode para definir a prioridade de renderização
+                // Isso substitui o antigo AccelerationMode.
+                RenderingMode = new[] { AndroidRenderingMode.Egl }
+            });
     }
 
     protected override void OnCreate(Bundle savedInstanceState)

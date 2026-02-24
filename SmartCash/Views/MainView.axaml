@@ -32,7 +32,7 @@
                 </Border>
             </Border>
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsScrollChainingEnabled="False">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsScrollChainingEnabled="True">
                 <StackPanel Classes="MainContentArea">
 
                     <Border Classes="MainCard">
@@ -76,7 +76,7 @@
                             <ScrollViewer HorizontalScrollBarVisibility="Hidden"
                                           VerticalScrollBarVisibility="Disabled"
                                           HorizontalSnapPointsType="MandatorySingle"
-                                          IsScrollChainingEnabled="False">
+                                          IsScrollChainingEnabled="True">
                                 <StackPanel Orientation="Horizontal">
 
                                     <Grid Width="{Binding #CardInferior.Bounds.Width}">
@@ -86,7 +86,8 @@
                                             <ListBox ItemsSource="{Binding ItensMesSelecionado}" 
                                                      Background="Transparent"
                                                      MaxHeight="500"
-                                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                     ScrollViewer.IsScrollChainingEnabled="True">
                                                 <ListBox.ItemTemplate>
                                                     <DataTemplate x:DataType="models:ItemModel">
                                                         <Border Classes="ListItemBorder">
@@ -129,7 +130,8 @@
                                             <ListBox ItemsSource="{Binding CategoriasMesSelecionado}" 
                                                      Background="Transparent"
                                                      MaxHeight="250"
-                                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                     ScrollViewer.IsScrollChainingEnabled="True">
                                                 <ListBox.ItemTemplate>
                                                     <DataTemplate x:DataType="models:ResumoCategoriaModel">
                                                         <Border Classes="ListItemBorder">
@@ -192,6 +194,13 @@
 
         </Grid>
 
-        <ContentControl Content="{Binding ViewAtual}" IsVisible="{Binding !ExibindoMenuPrincipal}"/>
+            <TransitioningContentControl Content="{Binding ViewAtual}" 
+                                         IsVisible="{Binding !ExibindoMenuPrincipal}">
+                <TransitioningContentControl.PageTransition>
+                    <CompositePageTransition>       
+                        <CrossFade Duration="00:00:00.500" />
+                    </CompositePageTransition>
+                </TransitioningContentControl.PageTransition>
+            </TransitioningContentControl>
     </Grid>
 </UserControl>

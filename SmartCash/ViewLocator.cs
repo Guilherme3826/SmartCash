@@ -1,10 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Microsoft.Extensions.DependencyInjection;
-using SmartCash.ViewModels;
-using System;
-
-namespace SmartCash;
 
 public class ViewLocator : IDataTemplate
 {
@@ -12,24 +7,16 @@ public class ViewLocator : IDataTemplate
     {
         if (data is null) return null;
 
-        // Se o objeto já for uma View injetada, retorne-a diretamente
+        // Se o dado já for um controle (View injetada), apenas use-o
         if (data is Control control) return control;
 
-        // Lógica padrão para ViewModels
-        var name = data.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
-        var type = Type.GetType(name);
-
-        if (type != null)
-        {
-            return (Control)Activator.CreateInstance(type)!;
-        }
-
-        return new TextBlock { Text = "Not Found: " + name };
+        // Se você cair aqui, é porque o Avalonia tentou renderizar uma ViewModel 
+        // que não foi injetada manualmente. Em AOT, evite o Type.GetType.
+        return new TextBlock { Text = "Nenhuma View vinculada estaticamente para: " + data.GetType().Name };
     }
 
     public bool Match(object? data)
     {
-        // Aceita tanto ViewModels quanto as Views injetadas
         return data is CommunityToolkit.Mvvm.ComponentModel.ObservableObject || data is Control;
     }
 }

@@ -3,6 +3,7 @@ using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SmartCash.EfCore;
 using SmartCash.EfCore.Models;
 using SmartCash.Mensageiros;
 using System;
@@ -32,38 +33,36 @@ namespace SmartCash.ViewModels
                 try
                 {
                     string json = File.ReadAllText(_configPath);
-                    var settings = JsonSerializer.Deserialize<AppSettingsModel>(json);
+
+                    // AOT CORRECTION: Usando o Source Generator Context definido anteriormente
+                    var settings = JsonSerializer.Deserialize(json, AppSettingsContext.Default.AppSettingsModel);
 
                     if (settings != null)
                     {
-                        // Alteramos o campo privado para evitar disparar o OnChanged durante o carregamento
+                        // MVVM Toolkit CORRECTION: Atribuindo aos campos para evitar loops de evento, 
+                        // mas garantindo que o estado interno do gerador de código seja respeitado
                         _ambienteSelecionado = settings.Ambiente;
                         _isTemaEscuro = settings.ModoEscuro;
 
-                        // Aplicamos o tema manualmente uma vez no início
-                        AplicarTema(_isTemaEscuro);
+                        AplicarTema(IsTemaEscuro);
 
-                        // ENVIAR MENSAGEM: Notifica o sistema que o tema foi definido/alterado
-                        WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(_isTemaEscuro));
+                        WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(IsTemaEscuro));
 
-                        // Notificamos a UI sobre as mudanças
+                        // Notificamos a UI manualmente já que alteramos os campos privados
                         OnPropertyChanged(nameof(AmbienteSelecionado));
                         OnPropertyChanged(nameof(IsTemaEscuro));
                     }
                 }
                 catch
                 {
-                    /* Fallback para padrões em caso de erro no JSON */
+                    /* Fallback para padrões */
                 }
             }
         }
-        /// <summary>
-        /// Método disparado automaticamente pelo CommunityToolkit.Mvvm quando IsTemaEscuro muda.
-        /// </summary>
+
         partial void OnIsTemaEscuroChanged(bool value)
         {
             AplicarTema(value);
-            // ENVIAR MENSAGEM: Essencial para quando o usuário clica no toggle em tempo real
             WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(value));
         }
 
@@ -72,7 +71,6 @@ namespace SmartCash.ViewModels
             if (Application.Current is { } app)
             {
                 app.RequestedThemeVariant = escuro ? ThemeVariant.Dark : ThemeVariant.Light;
-               
             }
         }
 
@@ -86,13 +84,18 @@ namespace SmartCash.ViewModels
                     Ambiente = AmbienteSelecionado,
                     ModoEscuro = IsTemaEscuro
                 };
+
                 WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(IsTemaEscuro));
-                string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+
+                // AOT CORRECTION: Removido 'new JsonSerializerOptions'. 
+                // Usamos o Context para serialização nativa sem reflexão.
+                string json = JsonSerializer.Serialize(settings, AppSettingsContext.Default.AppSettingsModel);
+
                 File.WriteAllText(_configPath, json);
             }
             catch (Exception)
             {
-                // Aqui você pode adicionar um log ou notificação de erro ao salvar
+                // Log ou notificação
             }
         }
     }

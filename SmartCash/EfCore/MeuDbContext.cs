@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using SmartCash.EfCore.Configurations;
 using SmartCash.EfCore.Models;
 using System.Reflection;
 
@@ -19,7 +20,10 @@ namespace SmartCash.EfCore
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfiguration(new CategoriaConfiguration());
+            modelBuilder.ApplyConfiguration(new ItemConfiguration());
+            modelBuilder.ApplyConfiguration(new ConsumivelConfiguration());
+            modelBuilder.ApplyConfiguration(new TransacaoConfiguration());
             base.OnModelCreating(modelBuilder);
         }
 

@@ -4,6 +4,8 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+
+		<IsAotCompatible>true</IsAotCompatible>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -11,9 +13,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AvaloniaXaml Remove="Assets\AppColorsDark.axaml" />
-	  <AvaloniaXaml Remove="Assets\AppColorsLight.axaml" />
-	  <AvaloniaXaml Remove="Assets\AppStyles.axaml" />
+		<AvaloniaXaml Remove="Assets\AppColorsDark.axaml" />
+		<AvaloniaXaml Remove="Assets\AppColorsLight.axaml" />
+		<AvaloniaXaml Remove="Assets\AppStyles.axaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -43,15 +45,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AvaloniaResource Update="Assets\AppColorsDark.axaml">
-	    <SubType>Designer</SubType>
-	  </AvaloniaResource>
-	  <AvaloniaResource Update="Assets\AppColorsLight.axaml">
-	    <SubType>Designer</SubType>
-	  </AvaloniaResource>
-	  <AvaloniaResource Update="Assets\AppStyles.axaml">
-	    <SubType>Designer</SubType>
-	  </AvaloniaResource>
+		<AvaloniaResource Update="Assets\AppColorsDark.axaml">
+			<SubType>Designer</SubType>
+		</AvaloniaResource>
+		<AvaloniaResource Update="Assets\AppColorsLight.axaml">
+			<SubType>Designer</SubType>
+		</AvaloniaResource>
+		<AvaloniaResource Update="Assets\AppStyles.axaml">
+			<SubType>Designer</SubType>
+		</AvaloniaResource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -59,7 +61,7 @@
 			<DependentUpon>CategoriasView.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\ConfiguracoesView.axaml.cs">
-		  <DependentUpon>ConfiguracoesView.axaml</DependentUpon>
+			<DependentUpon>ConfiguracoesView.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\Consumiveis\AdicionarConsumivelView.axaml.cs">
 			<DependentUpon>AdicionarConsumivelView.axaml</DependentUpon>

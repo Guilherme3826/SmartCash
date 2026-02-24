@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace SmartCash;
 
@@ -44,34 +43,9 @@ public partial class App : Application
 
         ServiceProvider = serviceCollection.BuildServiceProvider();
 
-        // Executa migrações e Seed em segundo plano para não travar a UI no Android
-        Task.Run(async () =>
-        {
-            using (var scope = ServiceProvider.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<MeuDbContext>();
-
-                try
-                {
-                    // Aplica migrações pendentes de forma assíncrona
-                    var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
-                    if (pendingMigrations.Any())
-                    {
-                        System.Diagnostics.Debug.WriteLine("[EF DEBUG] Aplicando migrações pendentes...");
-                        await context.Database.MigrateAsync();
-                        // Garante que o SQLite finalize a escrita imediatamente
-                        await context.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=DELETE;");
-                    }
-
-                    // Popula o banco de dados seguindo a ordem lógica
-                    SeedDatabase(context);
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"[EF ERROR] Erro ao processar banco: {ex.Message}");
-                }
-            }
-        });
+        // Inicializa o banco ANTES de chamar as Views, de forma síncrona/esperada pelo AOT.
+        // Isso evita que o EF Core se perca em threads dinâmicas.
+        InitializeDatabase();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -85,96 +59,87 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void SeedDatabase(MeuDbContext context)
+    private void InitializeDatabase()
     {
-        // 1. CARGA DE CATEGORIAS
-        if (!context.Set<CategoriaModel>().Any())
+        try
         {
-            var categorias = new List<CategoriaModel>
-        {
-            new CategoriaModel { Nome = "Alimentação", IconeApresentacao = "fa-solid fa-utensils" },
-            new CategoriaModel { Nome = "Transporte", IconeApresentacao = "fa-solid fa-car" },
-            new CategoriaModel { Nome = "Lazer", IconeApresentacao = "fa-solid fa-gamepad" },
-            new CategoriaModel { Nome = "Saúde", IconeApresentacao = "fa-solid fa-heart-pulse" },
-            new CategoriaModel { Nome = "Educação", IconeApresentacao = "fa-solid fa-book" },
-            new CategoriaModel { Nome = "Moradia", IconeApresentacao = "fa-solid fa-house" }
-        };
-            context.Set<CategoriaModel>().AddRange(categorias);
-            context.SaveChanges();
-            System.Diagnostics.Debug.WriteLine("[EF DEBUG] Categorias populadas.");
-        }
+            using var scope = ServiceProvider.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<MeuDbContext>();
 
-        // (Seu código de inserção de Consumíveis pode continuar aqui caso o banco esteja vazio)
-        // Omiti a carga manual de consumíveis assumindo que você já rodou o script SQL de 500 itens.
+            // EnsureCreated é o método correto e seguro para AOT (não usa Migrations/Reflection)
+            bool criadoAgora = context.Database.EnsureCreated();
 
-        // 3. CARGA MASSIVA DE TRANSAÇÕES PARA 2025
-        // Verifica se já existem transações do ano de 2025 para evitar duplicação a cada abertura do app
-        if (!context.Set<TransacaoModel>().Any(t => t.Data.Year == 2025))
-        {
-            var consumiveisDisponiveis = context.Set<ConsumiveisModel>().ToList();
-
-            // Só gera transações se existirem produtos cadastrados
-            if (consumiveisDisponiveis.Any())
+            if (criadoAgora)
             {
-                System.Diagnostics.Debug.WriteLine("[EF DEBUG] Iniciando geração de 365 dias de transações para 2025...");
-
-                // Usamos uma seed fixa (123) para que os dados aleatórios gerados sejam sempre os mesmos
-                // caso você apague o banco e recrie. Facilita os testes.
-                var random = new Random(123);
-                var dataInicial = new DateTime(2025, 1, 1, 8, 0, 0);
-
-                // Loop percorrendo os 365 dias do ano
-                for (int dia = 0; dia < 365; dia++)
-                {
-                    // Varia a hora da compra aleatoriamente entre 08:00 e 19:59
-                    var dataCompra = dataInicial.AddDays(dia).AddHours(random.Next(0, 12)).AddMinutes(random.Next(0, 59));
-
-                    var novaTransacao = new TransacaoModel
-                    {
-                        Data = dataCompra,
-                        ValorTotal = 0 // Será calculado na soma dos itens
-                    };
-
-                    context.Set<TransacaoModel>().Add(novaTransacao);
-
-                    // Precisamos salvar para o SQLite gerar o IdTransacao que será usado nos itens
-                    context.SaveChanges();
-
-                    int qtdItensNaCompra = random.Next(2, 6); // Cada dia terá de 2 a 5 itens diferentes
-                    decimal somaValorDiario = 0;
-
-                    for (int i = 0; i < qtdItensNaCompra; i++)
-                    {
-                        // Sorteia um produto aleatório da lista de 500+ consumíveis
-                        var produtoSorteado = consumiveisDisponiveis[random.Next(consumiveisDisponiveis.Count)];
-
-                        int quantidade = random.Next(1, 4); // Compra de 1 a 3 unidades do mesmo produto
-                        decimal valorTotalItem = produtoSorteado.Valor * quantidade;
-
-                        var novoItem = new ItemModel
-                        {
-                            IdTransacao = novaTransacao.IdTransacao,
-                            IdConsumivel = produtoSorteado.IdConsumivel,
-                            Quantidade = quantidade,
-                            ValorUnit = produtoSorteado.Valor,
-                            ValorTotal = valorTotalItem
-                        };
-
-                        context.Set<ItemModel>().Add(novoItem);
-                        somaValorDiario += valorTotalItem;
-                    }
-
-                    // Atualiza o cabeçalho da transação com o valor total correto
-                    novaTransacao.ValorTotal = somaValorDiario;
-                    context.Set<TransacaoModel>().Update(novaTransacao);
-                }
-
-                // Salva todas as atualizações de ValorTotal e todos os Itens de uma vez
-                context.SaveChanges();
-                System.Diagnostics.Debug.WriteLine("[EF DEBUG] Geração de transações de 2025 concluída com sucesso!");
+                System.Diagnostics.Debug.WriteLine("[EF DEBUG] Banco criado via EnsureCreated.");
+                context.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL;");
             }
+
+            // A chamada síncrona aqui garante que o LINQ seja pré-compilado pelo AOT
+            SeedDatabase(context);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[EF ERROR] Erro ao inicializar banco: {ex.Message}");
         }
     }
+
+    private void SeedDatabase(MeuDbContext context)
+    {
+        // Usamos ADO.NET bruto para o Seed. 
+        // Isso evita o bug do EF Core Generator na inicialização do Avalonia.
+
+        bool hasCategorias = false;
+
+        try
+        {
+            using var connection = context.Database.GetDbConnection();
+            if (connection.State == System.Data.ConnectionState.Closed)
+            {
+                connection.Open();
+            }
+
+            // 1. CHECA SE EXISTEM CATEGORIAS (Substitui o .Any())
+            using (var checkCommand = connection.CreateCommand())
+            {
+                // Verifica o nome exato da sua tabela no banco gerado. 
+                // Geralmente é "Categorias" ou "CategoriaModel".
+                checkCommand.CommandText = "SELECT 1 FROM Categorias LIMIT 1;";
+
+                using (var reader = checkCommand.ExecuteReader())
+                {
+                    hasCategorias = reader.HasRows;
+                }
+            }
+
+            // 2. INSERE AS CATEGORIAS SE NÃO EXISTIREM
+            if (!hasCategorias)
+            {
+                using (var insertCommand = connection.CreateCommand())
+                {
+                    // Inserção em massa direta e extremamente rápida
+                    insertCommand.CommandText = @"
+                        INSERT INTO Categoria (Nome, IconeApresentacao) VALUES 
+                        ('Alimentação', 'fa-solid fa-utensils'),
+                        ('Transporte', 'fa-solid fa-car'),
+                        ('Lazer', 'fa-solid fa-gamepad'),
+                        ('Saúde', 'fa-solid fa-heart-pulse'),
+                        ('Educação', 'fa-solid fa-book'),
+                        ('Moradia', 'fa-solid fa-house');
+                    ";
+
+                    insertCommand.ExecuteNonQuery();
+                }
+
+                System.Diagnostics.Debug.WriteLine("[EF DEBUG] Categorias populadas via SQL.");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[EF ERROR] Erro no Seed de Banco de Dados: {ex.Message}");
+        }
+    }
+
     private string GetDatabasePath()
     {
         string pastaLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -186,22 +151,29 @@ public partial class App : Application
             try
             {
                 string json = File.ReadAllText(configPath);
-                var settings = JsonSerializer.Deserialize<AppSettingsModel>(json);
+
+                // CORREÇÃO AOT: Usando o Source Generator Context em vez de Reflection
+                var settings = JsonSerializer.Deserialize(json, AppSettingsContext.Default.AppSettingsModel);
+
                 ambiente = settings?.Ambiente ?? "Produção";
             }
-            catch { /* Se o JSON estiver corrompido, usa Produção */ }
+            catch
+            {
+                /* Se o JSON estiver corrompido, mantém o fallback para Produção */
+            }
         }
 
-        string nomeBanco = ambiente == "Homologação" ? "smartcash_homolog.db" : "smartcash.db";
+        string nomeBanco = (ambiente == "Homologação") ? "smartcash_homolog.db" : "smartcash.db";
         return Path.Combine(pastaLocal, nomeBanco);
     }
 
-
     private void ConfigureServices(IServiceCollection services)
     {
-
         services.AddDbContextFactory<MeuDbContext>(options =>
-                options.UseSqlite($"Data Source={GetDatabasePath()}", x => x.MigrationsAssembly("SmartCash")));
+        {
+            options.UseSqlite($"Data Source={GetDatabasePath()}", x => x.MigrationsAssembly("SmartCash"))
+                   .UseModel(SmartCash.CompiledModels.MeuDbContextModel.Instance); // Ativa o modelo compilado para AOT
+        });
 
         // Repositórios
         services.AddTransient<IBaseRepository<CategoriaModel>, CategoriaRepository>();
@@ -230,6 +202,5 @@ public partial class App : Application
         services.AddTransient<AdicionarTransacaoView>();
         services.AddTransient<AdicionarConsumivelView>();
         services.AddTransient<ConfiguracoesView>();
-
     }
 }

@@ -24,13 +24,24 @@ namespace SmartCash.EfCore.Repositories
 
             try
             {
-                var query = db.Transacoes
-                    .AsNoTracking()
-                    .Include(t => t.Itens)
-                        .ThenInclude(i => i.Produto);
+                // CORREÇÃO AOT: Consultas planas e simples que o Source Generator compila facilmente.
+                // Carregamos as transações primeiro (o EF Core começa a rastreá-las).
+                var transacoes = await db.Transacoes.ToListAsync();
 
-                Debug.WriteLine($"Executando Query SQLite (Transações Completas): \n{query.ToQueryString()}");
-                return await query.ToListAsync();
+                var ids = transacoes.Select(t => t.IdTransacao).ToList();
+
+                if (ids.Any())
+                {
+                    // Carregamos os itens e seus produtos vinculados a essas transações.
+                    // O recurso de "Navigation Fix-up" do EF Core vai automaticamente injetar 
+                    // esses itens dentro da propriedade 'Itens' de cada 'TransacaoModel' carregada acima.
+                    await db.Itens
+                        .Include(i => i.Produto)
+                        .Where(i => ids.Contains(i.IdTransacao))
+                        .ToListAsync();
+                }
+
+                return transacoes;
             }
             catch (Exception ex)
             {
@@ -45,12 +56,19 @@ namespace SmartCash.EfCore.Repositories
 
             try
             {
-                return await db.Transacoes
-                    .AsNoTracking()
-                    .Include(t => t.Itens)
-                        .ThenInclude(i => i.Produto)
-                            .ThenInclude(i => i.Categoria)
-                    .FirstOrDefaultAsync(x => x.IdTransacao == id);
+                // AOT SAFE: Abordagem idêntica para evitar falhas no detalhamento.
+                var transacao = await db.Transacoes.FirstOrDefaultAsync(x => x.IdTransacao == id);
+
+                if (transacao != null)
+                {
+                    await db.Itens
+                        .Include(i => i.Produto)
+                            .ThenInclude(p => p.Categoria)
+                        .Where(i => i.IdTransacao == id)
+                        .ToListAsync();
+                }
+
+                return transacao;
             }
             catch (Exception ex)
             {
@@ -121,24 +139,31 @@ namespace SmartCash.EfCore.Repositories
 
         public async Task<List<ResumoMesModel>> GetHistoricoMensalAsync()
         {
-            using var db = await _contextFactory.CreateDbContextAsync();
+            try
+            {
+                // Utiliza a rota AOT Safe que construímos acima
+                var transacoes = await GetAllAsync();
 
-            var transacoes = await db.Transacoes.AsNoTracking().ToListAsync();
+                var historico = transacoes
+                    .GroupBy(t => new { t.Data.Year, t.Data.Month })
+                    .Select(g => new ResumoMesModel
+                    {
+                        Ano = g.Key.Year,
+                        Mes = g.Key.Month,
+                        MesAnoApresentacao = $"{g.Key.Month:D2}/{g.Key.Year}",
+                        Total = g.Sum(x => x.ValorTotal)
+                    })
+                    .OrderByDescending(x => x.Ano)
+                    .ThenByDescending(x => x.Mes)
+                    .ToList();
 
-            var historico = transacoes
-                .GroupBy(t => new { t.Data.Year, t.Data.Month })
-                .Select(g => new ResumoMesModel
-                {
-                    Ano = g.Key.Year,
-                    Mes = g.Key.Month,
-                    MesAnoApresentacao = $"{g.Key.Month:D2}/{g.Key.Year}",
-                    Total = g.Sum(x => x.ValorTotal)
-                })
-                .OrderByDescending(x => x.Ano)
-                .ThenByDescending(x => x.Mes)
-                .ToList();
-
-            return historico;
+                return historico;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro ao gerar histórico mensal: {ex.Message}");
+                return new List<ResumoMesModel>();
+            }
         }
     }
 }

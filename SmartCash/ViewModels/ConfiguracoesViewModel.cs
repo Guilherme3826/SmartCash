@@ -37,14 +37,14 @@ namespace SmartCash.ViewModels
                     if (settings != null)
                     {
                         // Alteramos o campo privado para evitar disparar o OnChanged durante o carregamento
-                        _ambienteSelecionado = settings.Ambiente;
-                        _isTemaEscuro = settings.ModoEscuro;
+                        AmbienteSelecionado = settings.Ambiente;
+                        IsTemaEscuro= settings.ModoEscuro;
 
                         // Aplicamos o tema manualmente uma vez no início
-                        AplicarTema(_isTemaEscuro);
+                        AplicarTema(IsTemaEscuro);
 
                         // ENVIAR MENSAGEM: Notifica o sistema que o tema foi definido/alterado
-                        WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(_isTemaEscuro));
+                        WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(IsTemaEscuro));
 
                         // Notificamos a UI sobre as mudanças
                         OnPropertyChanged(nameof(AmbienteSelecionado));
@@ -86,13 +86,49 @@ namespace SmartCash.ViewModels
                     Ambiente = AmbienteSelecionado,
                     ModoEscuro = IsTemaEscuro
                 };
+
                 WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(IsTemaEscuro));
+
+                // NOTA: Se você for rodar Native AOT, lembre-se de usar o JsonSerializerContext aqui depois
                 string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(_configPath, json);
+
+                // Verifica se está rodando no Desktop (Windows, Linux, macOS)
+                if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+                {
+                    var executablePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName;
+                    if (!string.IsNullOrEmpty(executablePath))
+                    {
+                        System.Diagnostics.Process.Start(executablePath);
+                    }
+
+                    if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
+                    {
+                        desktop.Shutdown();
+                    }
+                }
+                // Se for Android (ou iOS)
+                else if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS())
+                {
+                    if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IControlledApplicationLifetime mobileLifetime)
+                    {
+                        try
+                        {
+                            mobileLifetime.Shutdown();
+                        }
+                        catch
+                        {
+                            // Ignora se o Avalonia falhar ao tentar fechar graciosamente
+                        }
+                    }
+
+                    // Força bruta: Mata o processo do .NET no Android imediatamente.
+                    Environment.Exit(0);
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Aqui você pode adicionar um log ou notificação de erro ao salvar
+                System.Diagnostics.Debug.WriteLine($"Erro ao salvar config: {ex.Message}");
             }
         }
     }

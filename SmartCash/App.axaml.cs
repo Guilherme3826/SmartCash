@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Projektanker.Icons.Avalonia;
@@ -9,6 +10,7 @@ using SmartCash.EfCore;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
 using SmartCash.EfCore.Repositories;
+using SmartCash.Mensageiros;
 using SmartCash.ViewModels;
 using SmartCash.ViewModels.Categorias;
 using SmartCash.ViewModels.Consumiveis;
@@ -45,13 +47,7 @@ public partial class App : Application
         // 1. Ler o arquivo de configuração de forma centralizada no início do ciclo de vida
         CarregarConfiguracoes();
 
-        // 2. Aplicar o tema na thread principal (UI) imediatamente após carregar o framework
-        if (Application.Current != null)
-        {
-            Application.Current.RequestedThemeVariant = _configuracoesAtuais.ModoEscuro
-                ? Avalonia.Styling.ThemeVariant.Dark
-                : Avalonia.Styling.ThemeVariant.Light;
-        }
+
 
         var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
@@ -102,6 +98,19 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+
+        // 2. Aplicar o tema na thread principal (UI) imediatamente após carregar o framework
+        if (Application.Current != null)
+        {
+            Application.Current.RequestedThemeVariant = _configuracoesAtuais.ModoEscuro
+                ? Avalonia.Styling.ThemeVariant.Dark
+                : Avalonia.Styling.ThemeVariant.Light;
+
+            // Envia a mensagem para que o Android e outras Views saibam do tema inicial
+            WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(_configuracoesAtuais.ModoEscuro));
+        }
+
+
     }
 
     private void SeedDatabase(MeuDbContext context)

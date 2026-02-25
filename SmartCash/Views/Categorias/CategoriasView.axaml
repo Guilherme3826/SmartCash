@@ -20,38 +20,47 @@
                     x:CompileBindings="False"
                     Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-				<Border Classes="HeaderContent">
+				<Border Classes="HeaderContent" Padding="10,12">
 					<Grid ColumnDefinitions="Auto, *, Auto">
 
 						<Button Grid.Column="0"
                                 Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).VoltarCommand}"
-                                Classes="IconButton">
-							<i:Icon Value="fa-solid fa-arrow-left" Foreground="{DynamicResource WaHeaderIcon}" FontSize="22"/>
+                                Classes="IconButton"
+                                Margin="0,0,5,0">
+							<i:Icon Value="fa-solid fa-arrow-left" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
 						</Button>
 
-						<TextBlock Grid.Column="1" Text="Categorias" Classes="HeaderTitle"/>
+						<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+							<Border Classes="IconAvatarCard">
+								<i:Icon Value="fa-solid fa-tags" Classes="IconAvatarGraphic"/>
+							</Border>
+							<TextBlock Text="Categorias" Classes="HeaderTitle" VerticalAlignment="Center"/>
+						</StackPanel>
 
-						<Button Grid.Column="2" Classes="IconButton">
-							<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="{DynamicResource WaHeaderIcon}" FontSize="22"/>
+						<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Spacing="20">
+							<Button Classes="IconButton">
+								<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
 
-							<Button.Flyout>
-								<MenuFlyout Placement="BottomEdgeAlignedRight">
-									<MenuItem Header="Adicionar Categoria"
-                                              Command="{Binding AdicionarNovaCategoriaCommand}">
-										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-plus" Classes="MenuIcon"/>
-										</MenuItem.Icon>
-									</MenuItem>
+								<Button.Flyout>
+									<MenuFlyout Placement="BottomEdgeAlignedRight">
+										<MenuItem Header="Adicionar Categoria"
+                                                  Command="{Binding AdicionarNovaCategoriaCommand}">
+											<MenuItem.Icon>
+												<i:Icon Value="fa-solid fa-plus" Classes="MenuIcon"/>
+											</MenuItem.Icon>
+										</MenuItem>
 
-									<MenuItem Header="Atualizar Lista"
-                                              Command="{Binding CarregarCategoriasCommand}">
-										<MenuItem.Icon>
-											<i:Icon Value="fa-solid fa-rotate" Classes="MenuIcon"/>
-										</MenuItem.Icon>
-									</MenuItem>
-								</MenuFlyout>
-							</Button.Flyout>
-						</Button>
+										<MenuItem Header="Atualizar Lista"
+                                                  Command="{Binding CarregarCategoriasCommand}">
+											<MenuItem.Icon>
+												<i:Icon Value="fa-solid fa-rotate" Classes="MenuIcon"/>
+											</MenuItem.Icon>
+										</MenuItem>
+									</MenuFlyout>
+								</Button.Flyout>
+							</Button>
+						</StackPanel>
+
 					</Grid>
 				</Border>
 			</Border>

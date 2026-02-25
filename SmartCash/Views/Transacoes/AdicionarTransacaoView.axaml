@@ -12,23 +12,33 @@
 
 	<Grid RowDefinitions="Auto, Auto, *">
 
-		<Border Grid.Row="0" Classes="HeaderBox"
+		<Border Grid.Row="0" Classes="HeaderBox" CornerRadius="0"
                 x:CompileBindings="False"
                 Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-			<Border Classes="HeaderContent">
+			<Border Classes="HeaderContent" Padding="10,12">
 				<StackPanel Spacing="15">
 					<Grid ColumnDefinitions="Auto, *, Auto">
-						
-						<Button Grid.Column="0" Command="{Binding VoltarCommand}" Classes="IconButton">
-							<i:Icon Value="fa-solid fa-arrow-left" Classes="HeaderIcon"/>
+
+						<Button Grid.Column="0"
+                                Command="{Binding VoltarCommand}"
+                                Classes="IconButton"
+                                Margin="0,0,5,0">
+							<i:Icon Value="fa-solid fa-arrow-left" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
 						</Button>
 
-						<TextBlock Grid.Column="1" Text="Nova Transação" Classes="HeaderTitle"/>
+						<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+							<Border Classes="IconAvatarCard">
+								<i:Icon Value="fa-solid fa-cart-shopping" Classes="IconAvatarGraphic"/>
+							</Border>
+							<TextBlock Text="Nova Transação" Classes="HeaderTitle" VerticalAlignment="Center"/>
+						</StackPanel>
 
-						<Button Grid.Column="2" Command="{Binding SalvarTransacaoCommand}" Classes="IconButton">
-							<i:Icon Value="fa-solid fa-check-double" Classes="HeaderIcon"/>
-						</Button>
+						<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Spacing="20">
+							<Button Command="{Binding SalvarTransacaoCommand}" Classes="IconButton">
+								<i:Icon Value="fa-solid fa-check-double" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
+							</Button>
+						</StackPanel>
 					</Grid>
 
 					<StackPanel HorizontalAlignment="Center">
@@ -40,7 +50,7 @@
 		</Border>
 
 		<StackPanel Grid.Row="1" Classes="FormArea">
-			
+
 			<StackPanel Classes="FieldContainer">
 				<TextBlock Text="O que você comprou?" Classes="FieldLabel"/>
 
@@ -84,17 +94,17 @@
 			</StackPanel>
 
 			<Grid ColumnDefinitions="*, 1.2*">
-				
+
 				<StackPanel Grid.Column="0" Classes="FieldContainer" Margin="0,0,10,0">
 					<TextBlock Text="Qtd." Classes="FieldLabel"/>
-					
+
 					<Grid ColumnDefinitions="*, Auto">
 						<Border Grid.Column="0" Classes="FieldCard" CornerRadius="12,0,0,12" Margin="0,0,1,0">
 							<TextBox Text="{Binding QuantidadeInput}"
                                      Classes="InputBase"
                                      HorizontalContentAlignment="Center"/>
 						</Border>
-						
+
 						<Button Grid.Column="1"
                                 Command="{Binding IncrementarQuantidadeCommand}"
                                 Classes="ButtonAttachedRightSecondary">
@@ -105,7 +115,7 @@
 
 				<StackPanel Grid.Column="1" Classes="FieldContainer">
 					<TextBlock Text="Preço Unit. (Opcional)" Classes="FieldLabel"/>
-					
+
 					<Border Classes="FieldCard">
 						<TextBox x:Name="TxtPreco"
 								 Text="{Binding PrecoUnitarioInput}"
@@ -122,7 +132,7 @@
 					<DataTemplate x:DataType="models:ItemModel">
 						<Border Classes="ListItemBorder">
 							<Grid ColumnDefinitions="*, Auto, Auto">
-								
+
 								<StackPanel Grid.Column="0" Classes="ListItemTextContainer">
 									<TextBlock Text="{Binding Produto.Nome}" Classes="ListItemTitle"/>
 									<TextBlock Text="{Binding ValorUnit, StringFormat='{}un: {0:C}'}" Classes="ListItemSubtitle"/>

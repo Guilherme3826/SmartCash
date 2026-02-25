@@ -4,16 +4,17 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<RunAOTCompilation>false</RunAOTCompilation>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<AvaloniaResource Include="Assets\**" />
+		<AvaloniaResource Include="Assets\**" Exclude="Assets\**\*.axaml" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AvaloniaXaml Remove="Assets\AppColorsDark.axaml" />
-	  <AvaloniaXaml Remove="Assets\AppColorsLight.axaml" />
-	  <AvaloniaXaml Remove="Assets\AppStyles.axaml" />
+		<AvaloniaXaml Include="Assets\AppColorsDark.axaml" />
+		<AvaloniaXaml Include="Assets\AppColorsLight.axaml" />
+		<AvaloniaXaml Include="Assets\AppStyles.axaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -43,23 +44,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AvaloniaResource Update="Assets\AppColorsDark.axaml">
-	    <SubType>Designer</SubType>
-	  </AvaloniaResource>
-	  <AvaloniaResource Update="Assets\AppColorsLight.axaml">
-	    <SubType>Designer</SubType>
-	  </AvaloniaResource>
-	  <AvaloniaResource Update="Assets\AppStyles.axaml">
-	    <SubType>Designer</SubType>
-	  </AvaloniaResource>
-	</ItemGroup>
-
-	<ItemGroup>
 		<Compile Update="Views\Categorias\CategoriasView.axaml.cs">
 			<DependentUpon>CategoriasView.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\ConfiguracoesView.axaml.cs">
-		  <DependentUpon>ConfiguracoesView.axaml</DependentUpon>
+			<DependentUpon>ConfiguracoesView.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\Consumiveis\AdicionarConsumivelView.axaml.cs">
 			<DependentUpon>AdicionarConsumivelView.axaml</DependentUpon>
@@ -67,5 +56,10 @@
 		<Compile Update="Views\Consumiveis\ConsumiveisView.axaml.cs">
 			<DependentUpon>ConsumiveisView.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\Dashboard\DashboardView.axaml.cs">
+		  <DependentUpon>DashboardView.axaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
+
+
 </Project>

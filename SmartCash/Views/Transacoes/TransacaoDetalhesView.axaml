@@ -12,20 +12,28 @@
 
 	<Grid RowDefinitions="Auto, *">
 
-		<Border Grid.Row="0" Classes="HeaderBox"
+		<Border Grid.Row="0" Classes="HeaderBox" CornerRadius="0"
                 x:CompileBindings="False"
                 Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
-			
-			<Border Classes="HeaderContent">
+
+			<Border Classes="HeaderContent" Padding="10,12">
 				<StackPanel Spacing="15">
 					<Grid ColumnDefinitions="Auto, *, Auto">
-						
-						<Button Grid.Column="0" Command="{Binding VoltarCommand}" Classes="IconButton">
-							<i:Icon Value="fa-solid fa-arrow-left" Classes="HeaderIcon"/>
+
+						<Button Grid.Column="0"
+                                Command="{Binding VoltarCommand}"
+                                Classes="IconButton"
+                                Margin="0,0,5,0">
+							<i:Icon Value="fa-solid fa-arrow-left" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
 						</Button>
-						
-						<TextBlock Grid.Column="1" Text="Detalhes" Classes="HeaderTitle"/>
-						
+
+						<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+							<Border Classes="IconAvatarCard">
+								<i:Icon Value="fa-solid fa-receipt" Classes="IconAvatarGraphic"/>
+							</Border>
+							<TextBlock Text="Detalhes" Classes="HeaderTitle" VerticalAlignment="Center"/>
+						</StackPanel>
+
 						<Rectangle Grid.Column="2" Width="32" Fill="Transparent"/>
 					</Grid>
 
@@ -38,32 +46,32 @@
 		</Border>
 
 		<Grid Grid.Row="1">
-			
+
 			<ProgressBar IsIndeterminate="True" IsVisible="{Binding EstaCarregando}" Classes="LoadingBar"/>
 
 			<ScrollViewer IsVisible="{Binding !EstaCarregando}">
 				<StackPanel Classes="ListArea">
-					
+
 					<Border Classes="ListContainerCard">
-						<ListBox ItemsSource="{Binding Transacao.Itens}" 
+						<ListBox ItemsSource="{Binding Transacao.Itens}"
                                  Background="Transparent"
                                  ScrollViewer.VerticalScrollBarVisibility="Hidden">
 							<ListBox.ItemTemplate>
 								<DataTemplate x:DataType="models:ItemModel">
 									<Border Classes="ListItemBorder">
 										<Grid ColumnDefinitions="Auto, *, Auto">
-											
+
 											<Border Grid.Column="0" Classes="IconAvatarCard">
 												<i:Icon Value="{Binding Produto.Categoria.IconeApresentacao}" Classes="IconAvatarGraphic"/>
 											</Border>
-											
+
 											<StackPanel Grid.Column="1" Classes="ListItemTextContainer">
 												<TextBlock Text="{Binding Produto.Nome}" Classes="ListItemTitle"/>
 												<TextBlock Text="{Binding Quantidade, StringFormat='{}{0} unidades'}" Classes="ListItemSubtitle"/>
 											</StackPanel>
-											
+
 											<TextBlock Grid.Column="2" Text="{Binding ValorTotal, StringFormat='{}{0:C}'}" Classes="ListItemValue"/>
-											
+
 										</Grid>
 									</Border>
 								</DataTemplate>
@@ -71,7 +79,7 @@
 						</ListBox>
 					</Border>
 
-                    <Rectangle Height="20" Fill="Transparent"/>
+					<Rectangle Height="20" Fill="Transparent"/>
 				</StackPanel>
 			</ScrollViewer>
 		</Grid>

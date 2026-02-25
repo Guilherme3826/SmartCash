@@ -12,23 +12,33 @@
 
 	<Grid RowDefinitions="Auto, *">
 
-		<Border Grid.Row="0" Classes="HeaderBox"
+		<Border Grid.Row="0" Classes="HeaderBox" CornerRadius="0"
                 x:CompileBindings="False"
                 Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-			<Border Classes="HeaderContent">
+			<Border Classes="HeaderContent" Padding="10,12">
 				<Grid ColumnDefinitions="Auto, *, Auto">
-					
-					<Button Grid.Column="0" Command="{Binding VoltarCommand}" Classes="IconButton">
-						<i:Icon Value="fa-solid fa-arrow-left" Foreground="{DynamicResource WaHeaderIcon}" FontSize="22"/>
+
+					<Button Grid.Column="0"
+                            Command="{Binding VoltarCommand}"
+                            Classes="IconButton"
+                            Margin="0,0,5,0">
+						<i:Icon Value="fa-solid fa-arrow-left" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
 					</Button>
 
-					<TextBlock Grid.Column="1" Text="Gerenciar Item" Classes="HeaderTitle"/>
+					<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+						<Border Classes="IconAvatarCard">
+							<i:Icon Value="fa-solid fa-box-open" Classes="IconAvatarGraphic"/>
+						</Border>
+						<TextBlock Text="Gerenciar Item" Classes="HeaderTitle" VerticalAlignment="Center"/>
+					</StackPanel>
 
-					<Button Grid.Column="2" Command="{Binding SalvarCommand}" Classes="IconButton">
-						<i:Icon Value="fa-solid fa-check" Foreground="{DynamicResource WaHeaderIcon}" FontSize="22"/>
-					</Button>
-					
+					<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Spacing="20">
+						<Button Command="{Binding SalvarCommand}" Classes="IconButton">
+							<i:Icon Value="fa-solid fa-check" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
+						</Button>
+					</StackPanel>
+
 				</Grid>
 			</Border>
 		</Border>
@@ -59,11 +69,11 @@
 							<ComboBox.ItemTemplate>
 								<DataTemplate x:DataType="models:CategoriaModel">
 									<StackPanel Orientation="Horizontal" Spacing="12">
-										<i:Icon Value="{Binding IconeApresentacao}" 
-                                                Foreground="{DynamicResource WaPrimary}" 
-                                                FontSize="16" 
+										<i:Icon Value="{Binding IconeApresentacao}"
+                                                Foreground="{DynamicResource WaPrimary}"
+                                                FontSize="16"
                                                 VerticalAlignment="Center"/>
-										<TextBlock Text="{Binding Nome}" 
+										<TextBlock Text="{Binding Nome}"
                                                    Classes="ComboBoxItemText"/>
 									</StackPanel>
 								</DataTemplate>

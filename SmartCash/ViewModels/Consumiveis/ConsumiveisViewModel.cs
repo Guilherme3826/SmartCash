@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -75,6 +76,21 @@ namespace SmartCash.ViewModels.Consumiveis
             Categorias = new ObservableCollection<CategoriaModel>(listaCategorias);
             Consumiveis = new ObservableCollection<ConsumiveisModel>(_todosConsumiveis);
             CategoriaSelecionada = categoriaTodas;
+        }
+
+        [RelayCommand]
+        private async Task ExcluirConsumivelAsync(ConsumiveisModel consumivel)
+        {
+            if (consumivel == null) return;
+            try
+            {            
+                await _consumiveisRepository.DeleteAsync(consumivel.IdConsumivel);         
+                Consumiveis.Remove(consumivel);               
+            }
+            catch (Exception ex)
+            {               
+                System.Diagnostics.Debug.WriteLine($"[ERRO AO EXCLUIR] {ex.Message}");
+            }
         }
 
         // Método interceptador gerado pelo CommunityToolkit sempre que a propriedade CategoriaSelecionada é alterada

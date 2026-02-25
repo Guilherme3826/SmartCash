@@ -14,10 +14,12 @@ using SmartCash.Mensageiros;
 using SmartCash.ViewModels;
 using SmartCash.ViewModels.Categorias;
 using SmartCash.ViewModels.Consumiveis;
+using SmartCash.ViewModels.Dashboard;
 using SmartCash.ViewModels.Transacoes;
 using SmartCash.Views;
 using SmartCash.Views.Categorias;
 using SmartCash.Views.Consumiveis;
+using SmartCash.Views.Dashboard;
 using SmartCash.Views.Transacoes;
 using System;
 using System.Collections.Generic;
@@ -184,6 +186,7 @@ public partial class App : Application
         services.AddSingleton<ConsumiveisViewModel>();
         services.AddSingleton<TransacoesViewModel>();
         services.AddSingleton<ConfiguracoesViewModel>();
+        services.AddSingleton<DashboardViewModel>();
 
         services.AddTransient<AdicionarCategoriaViewModel>();
         services.AddTransient<AdicionarTransacaoViewModel>();
@@ -191,6 +194,7 @@ public partial class App : Application
         services.AddTransient<AdicionarConsumivelViewModel>();
 
         // Views
+        services.AddTransient<DashboardView>();
         services.AddTransient<CategoriasView>();
         services.AddTransient<AdicionarCategoriaView>();
         services.AddTransient<ConsumiveisView>();

@@ -157,10 +157,15 @@ namespace SmartCash.ViewModels
                 var provider = GetStorageProvider();
                 if (provider == null) return;
 
+                // Gera o sufixo de data e hora no formato: 2026-02-25_19-05
+                // Este formato é seguro para Windows, Android e organiza bem por nome.
+                string dataHoraSegura = DateTime.Now.ToString("yyyy-MM-dd_HH-mm");
+                string nomeSugerido = $"SmartCash_Backup_{dataHoraSegura}";
+
                 var file = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
                 {
                     Title = "Salvar Backup do SmartCash",
-                    SuggestedFileName = "SmartCashDbBackups.zip",
+                    SuggestedFileName = nomeSugerido,
                     DefaultExtension = ".zip",
                     FileTypeChoices = new[] { new FilePickerFileType("Arquivo ZIP") { Patterns = new[] { "*.zip" } } }
                 });
@@ -194,6 +199,8 @@ namespace SmartCash.ViewModels
 
                 Directory.Delete(pastaTemp, true);
                 File.Delete(arquivoZipTemp);
+
+                System.Diagnostics.Debug.WriteLine($"[Backup] Sucesso: {nomeSugerido}");
             }
             catch (Exception ex)
             {

@@ -96,6 +96,7 @@ namespace SmartCash.ViewModels.Transacoes
 
             Transacoes = new ObservableCollection<TransacaoModel>(filtradas);
         }
+
         [RelayCommand]
         private void AbrirDetalhes(TransacaoModel transacao)
         {
@@ -122,6 +123,26 @@ namespace SmartCash.ViewModels.Transacoes
             ViewSubAtual = vm;
             ExibindoLista = false;
         }
+
+        [RelayCommand]
+        private async Task ExcluirTransacao(TransacaoModel transacao)
+        {
+            if (transacao == null) return;
+
+            try
+            {
+                // Assumindo que seu IBaseRepository possui o método DeleteAsync ou similar
+                await _transacaoRepository.DeleteAsync(transacao.IdTransacao);
+
+                // Recarrega os dados para atualizar a interface e os filtros automaticamente
+                await CarregarDadosAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao excluir transação: {ex.Message}");
+            }
+        }
+
         partial void OnTransacaoSelecionadaChanged(TransacaoModel? value)
         {
             if (value != null)

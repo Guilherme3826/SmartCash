@@ -53,6 +53,7 @@ namespace SmartCash.ViewModels.Consumiveis
         {
         }
 
+        [RelayCommand]
         public async Task CarregarDadosAsync()
         {
             // 1. Carrega as categorias do repositório
@@ -83,12 +84,14 @@ namespace SmartCash.ViewModels.Consumiveis
         {
             if (consumivel == null) return;
             try
-            {            
-                await _consumiveisRepository.DeleteAsync(consumivel.IdConsumivel);         
-                Consumiveis.Remove(consumivel);               
+            {
+                await _consumiveisRepository.DeleteAsync(consumivel.IdConsumivel);
+
+                // Recarrega os dados para garantir que a memória e o banco de dados estejam sincronizados
+                await CarregarDadosAsync();
             }
             catch (Exception ex)
-            {               
+            {
                 System.Diagnostics.Debug.WriteLine($"[ERRO AO EXCLUIR] {ex.Message}");
             }
         }
@@ -124,7 +127,7 @@ namespace SmartCash.ViewModels.Consumiveis
 
         [RelayCommand]
         private async Task AdicionarAsync()
-        {            
+        {
             var adicionarVm = App.ServiceProvider.GetRequiredService<AdicionarConsumivelViewModel>();
             ViewSubAtual = adicionarVm;
             ExibindoLista = false;

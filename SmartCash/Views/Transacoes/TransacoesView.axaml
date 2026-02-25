@@ -96,6 +96,13 @@
 														<i:Icon Value="fa-solid fa-list-ul" Classes="MenuIcon"/>
 													</MenuItem.Icon>
 												</MenuItem>
+												<MenuItem Header="Excluir"
+                                                          Command="{Binding $parent[ListBox].((vm:TransacoesViewModel)DataContext).ExcluirTransacaoCommand}"
+                                                          CommandParameter="{Binding}">
+													<MenuItem.Icon>
+														<i:Icon Value="fa-solid fa-trash" Classes="MenuIcon"/>
+													</MenuItem.Icon>
+												</MenuItem>
 											</MenuFlyout>
 										</Border.ContextFlyout>
 

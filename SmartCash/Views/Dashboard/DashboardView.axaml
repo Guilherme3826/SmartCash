@@ -2,9 +2,175 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 xmlns:vm="clr-namespace:SmartCash.ViewModels.Dashboard"
-			 x:DataType="vm:DashboardViewModel"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:vm="clr-namespace:SmartCash.ViewModels.Dashboard"
+             xmlns:mvm="clr-namespace:SmartCash.ViewModels"
+             xmlns:views="clr-namespace:SmartCash.Views"
+             xmlns:models="clr-namespace:SmartCash.EfCore.Models"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
+             x:DataType="vm:DashboardViewModel"
+             Background="{DynamicResource WaBackground}"
              x:Class="SmartCash.Views.Dashboard.DashboardView">
-  Welcome to Avalonia!
+
+	<Grid RowDefinitions="Auto, *">
+
+		<Border Grid.Row="0" Classes="HeaderBox" CornerRadius="0"
+                x:CompileBindings="False"
+                Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
+
+			<Border Classes="HeaderContent">
+				<Grid ColumnDefinitions="*, Auto">
+					<StackPanel Grid.Column="0" VerticalAlignment="Center">
+						<TextBlock Text="SmartCash" Classes="HeaderBrandTitle"/>
+
+						<StackPanel Classes="HeaderSubtitleArea">
+							<TextBlock Text="Mês Atual:" Classes="HeaderSubtitleLabel"/>
+							<TextBlock Text="{Binding TotalMesAtual}" Classes="HeaderSubtitleValue"/>
+						</StackPanel>
+					</StackPanel>
+
+					<Button Grid.Column="1" Classes="IconButton" VerticalAlignment="Center">
+						<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
+
+						<Button.Flyout>
+							<MenuFlyout Placement="BottomEdgeAlignedRight">
+								<MenuItem Header="Configurações" Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).NavegarConfiguracoesCommand}">
+									<MenuItem.Icon>
+										<i:Icon Value="fa-solid fa-gear" Classes="MenuIcon"/>
+									</MenuItem.Icon>
+								</MenuItem>
+							</MenuFlyout>
+						</Button.Flyout>
+					</Button>
+				</Grid>
+			</Border>
+		</Border>
+
+		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsScrollChainingEnabled="True">
+			<StackPanel Classes="MainContentArea">
+
+				<Border Classes="MainCard">
+					<StackPanel>
+						<TextBlock Text="Histórico de Gastos" Classes="SectionTitle"/>
+
+						<ListBox Classes="ChartListBox" ItemsSource="{Binding HistoricoMensal}"
+                                 SelectedItem="{Binding MesSelecionado}"
+                                 Background="Transparent"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel Orientation="Horizontal" Spacing="15"/>
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
+							<ListBox.ItemTemplate>
+								<DataTemplate x:DataType="models:ResumoMesModel">
+									<StackPanel VerticalAlignment="Bottom" Spacing="5" Width="70" Margin="5">
+										<TextBlock Text="{Binding Total, StringFormat='{}{0:N0}'}" Classes="MonthTotalText"/>
+										<Border Classes="MonthTotalBar" Height="{Binding AlturaBarra}"/>
+										<TextBlock Text="{Binding MesAnoApresentacao}" Classes="MonthYearText"/>
+									</StackPanel>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</StackPanel>
+				</Border>
+
+				<Border x:Name="CardInferior" Classes="MainCardNoPadding">
+					<StackPanel>
+
+						<Grid Margin="20,15,20,10" ColumnDefinitions="*, Auto">
+							<TextBlock Grid.Column="0" Text="Detalhes do Mês" Classes="SwipeHeaderTitle"/>
+							<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+								<TextBlock Text="Deslize" Classes="SwipeHeaderSubtitle"/>
+								<i:Icon Value="fa-solid fa-arrows-left-right" Classes="SwipeHeaderIcon"/>
+							</StackPanel>
+						</Grid>
+
+						<ScrollViewer HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Disabled"
+                                      HorizontalSnapPointsType="MandatorySingle"
+                                      IsScrollChainingEnabled="True">
+							<StackPanel Orientation="Horizontal">
+
+								<Grid Width="{Binding #CardInferior.Bounds.Width}">
+									<StackPanel>
+										<TextBlock Text="Lançamentos" Classes="TabSectionTitle"/>
+
+										<ListBox ItemsSource="{Binding ItensMesSelecionado}"
+                                                 Background="Transparent"
+                                                 MaxHeight="500"
+                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                 ScrollViewer.IsScrollChainingEnabled="True">
+											<ListBox.ItemTemplate>
+												<DataTemplate x:DataType="models:ItemModel">
+													<Border Classes="ListItemBorder">
+														<Grid ColumnDefinitions="Auto, *, Auto">
+
+															<Border Grid.Column="0" Classes="IconAvatarCard">
+																<i:Icon Value="{Binding Produto.Categoria.IconeApresentacao}" Classes="IconAvatarGraphicLight"/>
+															</Border>
+
+															<StackPanel Grid.Column="1" Classes="ListItemTextContainer">
+																<TextBlock Text="{Binding Produto.Nome}" Classes="ListItemTitle"/>
+																<TextBlock Text="{Binding Transacao.Data, StringFormat='{}{0:dd/MM/yyyy}'}" Classes="ListItemSubtitle"/>
+															</StackPanel>
+
+															<StackPanel Grid.Column="2" VerticalAlignment="Center">
+																<TextBlock Text="{Binding ValorTotal, StringFormat='{}{0:C2}'}" Classes="ListItemValueNeutral"/>
+																<TextBlock Text="{Binding Quantidade, StringFormat='Qtd: {0}'}" Classes="ListItemSubtitleRight"/>
+															</StackPanel>
+														</Grid>
+													</Border>
+												</DataTemplate>
+											</ListBox.ItemTemplate>
+										</ListBox>
+									</StackPanel>
+								</Grid>
+
+								<Grid Width="{Binding #CardInferior.Bounds.Width}">
+									<StackPanel>
+										<TextBlock Text="Participação por Categoria" Classes="TabSectionTitle"/>
+
+										<lvc:PieChart Series="{Binding SeriesGraficoPizza}"
+                                                      Height="330"
+                                                      InitialRotation="45"
+                                                      MaxAngle="270"
+                                                      Background="{DynamicResource WaSurface}"
+                                                      MinValue="0"
+                                                      MaxValue="{Binding ValorMaximoGauge}"
+                                                      LegendPosition="Hidden"/>
+
+										<ListBox ItemsSource="{Binding CategoriasMesSelecionado}"
+                                                 Background="Transparent"
+                                                 MaxHeight="250"
+                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                 ScrollViewer.IsScrollChainingEnabled="True">
+											<ListBox.ItemTemplate>
+												<DataTemplate x:DataType="models:ResumoCategoriaModel">
+													<Border Classes="ListItemBorder">
+														<Grid ColumnDefinitions="Auto, *, Auto">
+
+															<Border Grid.Column="0" Classes="IconAvatarCard">
+																<i:Icon Value="{Binding Categoria.IconeApresentacao}" Foreground="{Binding CorHex}" Classes="IconAvatarGraphicBase"/>
+															</Border>
+
+															<TextBlock Grid.Column="1" Text="{Binding Categoria.Nome}" Classes="ListItemTitle" VerticalAlignment="Center" Margin="15,0,0,0"/>
+															<TextBlock Grid.Column="2" Text="{Binding Total, StringFormat='{}{0:C2}'}" Classes="ListItemValueNeutral"/>
+														</Grid>
+													</Border>
+												</DataTemplate>
+											</ListBox.ItemTemplate>
+										</ListBox>
+									</StackPanel>
+								</Grid>
+							</StackPanel>
+						</ScrollViewer>
+					</StackPanel>
+				</Border>
+				<Rectangle Height="20" Fill="Transparent"/>
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
 </UserControl>

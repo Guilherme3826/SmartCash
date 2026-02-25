@@ -3,110 +3,117 @@
         xmlns:i="https://github.com/projektanker/icons.avalonia">
 
 	<Style Selector="ListBox">
-		<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value= "True"/>		
-		<Setter Property="UseLayoutRounding" Value="True"/>
-		<Setter Property="ScrollViewer.AllowAutoHide" Value="True"/>
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="ScrollViewer.AllowAutoHide" Value="True"/>
+		<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True"/>
+		<Setter Property="UseLayoutRounding" Value="True"/>
 	</Style>
 
 	<Style Selector="ListBoxItem">
-		<Setter Property="Padding" Value="0"/>		
-		<Setter Property="FocusAdorner" Value="{x:Null}"/>
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="CornerRadius" Value="0"/>
+		<Setter Property="FocusAdorner" Value="{x:Null}"/>
+		<Setter Property="Padding" Value="0"/>
 	</Style>
-	
+
 	<Style Selector="ListBox.ChartListBox ListBoxItem">
-		<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value= "True"/>		
-		<Setter Property="ScrollViewer.AllowAutoHide" Value="True"/>
 		<Setter Property="CornerRadius" Value="12"/>
 		<Setter Property="Margin" Value="0,2"/>
+		<Setter Property="ScrollViewer.AllowAutoHide" Value="True"/>
+		<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True"/>
 	</Style>
 
 	<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
 		<Setter Property="Background" Value="{DynamicResource WaSelection}"/>
 	</Style>
-	
+
 	<Style Selector="ComboBox">
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
+		<Setter Property="Height" Value="54"/>
 		<Setter Property="Padding" Value="15,0,10,0"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
-		<Setter Property="Height" Value="54"/>
-		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
 	</Style>
 
 	<Style Selector="Border.HeaderBox">
 		<Setter Property="Background" Value="{DynamicResource WaPrimary}"/>
-		<Setter Property="CornerRadius" Value="0,0,25,25"/>
 		<Setter Property="BoxShadow" Value="0 2 6 0 #20000000"/>
+		<Setter Property="CornerRadius" Value="0,0,25,25"/>
 	</Style>
 
 	<Style Selector="Grid.MainViewLayout Border.HeaderBox">
-		<Setter Property="CornerRadius" Value="0"/>
 		<Setter Property="BoxShadow" Value="0 2 6 0 #20000000"/>
+		<Setter Property="CornerRadius" Value="0"/>
 	</Style>
 
 	<Style Selector="Border.HeaderContent">
 		<Setter Property="Padding" Value="20,15,20,20"/>
 	</Style>
-	
+
 	<Style Selector="TextBlock.HeaderBrandTitle">
 		<Setter Property="FontSize" Value="24"/>
 		<Setter Property="FontWeight" Value="Bold"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 	</Style>
+
 	<Style Selector="TextBlock.HeaderTitle">
 		<Setter Property="FontSize" Value="20"/>
 		<Setter Property="FontWeight" Value="Medium"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 		<Setter Property="Margin" Value="10,0,0,0"/>
 	</Style>
-	
+
 	<Style Selector="StackPanel.HeaderSubtitleArea">
+		<Setter Property="Margin" Value="0,5,0,0"/>
 		<Setter Property="Orientation" Value="Horizontal"/>
 		<Setter Property="Spacing" Value="5"/>
-		<Setter Property="Margin" Value="0,5,0,0"/>
 	</Style>
+
 	<Style Selector="TextBlock.HeaderSubtitleLabel">
-		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 		<Setter Property="FontSize" Value="13"/>
+		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 		<Setter Property="Opacity" Value="0.8"/>
 	</Style>
+
 	<Style Selector="TextBlock.HeaderSubtitleValue">
-		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 		<Setter Property="FontSize" Value="18"/>
 		<Setter Property="FontWeight" Value="SemiBold"/>
+		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 	</Style>
 
 	<Style Selector="StackPanel.MainContentArea">
 		<Setter Property="Margin" Value="15"/>
 		<Setter Property="Spacing" Value="15"/>
 	</Style>
+
 	<Style Selector="Border.MainCard">
 		<Setter Property="Background" Value="{DynamicResource WaSurface}"/>
+		<Setter Property="BoxShadow" Value="0 1 3 0 #15000000"/>
 		<Setter Property="CornerRadius" Value="15"/>
 		<Setter Property="Padding" Value="15"/>
-		<Setter Property="BoxShadow" Value="0 1 3 0 #15000000"/>
 	</Style>
+
 	<Style Selector="Border.MainCardNoPadding">
 		<Setter Property="Background" Value="{DynamicResource WaSurface}"/>
-		<Setter Property="CornerRadius" Value="15"/>
 		<Setter Property="BoxShadow" Value="0 1 3 0 #15000000"/>
 		<Setter Property="ClipToBounds" Value="True"/>
+		<Setter Property="CornerRadius" Value="15"/>
 	</Style>
+
 	<Style Selector="Border.ListContainerCard">
 		<Setter Property="Background" Value="{DynamicResource WaSurface}"/>
-		<Setter Property="CornerRadius" Value="15"/>
 		<Setter Property="BoxShadow" Value="0 1 3 0 #15000000"/>
 		<Setter Property="ClipToBounds" Value="True"/>
+		<Setter Property="CornerRadius" Value="15"/>
 	</Style>
+
 	<Style Selector="Border.SettingsCard">
 		<Setter Property="Background" Value="{DynamicResource WaSurface}"/>
+		<Setter Property="BoxShadow" Value="0 1 3 0 #15000000"/>
 		<Setter Property="CornerRadius" Value="15"/>
 		<Setter Property="Padding" Value="20"/>
-		<Setter Property="BoxShadow" Value="0 1 3 0 #15000000"/>
 	</Style>
 
 	<Style Selector="TextBlock.SectionTitle, TextBlock.SwipeHeaderTitle">
@@ -115,17 +122,19 @@
 		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
 		<Setter Property="Margin" Value="0,0,0,15"/>
 	</Style>
-	
+
 	<Style Selector="TextBlock.SwipeHeaderSubtitle">
 		<Setter Property="FontSize" Value="11"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextSecondary}"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
+
 	<Style Selector="i|Icon.SwipeHeaderIcon">
 		<Setter Property="FontSize" Value="12"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaDivider}"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
+
 	<Style Selector="TextBlock.TabSectionTitle">
 		<Setter Property="FontSize" Value="13"/>
 		<Setter Property="FontWeight" Value="Bold"/>
@@ -139,11 +148,13 @@
 		<Setter Property="Foreground" Value="{DynamicResource WaTextSecondary}"/>
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 	</Style>
+
 	<Style Selector="Border.MonthTotalBar">
 		<Setter Property="Background" Value="{DynamicResource WaAccent}"/>
 		<Setter Property="CornerRadius" Value="5,5,2,2"/>
 		<Setter Property="MinWidth" Value="12"/>
 	</Style>
+
 	<Style Selector="TextBlock.MonthYearText">
 		<Setter Property="FontSize" Value="11"/>
 		<Setter Property="FontWeight" Value="Medium"/>
@@ -152,50 +163,56 @@
 	</Style>
 
 	<Style Selector="Border.ListItemBorder">
+		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource WaDivider}"/>
 		<Setter Property="BorderThickness" Value="0,0,0,1"/>
 		<Setter Property="Padding" Value="15,12"/>
-		<Setter Property="Background" Value="Transparent"/>
 	</Style>
+
 	<Style Selector="Border.IconAvatarCard">
-		<Setter Property="Width" Value="44"/>
-		<Setter Property="Height" Value="44"/>
-		<Setter Property="CornerRadius" Value="22"/>
 		<Setter Property="Background" Value="{DynamicResource WaBackground}"/>
+		<Setter Property="CornerRadius" Value="22"/>
+		<Setter Property="Height" Value="44"/>
+		<Setter Property="Width" Value="44"/>
 	</Style>
+
 	<Style Selector="i|Icon.IconAvatarGraphicLight">
 		<Setter Property="FontSize" Value="18"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaAccent}"/>
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
+
 	<Style Selector="i|Icon.IconAvatarGraphicBase">
 		<Setter Property="FontSize" Value="18"/>
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
-	
+
 	<Style Selector="StackPanel.ListItemTextContainer">
-		<Setter Property="VerticalAlignment" Value="Center"/>
 		<Setter Property="Margin" Value="15,0,10,0"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
+
 	<Style Selector="TextBlock.ListItemTitle">
 		<Setter Property="FontSize" Value="16"/>
-		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
 		<Setter Property="FontWeight" Value="SemiBold"/>
+		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
 		<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
 	</Style>
+
 	<Style Selector="TextBlock.ListItemSubtitle">
 		<Setter Property="FontSize" Value="13"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextSecondary}"/>
 	</Style>
-	
+
 	<Style Selector="TextBlock.ListItemValueNeutral">
 		<Setter Property="FontSize" Value="16"/>
 		<Setter Property="FontWeight" Value="Bold"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
 		<Setter Property="HorizontalAlignment" Value="Right"/>
 	</Style>
+
 	<Style Selector="TextBlock.ListItemSubtitleRight">
 		<Setter Property="FontSize" Value="12"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextSecondary}"/>
@@ -206,9 +223,11 @@
 		<Setter Property="Margin" Value="20"/>
 		<Setter Property="Spacing" Value="25"/>
 	</Style>
+
 	<Style Selector="StackPanel.FieldContainer">
 		<Setter Property="Spacing" Value="8"/>
 	</Style>
+
 	<Style Selector="TextBlock.FieldLabel">
 		<Setter Property="FontSize" Value="14"/>
 		<Setter Property="FontWeight" Value="Medium"/>
@@ -218,37 +237,40 @@
 
 	<Style Selector="Border.FieldCard">
 		<Setter Property="Background" Value="{DynamicResource WaSurface}"/>
-		<Setter Property="CornerRadius" Value="8"/>
 		<Setter Property="BoxShadow" Value="0 1 2 0 #10000000"/>
+		<Setter Property="CornerRadius" Value="8"/>
 	</Style>
+
 	<Style Selector="TextBox.InputBase">
-		<Setter Property="Height" Value="50"/>
-		<Setter Property="BorderThickness" Value="0"/>
 		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderThickness" Value="0"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
+		<Setter Property="Height" Value="50"/>
 		<Setter Property="Padding" Value="12,0"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
 	</Style>
-	
+
 	<Style Selector="Button.ButtonAttachedRightPrimary">
 		<Setter Property="Background" Value="{DynamicResource WaAccent}"/>
-		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
-		<Setter Property="Width" Value="60"/>
-		<Setter Property="Height" Value="50"/>
 		<Setter Property="CornerRadius" Value="0,8,8,0"/>
+		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
+		<Setter Property="Height" Value="50"/>
+		<Setter Property="Width" Value="60"/>
 	</Style>
+
 	<Style Selector="i|Icon.IconAttachedRightPrimary">
 		<Setter Property="FontSize" Value="18"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 	</Style>
-	
+
 	<Style Selector="Button.ButtonAttachedRightSecondary">
 		<Setter Property="Background" Value="{DynamicResource WaDivider}"/>
-		<Setter Property="Width" Value="50"/>
-		<Setter Property="Height" Value="50"/>
-		<Setter Property="CornerRadius" Value="0,8,8,0"/>
 		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="CornerRadius" Value="0,8,8,0"/>
+		<Setter Property="Height" Value="50"/>
+		<Setter Property="Width" Value="50"/>
 	</Style>
+
 	<Style Selector="i|Icon.IconAttachedRightSecondary">
 		<Setter Property="FontSize" Value="14"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextSecondary}"/>
@@ -259,11 +281,13 @@
 		<Setter Property="Foreground" Value="{DynamicResource WaPrimary}"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
+
 	<Style Selector="TextBlock.AutoCompleteTitle">
 		<Setter Property="FontSize" Value="15"/>
-		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
 		<Setter Property="FontWeight" Value="SemiBold"/>
+		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
 	</Style>
+
 	<Style Selector="TextBlock.AutoCompleteSubtitle">
 		<Setter Property="FontSize" Value="13"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextSecondary}"/>
@@ -273,36 +297,47 @@
 		<Setter Property="FontSize" Value="15"/>
 		<Setter Property="FontWeight" Value="Bold"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
 		<Setter Property="Margin" Value="15,0"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 
 	<Style Selector="Button.PrimaryAction">
 		<Setter Property="Background" Value="{DynamicResource WaAccent}"/>
-		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
-		<Setter Property="HorizontalAlignment" Value="Stretch"/>
-		<Setter Property="Height" Value="55"/>
 		<Setter Property="CornerRadius" Value="8"/>
+		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
+		<Setter Property="Height" Value="55"/>
+		<Setter Property="HorizontalAlignment" Value="Stretch"/>
 	</Style>
 
 	<Style Selector="Border.BottomNavBox">
 		<Setter Property="Background" Value="{DynamicResource WaSurface}"/>
-		<Setter Property="Padding" Value="0,8"/>
-		<Setter Property="CornerRadius" Value="0"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource WaDivider}"/>
 		<Setter Property="BorderThickness" Value="0,1,0,0"/>
+		<Setter Property="CornerRadius" Value="0"/>
+		<Setter Property="Padding" Value="0,8"/>
 	</Style>
+
 	<Style Selector="Button.BottomNavBtn">
 		<Setter Property="Background" Value="Transparent"/>
-		<Setter Property="HorizontalAlignment" Value="Stretch"/>
-		<Setter Property="VerticalAlignment" Value="Stretch"/>
 		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="HorizontalAlignment" Value="Stretch"/>
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="VerticalAlignment" Value="Stretch"/>
 	</Style>
+
+	<Style Selector="Button.BottomNavBtn:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="Transparent"/>
+	</Style>
+	<Style Selector="Button.BottomNavBtn:pressed /template/ ContentPresenter">
+		<Setter Property="Background" Value="Transparent"/>
+	</Style>
+
 	<Style Selector="i|Icon.BottomNavIcon">
 		<Setter Property="FontSize" Value="20"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaIconLight}"/>
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 	</Style>
+
 	<Style Selector="TextBlock.BottomNavText">
 		<Setter Property="FontSize" Value="11"/>
 		<Setter Property="FontWeight" Value="SemiBold"/>
@@ -315,16 +350,20 @@
 		<Setter Property="BorderThickness" Value="0"/>
 		<Setter Property="Padding" Value="5"/>
 	</Style>
+
 	<Style Selector="i|Icon.HeaderIcon">
-		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 		<Setter Property="FontSize" Value="22"/>
+		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 	</Style>
+
 	<Style Selector="i|Icon.MenuIcon">
 		<Setter Property="FontSize" Value="16"/>
 	</Style>
+
 	<Style Selector="i|Icon.ActionIcon">
 		<Setter Property="FontSize" Value="18"/>
 	</Style>
+
 	<Style Selector="TextBlock.ActionText">
 		<Setter Property="FontSize" Value="16"/>
 		<Setter Property="FontWeight" Value="Bold"/>
@@ -337,17 +376,20 @@
 		<Setter Property="Foreground" Value="{DynamicResource WaPrimary}"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
+
 	<Style Selector="TextBlock.SettingsItemTitle">
 		<Setter Property="FontSize" Value="16"/>
 		<Setter Property="FontWeight" Value="Medium"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextPrimary}"/>
 	</Style>
+
 	<Style Selector="TextBlock.SettingsItemDescription">
 		<Setter Property="FontSize" Value="13"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaTextSecondary}"/>
-		<Setter Property="TextWrapping" Value="Wrap"/>
 		<Setter Property="Margin" Value="0,2,0,0"/>
+		<Setter Property="TextWrapping" Value="Wrap"/>
 	</Style>
+
 	<Style Selector="i|Icon.SettingsIcon">
 		<Setter Property="FontSize" Value="20"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaIconLight}"/>
@@ -357,35 +399,39 @@
 	<Style Selector="i|Icon.IconDanger">
 		<Setter Property="Foreground" Value="{DynamicResource WaDanger}"/>
 	</Style>
+
 	<Style Selector="TextBlock.ListItemValueDanger">
-		<Setter Property="Foreground" Value="{DynamicResource WaDanger}"/>
 		<Setter Property="FontWeight" Value="Bold"/>
+		<Setter Property="Foreground" Value="{DynamicResource WaDanger}"/>
 	</Style>
+
 	<Style Selector="Border.IconAvatarCardWarning">
-		<Setter Property="Width" Value="44"/>
-		<Setter Property="Height" Value="44"/>
-		<Setter Property="CornerRadius" Value="22"/>
 		<Setter Property="Background" Value="{DynamicResource WaWarningBackground}"/>
+		<Setter Property="CornerRadius" Value="22"/>
+		<Setter Property="Height" Value="44"/>
+		<Setter Property="Width" Value="44"/>
 	</Style>
+
 	<Style Selector="i|Icon.IconAvatarGraphicWarning">
 		<Setter Property="Foreground" Value="{DynamicResource WaWarningForeground}"/>
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
-	
+
 	<Style Selector="TextBlock.HeaderSummaryValue">
 		<Setter Property="FontSize" Value="36"/>
 		<Setter Property="FontWeight" Value="Bold"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 	</Style>
+
 	<Style Selector="TextBlock.HeaderSummarySubtitle">
 		<Setter Property="FontSize" Value="14"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
-		<Setter Property="Opacity" Value="0.8"/>
 		<Setter Property="HorizontalAlignment" Value="Center"/>
+		<Setter Property="Opacity" Value="0.8"/>
 	</Style>
-	
+
 	<Style Selector="ProgressBar.LoadingBar">
 		<Setter Property="Foreground" Value="{DynamicResource WaPrimary}"/>
 		<Setter Property="VerticalAlignment" Value="Top"/>
@@ -393,21 +439,22 @@
 
 	<Style Selector="Border.IconSelectorCard">
 		<Setter Property="Background" Value="{DynamicResource WaSurface}"/>
-		<Setter Property="CornerRadius" Value="8"/>
 		<Setter Property="BoxShadow" Value="0 1 2 0 #10000000"/>
+		<Setter Property="CornerRadius" Value="8"/>
 		<Setter Property="Padding" Value="15"/>
 	</Style>
-	
+
 	<Style Selector="ListBox.IconListBox ListBoxItem">
 		<Setter Property="CornerRadius" Value="12"/>
 		<Setter Property="Margin" Value="4"/>
 	</Style>
-	
+
 	<Style Selector="Border.IconItemCard">
-		<Setter Property="Width" Value="54"/>
-		<Setter Property="Height" Value="54"/>
 		<Setter Property="CornerRadius" Value="12"/>
+		<Setter Property="Height" Value="54"/>
+		<Setter Property="Width" Value="54"/>
 	</Style>
+
 	<Style Selector="i|Icon.IconItemGraphic">
 		<Setter Property="FontSize" Value="24"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaIconLight}"/>

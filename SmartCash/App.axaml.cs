@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
+using LiveChartsCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Projektanker.Icons.Avalonia;
@@ -32,6 +33,7 @@ namespace SmartCash;
 
 public partial class App : Application
 {
+    public static Action<IServiceCollection>? RegisterPlatformServices { get; set; }
     public static IServiceProvider ServiceProvider { get; private set; } = null!;
 
     // Armazena as configurações na memória para serem usadas por todo o ciclo de vida
@@ -44,6 +46,7 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        var services = new ServiceCollection();
         IconProvider.Current.Register<FontAwesomeIconProvider>();
 
         // 1. Ler o arquivo de configuração de forma centralizada no início do ciclo de vida
@@ -53,6 +56,8 @@ public partial class App : Application
 
         var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
+
+        RegisterPlatformServices?.Invoke(services);
 
         ServiceProvider = serviceCollection.BuildServiceProvider();
 
@@ -203,5 +208,9 @@ public partial class App : Application
         services.AddTransient<AdicionarTransacaoView>();
         services.AddTransient<AdicionarConsumivelView>();
         services.AddTransient<ConfiguracoesView>();
+
+
+
+       
     }
 }

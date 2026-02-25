@@ -1,21 +1,30 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
+using Microsoft.Extensions.DependencyInjection;
+using SmartCash.Desktop.Services; // Namespace onde você criou o WindowsCompartilhamentoService
+using System;
 
-namespace SmartCash.Desktop;
-
-sealed class Program
+namespace SmartCash.Desktop
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
-    [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    internal class Program
+    {
+        [STAThread]
+        public static void Main(string[] args)
+        {
+            // Injeta o serviço específico do Windows antes do App rodar
+            App.RegisterPlatformServices = services =>
+            {
+                services.AddSingleton<Interfaces.ICompartilhamentoService, WindowsCompartilhamentoService>();
+                services.AddSingleton<Interfaces.IPermissaoService, WindowsPermissaoService>();
+            };
 
-    // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
-            .UsePlatformDetect()
-            .WithInterFont()
-            .LogToTrace();
+            BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+        }
+
+        public static AppBuilder BuildAvaloniaApp()
+            => AppBuilder.Configure<App>()
+                .UsePlatformDetect()
+                .WithInterFont()
+                .LogToTrace();
+    }
 }

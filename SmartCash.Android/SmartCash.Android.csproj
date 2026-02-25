@@ -10,6 +10,7 @@
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 		<UseShortFileNames>True</UseShortFileNames>
+		<AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -17,10 +18,20 @@
 		<RunAOTCompilation>false</RunAOTCompilation>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<RuntimeIdentifier>android-arm64</RuntimeIdentifier>
+		<AndroidKeyStore>False</AndroidKeyStore>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<AndroidResource Include="Icon.png">
 			<Link>Resources\drawable\Icon.png</Link>
 		</AndroidResource>
+		<AndroidResource Include="Resources\xml\file_paths.xml" />
 	</ItemGroup>
 
 	<ItemGroup>

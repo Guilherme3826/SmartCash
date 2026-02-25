@@ -66,10 +66,36 @@
 				<Border Classes="SettingsCard">
 					<StackPanel Spacing="15">
 
-						<StackPanel Orientation="Horizontal" Spacing="15">
-							<i:Icon Value="fa-solid fa-database" Classes="SettingsIcon"/>
-							<TextBlock Text="Banco de Dados" Classes="SettingsSectionTitle"/>
-						</StackPanel>
+						<Grid ColumnDefinitions="*, Auto">
+							<StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="15" VerticalAlignment="Center">
+								<i:Icon Value="fa-solid fa-database" Classes="SettingsIcon"/>
+								<TextBlock Text="Banco de Dados" Classes="SettingsSectionTitle"/>
+							</StackPanel>
+
+							<Button Grid.Column="1" Classes="IconButton" VerticalAlignment="Center">
+								<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="{DynamicResource WaIconLight}" FontSize="20"/>
+
+								<Button.Flyout>
+									<MenuFlyout Placement="BottomEdgeAlignedRight">
+										<MenuItem Header="Fazer backup do banco de dados" Command="{Binding BackupBancoDadosCommand}">
+											<MenuItem.Icon>
+												<i:Icon Value="fa-solid fa-cloud-arrow-up" Classes="MenuIcon"/>
+											</MenuItem.Icon>
+										</MenuItem>
+										<MenuItem Header="Restaurar banco de dados" Command="{Binding RestaurarBancoDadosCommand}">
+											<MenuItem.Icon>
+												<i:Icon Value="fa-solid fa-cloud-arrow-down" Classes="MenuIcon"/>
+											</MenuItem.Icon>
+										</MenuItem>
+										<MenuItem Header="Exportar banco de dados" Command="{Binding ExportarBancoDadosCommand}">
+											<MenuItem.Icon>
+												<i:Icon Value="fa-solid fa-file-export" Classes="MenuIcon"/>
+											</MenuItem.Icon>
+										</MenuItem>
+									</MenuFlyout>
+								</Button.Flyout>
+							</Button>
+						</Grid>
 
 						<TextBlock Text="Selecione o ambiente em que o aplicativo irá operar. Necessita reiniciar para aplicar."
                                    Classes="SettingsItemDescription"/>
@@ -87,13 +113,6 @@
 						</Border>
 					</StackPanel>
 				</Border>
-
-				<Button Command="{Binding SalvarConfiguracoesCommand}" Classes="PrimaryAction">
-					<StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-						<i:Icon Value="fa-solid fa-floppy-disk" Classes="ActionIcon"/>
-						<TextBlock Text="Salvar Alterações" Classes="ActionText"/>
-					</StackPanel>
-				</Button>
 
 			</StackPanel>
 		</ScrollViewer>

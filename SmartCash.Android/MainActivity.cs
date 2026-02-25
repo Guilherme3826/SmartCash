@@ -5,6 +5,8 @@ using Android.Views;
 using Avalonia;
 using Avalonia.Android;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
+using SmartCash.Android.Services;
 using SmartCash.Mensageiros;
 
 namespace SmartCash.Android;
@@ -22,6 +24,13 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
+        // Injeta os serviços específicos do Android antes do App rodar
+        App.RegisterPlatformServices = services =>
+        {
+            services.AddSingleton<Interfaces.ICompartilhamentoService, AndroidCompartilhamentoService>();
+            services.AddSingleton<Interfaces.IPermissaoService, AndroidPermissaoService>();
+        };
+
         return base.CustomizeAppBuilder(builder)
             .WithInterFont()
             .With(new AndroidPlatformOptions
@@ -34,6 +43,9 @@ public class MainActivity : AvaloniaMainActivity<App>
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
+        // Define a Activity atual para usarmos no serviço de permissão nativo
+        Platform.CurrentActivity = this;
+
         WeakReferenceMessenger.Default.Register<TemaAlteradoMessage>(this, (r, m) =>
         {
             RunOnUiThread(() => AplicarCorDaBarraDeStatus(m.Value));

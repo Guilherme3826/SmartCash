@@ -3,26 +3,38 @@ using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using SmartCash.EfCore.Models;
+using SmartCash.Interfaces;
 using SmartCash.Mensageiros;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.IO.Compression;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace SmartCash.ViewModels
 {
     public partial class ConfiguracoesViewModel : ObservableObject
     {
         private readonly string _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "settings.json");
+        private bool _isCarregando = true;
 
         [ObservableProperty] private bool _isTemaEscuro;
         [ObservableProperty] private ObservableCollection<string> _ambientesBd = new() { "Produção", "Homologação" };
         [ObservableProperty] private string _ambienteSelecionado = "Produção";
 
+        private readonly ICompartilhamentoService? _compartilhamentoService;
+        private readonly IPermissaoService? _permissaoService;
+
         public ConfiguracoesViewModel()
         {
+            _compartilhamentoService = App.ServiceProvider.GetService<ICompartilhamentoService>();
+            _permissaoService = App.ServiceProvider.GetService<IPermissaoService>();
+
             CarregarConfiguracoes();
+            _isCarregando = false;
         }
 
         private void CarregarConfiguracoes()
@@ -36,35 +48,40 @@ namespace SmartCash.ViewModels
 
                     if (settings != null)
                     {
-                        // Alteramos o campo privado para evitar disparar o OnChanged durante o carregamento
                         AmbienteSelecionado = settings.Ambiente;
-                        IsTemaEscuro= settings.ModoEscuro;
+                        IsTemaEscuro = settings.ModoEscuro;
 
-                        // Aplicamos o tema manualmente uma vez no início
                         AplicarTema(IsTemaEscuro);
-
-                        // ENVIAR MENSAGEM: Notifica o sistema que o tema foi definido/alterado
                         WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(IsTemaEscuro));
 
-                        // Notificamos a UI sobre as mudanças
                         OnPropertyChanged(nameof(AmbienteSelecionado));
                         OnPropertyChanged(nameof(IsTemaEscuro));
                     }
                 }
                 catch
                 {
-                    /* Fallback para padrões em caso de erro no JSON */
+                    /* Fallback para padrões */
                 }
             }
         }
-        /// <summary>
-        /// Método disparado automaticamente pelo CommunityToolkit.Mvvm quando IsTemaEscuro muda.
-        /// </summary>
+
         partial void OnIsTemaEscuroChanged(bool value)
         {
             AplicarTema(value);
-            // ENVIAR MENSAGEM: Essencial para quando o usuário clica no toggle em tempo real
             WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(value));
+
+            if (!_isCarregando)
+            {
+                SalvarConfiguracoesNoArquivo();
+            }
+        }
+
+        partial void OnAmbienteSelecionadoChanged(string value)
+        {
+            if (_isCarregando) return;
+
+            SalvarConfiguracoesNoArquivo();
+            ReiniciarAplicativo();
         }
 
         private void AplicarTema(bool escuro)
@@ -72,12 +89,10 @@ namespace SmartCash.ViewModels
             if (Application.Current is { } app)
             {
                 app.RequestedThemeVariant = escuro ? ThemeVariant.Dark : ThemeVariant.Light;
-               
             }
         }
 
-        [RelayCommand]
-        private void SalvarConfiguracoes()
+        private void SalvarConfiguracoesNoArquivo()
         {
             try
             {
@@ -87,48 +102,165 @@ namespace SmartCash.ViewModels
                     ModoEscuro = IsTemaEscuro
                 };
 
-                WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(IsTemaEscuro));
-
-                // NOTA: Se você for rodar Native AOT, lembre-se de usar o JsonSerializerContext aqui depois
-                string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(_configPath, json);
-
-                // Verifica se está rodando no Desktop (Windows, Linux, macOS)
-                if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
-                {
-                    var executablePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName;
-                    if (!string.IsNullOrEmpty(executablePath))
-                    {
-                        System.Diagnostics.Process.Start(executablePath);
-                    }
-
-                    if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
-                    {
-                        desktop.Shutdown();
-                    }
-                }
-                // Se for Android (ou iOS)
-                else if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS())
-                {
-                    if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IControlledApplicationLifetime mobileLifetime)
-                    {
-                        try
-                        {
-                            mobileLifetime.Shutdown();
-                        }
-                        catch
-                        {
-                            // Ignora se o Avalonia falhar ao tentar fechar graciosamente
-                        }
-                    }
-
-                    // Força bruta: Mata o processo do .NET no Android imediatamente.
-                    Environment.Exit(0);
-                }
+                Directory.CreateDirectory(Path.GetDirectoryName(_configPath)!);
+                File.WriteAllText(_configPath, JsonSerializer.Serialize(settings));
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Erro ao salvar config: {ex.Message}");
+            }
+        }
+
+        private void ReiniciarAplicativo()
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                var processPath = Environment.ProcessPath;
+                if (!string.IsNullOrEmpty(processPath))
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(processPath) { UseShellExecute = true });
+                }
+            }
+
+            if (Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IControlledApplicationLifetime lifetime)
+            {
+                lifetime.Shutdown();
+            }
+
+            Environment.Exit(0);
+        }
+
+        [RelayCommand]
+        private async Task RestaurarBancoDados()
+        {
+            if (_permissaoService != null)
+            {
+                bool temPermissao = await _permissaoService.SolicitarPermissaoArmazenamentoAsync();
+                if (!temPermissao) return;
+            }
+
+            try
+            {
+                string diretorioBackup = OperatingSystem.IsWindows()
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SmartCash_Backups")
+                    : OperatingSystem.IsAndroid()
+                        ? "/storage/emulated/0/Download/SmartCash_Backups"
+                        : AppContext.BaseDirectory;
+
+                string caminhoZip = Path.Combine(diretorioBackup, "SmartCashDbBackups.zip");
+
+                if (!File.Exists(caminhoZip))
+                {
+                    System.Diagnostics.Debug.WriteLine("Arquivo não encontrado para restaurar.");
+                    return;
+                }
+
+                string pastaSandbox = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                ZipFile.ExtractToDirectory(caminhoZip, pastaSandbox, overwriteFiles: true);
+
+                ReiniciarAplicativo();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao restaurar: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task BackupBancoDados()
+        {
+            if (_permissaoService != null)
+            {
+                bool temPermissao = await _permissaoService.SolicitarPermissaoArmazenamentoAsync();
+                if (!temPermissao) return;
+            }
+
+            try
+            {
+                string diretorioBackup = OperatingSystem.IsWindows()
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SmartCash_Backups")
+                    : OperatingSystem.IsAndroid()
+                        ? "/storage/emulated/0/Download/SmartCash_Backups"
+                        : AppContext.BaseDirectory;
+
+                if (!Directory.Exists(diretorioBackup)) Directory.CreateDirectory(diretorioBackup);
+
+                string caminhoZipDestino = Path.Combine(diretorioBackup, "SmartCashDbBackups.zip");
+
+                string pastaSandbox = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string idUnico = Guid.NewGuid().ToString();
+                string pastaTemp = Path.Combine(Path.GetTempPath(), "SmartCashBackupTemp_" + idUnico);
+                string arquivoZipTemp = Path.Combine(Path.GetTempPath(), "TempZip_" + idUnico + ".zip");
+
+                Directory.CreateDirectory(pastaTemp);
+
+                var arquivosNaSandbox = Directory.GetFiles(pastaSandbox);
+                foreach (var arquivo in arquivosNaSandbox)
+                {
+                    if (arquivo.EndsWith(".db") || arquivo.EndsWith(".db-wal") || arquivo.EndsWith(".db-shm"))
+                    {
+                        File.Copy(arquivo, Path.Combine(pastaTemp, Path.GetFileName(arquivo)), true);
+                    }
+                }
+
+                // Cria o zip no diretório temporário para evitar conflitos de System.IO
+                ZipFile.CreateFromDirectory(pastaTemp, arquivoZipTemp);
+
+                // Move para a pasta pública forçando a sobrescrita nativa
+                File.Copy(arquivoZipTemp, caminhoZipDestino, true);
+
+                // Limpeza
+                Directory.Delete(pastaTemp, true);
+                File.Delete(arquivoZipTemp);
+
+                System.Diagnostics.Debug.WriteLine("Backup concluído com sucesso em: " + caminhoZipDestino);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao fazer backup: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task ExportarBancoDados()
+        {
+            if (_permissaoService != null)
+            {
+                bool temPermissao = await _permissaoService.SolicitarPermissaoArmazenamentoAsync();
+                if (!temPermissao) return;
+            }
+
+            try
+            {
+                string diretorioBackup = OperatingSystem.IsWindows()
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SmartCash_Backups")
+                    : OperatingSystem.IsAndroid()
+                        ? "/storage/emulated/0/Download/SmartCash_Backups"
+                        : AppContext.BaseDirectory;
+
+                string caminhoZip = Path.Combine(diretorioBackup, "SmartCashDbBackups.zip");
+
+                if (!File.Exists(caminhoZip))
+                {
+                    System.Diagnostics.Debug.WriteLine("Arquivo de backup não encontrado.");
+                    return;
+                }
+
+                if (_compartilhamentoService != null)
+                {
+                    if (OperatingSystem.IsAndroid())
+                    {
+                        _compartilhamentoService.CompartilharArquivo(caminhoZip, "Backup SmartCash");
+                    }
+                    else if (OperatingSystem.IsWindows())
+                    {
+                        _compartilhamentoService.AbrirPastaDoArquivo(caminhoZip);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao exportar: {ex.Message}");
             }
         }
     }

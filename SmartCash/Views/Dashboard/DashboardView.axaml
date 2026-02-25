@@ -19,34 +19,49 @@
                 x:CompileBindings="False"
                 Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
 
-			<Border Classes="HeaderContent">
-				<Grid ColumnDefinitions="*, Auto">
-					<StackPanel Grid.Column="0" VerticalAlignment="Center">
-						<TextBlock Text="SmartCash" Classes="HeaderBrandTitle"/>
+			<Border Classes="HeaderContent" Padding="20,20,20,30">
+				<Grid RowDefinitions="Auto, Auto">
 
-						<StackPanel Classes="HeaderSubtitleArea">
-							<TextBlock Text="Mês Atual:" Classes="HeaderSubtitleLabel"/>
-							<TextBlock Text="{Binding TotalMesAtual}" Classes="HeaderSubtitleValue"/>
+					<Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,30">
+
+						<StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+						
+								<i:Icon Value="fa-solid fa-wallet" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24" />
+						
+
+							<TextBlock Text="SMARTCASH"
+                                       Classes="HeaderBrandTitle"
+                                       FontSize="26"
+                                       FontWeight="Black"
+                                       LetterSpacing="1.5"
+                                       VerticalAlignment="Center"/>
 						</StackPanel>
-					</StackPanel>
 
-					<Button Grid.Column="1" Classes="IconButton" VerticalAlignment="Center">
-						<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
+						<Button Grid.Column="1" Classes="IconButton" VerticalAlignment="Center">
+							<i:Icon Value="fa-solid fa-ellipsis-vertical" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
 
-						<Button.Flyout>
-							<MenuFlyout Placement="BottomEdgeAlignedRight">
-								<MenuItem Header="Configurações" Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).NavegarConfiguracoesCommand}">
-									<MenuItem.Icon>
-										<i:Icon Value="fa-solid fa-gear" Classes="MenuIcon"/>
-									</MenuItem.Icon>
-								</MenuItem>
-							</MenuFlyout>
-						</Button.Flyout>
-					</Button>
+							<Button.Flyout>
+								<MenuFlyout Placement="BottomEdgeAlignedRight">
+									<MenuItem Header="Configurações" Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).NavegarConfiguracoesCommand}">
+										<MenuItem.Icon>
+											<i:Icon Value="fa-solid fa-gear" Classes="MenuIcon"/>
+										</MenuItem.Icon>
+									</MenuItem>
+								</MenuFlyout>
+							</Button.Flyout>
+						</Button>
+					</Grid>
+
+					<Border Grid.Row="1" BorderThickness="4,0,0,0" BorderBrush="{DynamicResource WaHeaderIcon}" Padding="15,2,0,2">
+						<StackPanel Orientation="Vertical" Classes="HeaderSubtitleArea" Spacing="2">
+							<TextBlock Text="GASTOS NO MÊS ATUAL" Classes="HeaderSubtitleLabel" FontSize="12" FontWeight="Bold" Opacity="0.7"/>
+							<TextBlock Text="{Binding TotalMesAtual}" Classes="HeaderSubtitleValue" FontSize="36" FontWeight="Bold"/>
+						</StackPanel>
+					</Border>
+
 				</Grid>
 			</Border>
 		</Border>
-
 		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsScrollChainingEnabled="True">
 			<StackPanel Classes="MainContentArea">
 

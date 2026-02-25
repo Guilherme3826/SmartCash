@@ -80,6 +80,7 @@
 	<Style Selector="TextBlock.HeaderSubtitleValue">
 		<Setter Property="FontSize" Value="18"/>
 		<Setter Property="FontWeight" Value="SemiBold"/>
+		<Setter Property="HorizontalAlignment" Value="Left"/>
 		<Setter Property="Foreground" Value="{DynamicResource WaHeaderIcon}"/>
 	</Style>
 

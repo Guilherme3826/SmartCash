@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using SmartCash.Android.Services;
 using SmartCash.Mensageiros;
 
+
+
 namespace SmartCash.Android;
 
 [Activity(

@@ -1,36 +1,59 @@
 ﻿using Android.Content;
 using AndroidX.Core.Content;
-using Java.IO;
+using Avalonia.Threading;
 using SmartCash.Interfaces;
-using Application = Android.App.Application;
+using Java.IO;
+using System;
 
 namespace SmartCash.Android.Services
 {
     public class AndroidCompartilhamentoService : ICompartilhamentoService
     {
-        public void CompartilharArquivo(string caminhoArquivo, string titulo)
-        {
-            var context = Application.Context;
-            var file = new File(caminhoArquivo);
-
-            // Requer a configuração do FileProvider no AndroidManifest e res/xml/file_paths.xml
-            var uri = FileProvider.GetUriForFile(context, context.PackageName + ".fileprovider", file);
-
-            var intent = new Intent(Intent.ActionSend);
-            intent.SetType("application/zip");
-            intent.PutExtra(Intent.ExtraStream, uri);
-            intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-            intent.AddFlags(ActivityFlags.NewTask);
-
-            var chooserIntent = Intent.CreateChooser(intent, titulo);
-            chooserIntent.AddFlags(ActivityFlags.NewTask);
-            context.StartActivity(chooserIntent);
-        }
-
         public void AbrirPastaDoArquivo(string caminhoArquivo)
         {
-            // Sem comportamento de "explorador de arquivos" no Android, acionamos o compartilhar direto
-            CompartilharArquivo(caminhoArquivo, "Abrir Backup");
+            throw new NotImplementedException();
+        }
+
+        public void CompartilharArquivo(string caminho, string titulo)
+        {
+            try
+            {
+                // Garante a execução na thread da UI
+                Dispatcher.UIThread.Post(() =>
+                {
+                    // Pega a instância garantida da MainActivity
+                    var activity = MainActivity.Instance;
+
+                    if (activity == null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("[AndroidCompartilhamento] ERRO: MainActivity.Instance está null.");
+                        return;
+                    }
+
+                    var file = new File(caminho);
+
+                    var uri = FileProvider.GetUriForFile(
+                        activity,
+                        activity.PackageName + ".fileprovider",
+                        file);
+
+                    var intent = new Intent(Intent.ActionSend);
+                    intent.SetType("application/zip");
+                    intent.PutExtra(Intent.ExtraStream, uri);
+
+                    // Permissões obrigatórias para Android 14
+                    intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+
+                    var chooser = Intent.CreateChooser(intent, titulo);
+                    chooser.AddFlags(ActivityFlags.NewTask);
+
+                    activity.StartActivity(chooser);
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[AndroidCompartilhamento] Erro crítico no Compartilhamento Android: {ex.Message}");
+            }
         }
     }
 }

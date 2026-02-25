@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SmartCash.EfCore.Models
+﻿namespace SmartCash.EfCore.Models
 {
     public class AppSettingsModel
     {
-        public string Ambiente { get; set; } = "Produção";
-        public bool ModoEscuro { get; set; } = false;
+        public string? Ambiente { get; set; }
+        public bool ModoEscuro { get; set; }
+
+        // Token do sistema (Oculto)
+        public string? BookmarkPastaBackup { get; set; }
+
+        // Nome visual para a interface do usuário
+        public string? NomePastaBackup { get; set; }
     }
 }

@@ -24,13 +24,14 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+		<EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<AndroidResource Include="Icon.png">
-			<Link>Resources\drawable\Icon.png</Link>
-		</AndroidResource>
+	  <None Remove="Icon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<AndroidResource Include="Resources\xml\file_paths.xml" />
 	</ItemGroup>
 

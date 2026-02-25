@@ -9,12 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using SmartCash.Android.Services;
 using SmartCash.Mensageiros;
 
-
-
 namespace SmartCash.Android;
 
 [Activity(
-    Label = "SmartCash.Android",
+    Label = "SmartCash",
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
@@ -24,29 +22,30 @@ public class MainActivity : AvaloniaMainActivity<App>
     private const string CorBarraEscuro = "#1F2C34";
     private const string CorBarraClaro = "#008069";
 
+    // Propriedade estática infalível para acessar a Activity no Avalonia 11
+    public static MainActivity? Instance { get; private set; }
+
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
-        // Injeta os serviços específicos do Android antes do App rodar
         App.RegisterPlatformServices = services =>
         {
             services.AddSingleton<Interfaces.ICompartilhamentoService, AndroidCompartilhamentoService>();
-            services.AddSingleton<Interfaces.IPermissaoService, AndroidPermissaoService>();
+            // Caso tenha removido o IPermissaoService antes, ignore-o aqui ou mantenha se ainda usar
+            // services.AddSingleton<Interfaces.IPermissaoService, AndroidPermissaoService>();
         };
 
         return base.CustomizeAppBuilder(builder)
             .WithInterFont()
             .With(new AndroidPlatformOptions
             {
-                // No Avalonia 11, usamos RenderingMode para definir a prioridade de renderização
-                // Isso substitui o antigo AccelerationMode.
                 RenderingMode = new[] { AndroidRenderingMode.Egl }
             });
     }
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
-        // Define a Activity atual para usarmos no serviço de permissão nativo
-        Platform.CurrentActivity = this;
+        // Salva a instância atual no momento exato em que o Android a cria
+        Instance = this;
 
         WeakReferenceMessenger.Default.Register<TemaAlteradoMessage>(this, (r, m) =>
         {
@@ -67,7 +66,6 @@ public class MainActivity : AvaloniaMainActivity<App>
         }
     }
 
-    // O PULO DO GATO: Dispara no exato momento em que o app termina de carregar e está 100% visível
     public override void OnWindowFocusChanged(bool hasFocus)
     {
         base.OnWindowFocusChanged(hasFocus);

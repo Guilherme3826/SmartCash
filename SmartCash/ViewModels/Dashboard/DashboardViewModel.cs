@@ -45,16 +45,7 @@ namespace SmartCash.ViewModels.Dashboard
         private IEnumerable<ISeries> _seriesGraficoPizza = Enumerable.Empty<ISeries>();
 
         [ObservableProperty]
-        private double _valorMaximoGauge = 100;
-
-        [ObservableProperty]
-        private double _vanesa;
-
-        [ObservableProperty]
-        private double _charles;
-
-        [ObservableProperty]
-        private double _ana;
+        private double _valorMaximoGauge = 100;      
 
         [ObservableProperty]
         bool isTemaEscuro = false;
@@ -85,6 +76,12 @@ namespace SmartCash.ViewModels.Dashboard
             _itemRepository = itemRepository;
 
             LabelFormatter = point => $"{point.Context.Series.Name}";
+
+            WeakReferenceMessenger.Default.Register<NovaTransacaoAdicionada>(this, (r, m) =>
+            {                
+                _ = CarregarDashboardAsync();
+            });
+
 
             _ = CarregarDashboardAsync();
         }

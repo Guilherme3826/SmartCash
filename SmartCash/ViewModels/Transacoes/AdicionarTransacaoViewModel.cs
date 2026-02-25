@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
+using SmartCash.Mensageiros;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -146,6 +148,8 @@ namespace SmartCash.ViewModels.Transacoes
             await _transacaoRepository.AddAsync(novaTransacao);
             await _parentViewModel.CarregarDadosCommand.ExecuteAsync(null);
             Voltar();
+
+            WeakReferenceMessenger.Default.Send(new NovaTransacaoAdicionada{});
         }
 
         [RelayCommand]

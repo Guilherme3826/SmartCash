@@ -45,29 +45,16 @@
 
 			<UniformGrid Rows="1">
 
-				<Button Command="{Binding NavegarCategoriasCommand}"
+				<Button Command="{Binding NavegarDashboardCommand}"
                         Classes="BottomNavBtn"
                         Background="Transparent"
                         BorderThickness="0"
                         Padding="0">
 					<StackPanel Spacing="5" HorizontalAlignment="Center" Margin="0,5">
-						<Border Classes="NavPill" Classes.active="{Binding IsCategoriasActive}">
-							<i:Icon Value="fa-solid fa-tags" Classes="BottomNavIcon" Classes.active="{Binding IsCategoriasActive}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						<Border Classes="NavPill" Classes.active="{Binding IsDashboardActive}">
+							<i:Icon Value="fa-solid fa-chart-pie" Classes="BottomNavIcon" Classes.active="{Binding IsDashboardActive}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Border>
-						<TextBlock Text="Categorias" Classes="BottomNavText" Classes.active="{Binding IsCategoriasActive}" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
-
-				<Button Command="{Binding NavegarConsumiveisCommand}"
-                        Classes="BottomNavBtn"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Padding="0">
-					<StackPanel Spacing="5" HorizontalAlignment="Center" Margin="0,5">
-						<Border Classes="NavPill" Classes.active="{Binding IsConsumiveisActive}">
-							<i:Icon Value="fa-solid fa-box" Classes="BottomNavIcon" Classes.active="{Binding IsConsumiveisActive}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-						<TextBlock Text="Consumíveis" Classes="BottomNavText" Classes.active="{Binding IsConsumiveisActive}" HorizontalAlignment="Center"/>
+						<TextBlock Text="Dashboard" Classes="BottomNavText" Classes.active="{Binding IsDashboardActive}" HorizontalAlignment="Center"/>
 					</StackPanel>
 				</Button>
 
@@ -84,16 +71,29 @@
 					</StackPanel>
 				</Button>
 
-				<Button Command="{Binding NavegarDashboardCommand}"
+				<Button Command="{Binding NavegarConsumiveisCommand}"
                         Classes="BottomNavBtn"
                         Background="Transparent"
                         BorderThickness="0"
                         Padding="0">
 					<StackPanel Spacing="5" HorizontalAlignment="Center" Margin="0,5">
-						<Border Classes="NavPill" Classes.active="{Binding IsDashboardActive}">
-							<i:Icon Value="fa-solid fa-chart-pie" Classes="BottomNavIcon" Classes.active="{Binding IsDashboardActive}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						<Border Classes="NavPill" Classes.active="{Binding IsConsumiveisActive}">
+							<i:Icon Value="fa-solid fa-box" Classes="BottomNavIcon" Classes.active="{Binding IsConsumiveisActive}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Border>
-						<TextBlock Text="Dashboard" Classes="BottomNavText" Classes.active="{Binding IsDashboardActive}" HorizontalAlignment="Center"/>
+						<TextBlock Text="Consumíveis" Classes="BottomNavText" Classes.active="{Binding IsConsumiveisActive}" HorizontalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+
+				<Button Command="{Binding NavegarCategoriasCommand}"
+                        Classes="BottomNavBtn"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Padding="0">
+					<StackPanel Spacing="5" HorizontalAlignment="Center" Margin="0,5">
+						<Border Classes="NavPill" Classes.active="{Binding IsCategoriasActive}">
+							<i:Icon Value="fa-solid fa-tags" Classes="BottomNavIcon" Classes.active="{Binding IsCategoriasActive}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<TextBlock Text="Categorias" Classes="BottomNavText" Classes.active="{Binding IsCategoriasActive}" HorizontalAlignment="Center"/>
 					</StackPanel>
 				</Button>
 

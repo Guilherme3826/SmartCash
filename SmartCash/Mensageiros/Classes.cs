@@ -19,4 +19,6 @@ namespace SmartCash.Mensageiros
         {
         }
     }
+    public class NovaTransacaoAdicionada { }
+    
 }

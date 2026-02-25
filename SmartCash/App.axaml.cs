@@ -46,20 +46,20 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var services = new ServiceCollection();
         IconProvider.Current.Register<FontAwesomeIconProvider>();
 
-        // 1. Ler o arquivo de configuração de forma centralizada no início do ciclo de vida
+        // 1. Ler o arquivo de configuração
         CarregarConfiguracoes();
 
+        // 2. Criar UMA ÚNICA coleção de serviços
+        var services = new ServiceCollection();
+        ConfigureServices(services);
 
-
-        var serviceCollection = new ServiceCollection();
-        ConfigureServices(serviceCollection);
-
+        // 3. Registar os serviços da plataforma (Android/Desktop)
         RegisterPlatformServices?.Invoke(services);
 
-        ServiceProvider = serviceCollection.BuildServiceProvider();
+        // 4. CONSTRUIR o ServiceProvider SÓ AGORA (depois de todos os serviços registados)
+        ServiceProvider = services.BuildServiceProvider();
 
         // Executa migrações e Seed em segundo plano para não travar a UI no Android
         Task.Run(async () =>

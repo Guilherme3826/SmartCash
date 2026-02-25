@@ -2,7 +2,7 @@
 {
     public interface ICompartilhamentoService
     {
-        void CompartilharArquivo(string caminhoArquivo, string titulo);
+        void CompartilharArquivo(string caminho, string titulo);
         void AbrirPastaDoArquivo(string caminhoArquivo);
     }
 }

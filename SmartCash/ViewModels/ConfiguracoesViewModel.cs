@@ -28,17 +28,19 @@ namespace SmartCash.ViewModels
         [ObservableProperty] private ObservableCollection<string> _ambientesBd = new() { "Produção", "Homologação" };
         [ObservableProperty] private string _ambienteSelecionado = "Produção";
 
+        [ObservableProperty] private string? _bookmarkPastaBackup;
+        [ObservableProperty] private string? _nomePastaBackup;
+
         private readonly ICompartilhamentoService? _compartilhamentoService;
 
         public ConfiguracoesViewModel()
         {
             _compartilhamentoService = App.ServiceProvider.GetService<ICompartilhamentoService>();
-            // Não precisamos mais do serviço de permissão nativo!
+
             CarregarConfiguracoes();
             _isCarregando = false;
         }
 
-        // --- Lógica de Temas e Configurações (Mantida Intacta) ---
         private void CarregarConfiguracoes()
         {
             if (File.Exists(_configPath))
@@ -50,8 +52,10 @@ namespace SmartCash.ViewModels
 
                     if (settings != null)
                     {
-                        AmbienteSelecionado = settings.Ambiente;
+                        AmbienteSelecionado = settings.Ambiente ?? "Produção";
                         IsTemaEscuro = settings.ModoEscuro;
+                        BookmarkPastaBackup = settings.BookmarkPastaBackup;
+                        NomePastaBackup = settings.NomePastaBackup;
 
                         AplicarTema(IsTemaEscuro);
                         WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(IsTemaEscuro));
@@ -60,7 +64,10 @@ namespace SmartCash.ViewModels
                         OnPropertyChanged(nameof(IsTemaEscuro));
                     }
                 }
-                catch { /* Fallback para padrões */ }
+                catch
+                {
+                    /* Fallback para padrões */
+                }
             }
         }
 
@@ -68,12 +75,17 @@ namespace SmartCash.ViewModels
         {
             AplicarTema(value);
             WeakReferenceMessenger.Default.Send(new TemaAlteradoMessage(value));
-            if (!_isCarregando) SalvarConfiguracoesNoArquivo();
+
+            if (!_isCarregando)
+            {
+                SalvarConfiguracoesNoArquivo();
+            }
         }
 
         partial void OnAmbienteSelecionadoChanged(string value)
         {
             if (_isCarregando) return;
+
             SalvarConfiguracoesNoArquivo();
             ReiniciarAplicativo();
         }
@@ -81,18 +93,30 @@ namespace SmartCash.ViewModels
         private void AplicarTema(bool escuro)
         {
             if (Application.Current is { } app)
+            {
                 app.RequestedThemeVariant = escuro ? ThemeVariant.Dark : ThemeVariant.Light;
+            }
         }
 
         private void SalvarConfiguracoesNoArquivo()
         {
             try
             {
-                var settings = new AppSettingsModel { Ambiente = AmbienteSelecionado, ModoEscuro = IsTemaEscuro };
+                var settings = new AppSettingsModel
+                {
+                    Ambiente = AmbienteSelecionado,
+                    ModoEscuro = IsTemaEscuro,
+                    BookmarkPastaBackup = BookmarkPastaBackup,
+                    NomePastaBackup = NomePastaBackup
+                };
+
                 Directory.CreateDirectory(Path.GetDirectoryName(_configPath)!);
                 File.WriteAllText(_configPath, JsonSerializer.Serialize(settings));
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Erro ao salvar config: {ex.Message}"); }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao salvar config: {ex.Message}");
+            }
         }
 
         private void ReiniciarAplicativo()
@@ -101,18 +125,19 @@ namespace SmartCash.ViewModels
             {
                 var processPath = Environment.ProcessPath;
                 if (!string.IsNullOrEmpty(processPath))
+                {
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(processPath) { UseShellExecute = true });
+                }
             }
 
             if (Application.Current?.ApplicationLifetime is IControlledApplicationLifetime lifetime)
+            {
                 lifetime.Shutdown();
+            }
 
             Environment.Exit(0);
         }
 
-        // --- NOVA LÓGICA DE BACKUP COM STORAGE PROVIDER (ANDROID 14+ COMPATÍVEL) ---
-
-        // Método auxiliar para pegar o provedor de arquivos nativo do Avalonia
         private IStorageProvider? GetStorageProvider()
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -132,7 +157,6 @@ namespace SmartCash.ViewModels
                 var provider = GetStorageProvider();
                 if (provider == null) return;
 
-                // 1. Abre a tela nativa do sistema (Windows ou Android) pedindo onde salvar
                 var file = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
                 {
                     Title = "Salvar Backup do SmartCash",
@@ -141,9 +165,8 @@ namespace SmartCash.ViewModels
                     FileTypeChoices = new[] { new FilePickerFileType("Arquivo ZIP") { Patterns = new[] { "*.zip" } } }
                 });
 
-                if (file == null) return; // Usuário cancelou
+                if (file == null) return;
 
-                // 2. Prepara o ZIP em uma pasta temporária isolada do app
                 string pastaSandbox = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 string pastaTemp = Path.Combine(Path.GetTempPath(), "SmartCashBackupTemp_" + Guid.NewGuid().ToString());
                 string arquivoZipTemp = Path.Combine(Path.GetTempPath(), "TempZip_" + Guid.NewGuid().ToString() + ".zip");
@@ -161,7 +184,6 @@ namespace SmartCash.ViewModels
 
                 ZipFile.CreateFromDirectory(pastaTemp, arquivoZipTemp);
 
-                // 3. Copia o ZIP temporário para o local seguro que o usuário escolheu via StorageProvider
                 await using (var streamDestino = await file.OpenWriteAsync())
                 {
                     await using (var streamOrigem = File.OpenRead(arquivoZipTemp))
@@ -170,11 +192,8 @@ namespace SmartCash.ViewModels
                     }
                 }
 
-                // 4. Limpeza
                 Directory.Delete(pastaTemp, true);
                 File.Delete(arquivoZipTemp);
-
-                System.Diagnostics.Debug.WriteLine("Backup salvo com sucesso pelo usuário.");
             }
             catch (Exception ex)
             {
@@ -190,7 +209,6 @@ namespace SmartCash.ViewModels
                 var provider = GetStorageProvider();
                 if (provider == null) return;
 
-                // 1. Abre a tela nativa do sistema para o usuário selecionar o ZIP de backup
                 var result = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
                     Title = "Selecione o Backup do SmartCash",
@@ -198,11 +216,9 @@ namespace SmartCash.ViewModels
                     FileTypeFilter = new[] { new FilePickerFileType("Arquivo ZIP") { Patterns = new[] { "*.zip" } } }
                 });
 
-                if (result.Count == 0) return; // Usuário cancelou
+                if (result.Count == 0) return;
 
                 var file = result[0];
-
-                // 2. Lê o arquivo seguro e copia para a pasta temporária do app
                 string arquivoZipTemp = Path.Combine(Path.GetTempPath(), "TempRestore_" + Guid.NewGuid().ToString() + ".zip");
 
                 await using (var streamOrigem = await file.OpenReadAsync())
@@ -213,7 +229,6 @@ namespace SmartCash.ViewModels
                     }
                 }
 
-                // 3. Extrai para a Sandbox
                 string pastaSandbox = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 ZipFile.ExtractToDirectory(arquivoZipTemp, pastaSandbox, overwriteFiles: true);
 
@@ -228,13 +243,137 @@ namespace SmartCash.ViewModels
         }
 
         [RelayCommand]
-        private void ExportarBancoDados()
+        private async Task ExportarBancoDados()
         {
-            // Como agora o usuário escolhe onde salvar no Backup, 
-            // o botão de Exportar talvez não seja mais necessário com a mesma lógica de antes,
-            // pois o arquivo já estará numa pasta pública escolhida por ele.
-            // Se desejar mantê-lo, a lógica precisará ser repensada.
-            System.Diagnostics.Debug.WriteLine("Utilize o novo sistema de Backup para salvar onde desejar.");
+            System.Diagnostics.Debug.WriteLine("[Exportar] Iniciando método ExportarBancoDados...");
+
+            try
+            {
+                if (_compartilhamentoService == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("[Exportar] ERRO: _compartilhamentoService está nulo. A injeção de dependência falhou.");
+                    return;
+                }
+                System.Diagnostics.Debug.WriteLine("[Exportar] Serviço de compartilhamento validado com sucesso.");
+
+                if (string.IsNullOrEmpty(BookmarkPastaBackup))
+                {
+                    System.Diagnostics.Debug.WriteLine("[Exportar] BLOQUEADO: BookmarkPastaBackup está nulo ou vazio. O usuário não definiu a pasta de backup.");
+                    // Pode adicionar uma notificação ao utilizador aqui
+                    return;
+                }
+                System.Diagnostics.Debug.WriteLine("[Exportar] Bookmark verificado. Iniciando geração do backup silencioso...");
+
+                // Efetua o backup e solicita a preservação do ficheiro temporário para o partilhar
+                string? caminhoArquivoParaCompartilhar = await ExecutarAutoBackupSilencioso(manterArquivoTemp: true);
+
+                System.Diagnostics.Debug.WriteLine($"[Exportar] Retorno do ExecutarAutoBackupSilencioso: '{caminhoArquivoParaCompartilhar}'");
+
+                if (string.IsNullOrEmpty(caminhoArquivoParaCompartilhar))
+                {
+                    System.Diagnostics.Debug.WriteLine("[Exportar] FALHA: O caminho do arquivo retornado é nulo ou vazio. O processo de backup falhou internamente.");
+                    return;
+                }
+
+                bool arquivoExiste = File.Exists(caminhoArquivoParaCompartilhar);
+                System.Diagnostics.Debug.WriteLine($"[Exportar] Verificação no disco: O arquivo realmente existe? {arquivoExiste}");
+
+                if (arquivoExiste)
+                {
+                    if (OperatingSystem.IsAndroid())
+                    {
+                        System.Diagnostics.Debug.WriteLine("[Exportar] SO Detectado: Android. Chamando a interface de compartilhamento nativa...");
+                        _compartilhamentoService.CompartilharArquivo(caminhoArquivoParaCompartilhar, "Backup SmartCash");
+                        System.Diagnostics.Debug.WriteLine("[Exportar] Comando de compartilhamento Android enviado com sucesso.");
+                    }
+                    else if (OperatingSystem.IsWindows())
+                    {
+                        System.Diagnostics.Debug.WriteLine("[Exportar] SO Detectado: Windows. Chamando abertura de pasta nativa...");
+                        _compartilhamentoService.AbrirPastaDoArquivo(caminhoArquivoParaCompartilhar);
+                        System.Diagnostics.Debug.WriteLine("[Exportar] Comando de abertura de pasta Windows enviado com sucesso.");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("[Exportar] SO Detectado: Não suportado pela lógica atual.");
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("[Exportar] FALHA: O método de backup retornou um caminho, mas o File.Exists diz que o arquivo não está lá.");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Exportar] EXCEÇÃO CRÍTICA: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[Exportar] StackTrace: {ex.StackTrace}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task DefinirPastaAutoBackup()
+        {
+            try
+            {
+                var provider = GetStorageProvider();
+                if (provider == null) return;
+
+                var pastas = await provider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                {
+                    Title = "Escolha a pasta para Backups Automáticos",
+                    AllowMultiple = false
+                });
+
+                if (pastas.Count == 0) return;
+
+                var pastaSelecionada = pastas[0];
+                var bookmark = await pastaSelecionada.SaveBookmarkAsync();
+
+                if (!string.IsNullOrEmpty(bookmark))
+                {
+                    BookmarkPastaBackup = bookmark;
+                    NomePastaBackup = pastaSelecionada.Name;
+
+                    SalvarConfiguracoesNoArquivo();
+                    System.Diagnostics.Debug.WriteLine("Pasta configurada com sucesso para auto-backup!");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao configurar pasta auto-backup: {ex.Message}");
+            }
+        }
+
+        public async Task<string?> ExecutarAutoBackupSilencioso(bool manterArquivoTemp = false)
+        {
+            try
+            {
+                string pastaSandbox = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string idUnico = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string pastaTemp = Path.Combine(Path.GetTempPath(), "SmartCashTemp_" + idUnico);
+                string arquivoZipTemp = Path.Combine(Path.GetTempPath(), $"SmartCash_AutoBackup_{idUnico}.zip");
+
+                Directory.CreateDirectory(pastaTemp);
+
+                var arquivosNaSandbox = Directory.GetFiles(pastaSandbox);
+                foreach (var arquivo in arquivosNaSandbox)
+                {
+                    if (arquivo.EndsWith(".db") || arquivo.EndsWith(".db-wal") || arquivo.EndsWith(".db-shm"))
+                    {
+                        File.Copy(arquivo, Path.Combine(pastaTemp, Path.GetFileName(arquivo)), true);
+                    }
+                }
+
+                ZipFile.CreateFromDirectory(pastaTemp, arquivoZipTemp);
+
+                Directory.Delete(pastaTemp, true);
+
+                return arquivoZipTemp;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro no auto-backup silencioso: {ex.Message}");
+                return null;
+            }
         }
     }
 }

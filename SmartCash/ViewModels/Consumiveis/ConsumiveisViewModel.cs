@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
+using SmartCash.Mensageiros;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -89,6 +91,7 @@ namespace SmartCash.ViewModels.Consumiveis
 
                 // Recarrega os dados para garantir que a memória e o banco de dados estejam sincronizados
                 await CarregarDadosAsync();
+                WeakReferenceMessenger.Default.Send(new NovoConsumivelAdicionado { });
             }
             catch (Exception ex)
             {

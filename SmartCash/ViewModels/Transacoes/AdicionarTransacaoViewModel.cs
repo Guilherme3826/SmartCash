@@ -39,6 +39,14 @@ namespace SmartCash.ViewModels.Transacoes
             _transacaoRepository = transacaoRepository;
             _parentViewModel = parent;
             _ = CarregarProdutosSugestaoAsync();
+
+            WeakReferenceMessenger.Default.Register<NovoConsumivelAdicionado>(this, (r, m) =>
+            {
+                // Usamos o Dispatcher ou Task.Run se necessário, mas como é um 
+                // comando de IO, chamamos o método assíncrono.
+                _ = CarregarProdutosSugestaoAsync();
+            });
+
         }
 
         // Monitora quando um produto é selecionado na AutoComplete para sugerir o preço atual

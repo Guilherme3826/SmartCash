@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
+using SmartCash.Mensageiros;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -78,6 +80,9 @@ namespace SmartCash.ViewModels.Consumiveis
 
             // Chama o método de recarregar da lista principal
             await _parent.CarregarDadosAsync();
+
+            WeakReferenceMessenger.Default.Send(new NovoConsumivelAdicionado { });
+
             Voltar();
         }
 

@@ -11,6 +11,7 @@
 		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 		<UseShortFileNames>True</UseShortFileNames>
 		<AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
+		<AndroidSigningKeyStore>gmDev.keystore</AndroidSigningKeyStore>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -25,6 +26,22 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+		<AndroidUseAapt2>True</AndroidUseAapt2>
+		<AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+		<AndroidPackageFormat>aab</AndroidPackageFormat>
+		<AndroidSigningKeyAlias>gmdev</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>BBh$6526</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>BBh$6526</AndroidSigningStorePass>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <AndroidUseAapt2>True</AndroidUseAapt2>
+	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+	  <AndroidPackageFormat>aab</AndroidPackageFormat>
+	  <AndroidKeyStore>True</AndroidKeyStore>
+	  <AndroidSigningKeyAlias>gmdev</AndroidSigningKeyAlias>
+	  <AndroidSigningKeyPass>BBh$6526</AndroidSigningKeyPass>
+	  <AndroidSigningStorePass>BBh$6526</AndroidSigningStorePass>
 	</PropertyGroup>
 
 	<ItemGroup>

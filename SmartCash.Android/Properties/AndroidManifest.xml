@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.gmdev.smartcash" android:installLocation="auto" android:versionCode="1" android:versionName="1.2">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.gmdev.smartcash" android:installLocation="auto" android:versionCode="3" android:versionName="1.5">
 	<!-- ⚠️ Removidas permissões obsoletas e perigosas -->
 	<application android:label="SmartCash" android:icon="@drawable/icon">
 		<provider android:name="androidx.core.content.FileProvider" android:authorities="com.gmdev.smartcash.fileprovider" android:exported="false" android:grantUriPermissions="true">

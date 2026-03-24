@@ -13,6 +13,28 @@ namespace SmartCash.Mensageiros
         {
         }
     }
+    public class NavegarParaCategoriaDetalhesGlobalMessage
+    {
+        public int IdCategoria { get; }
+        public string PeriodoFiltro { get; }
+
+        public NavegarParaCategoriaDetalhesGlobalMessage(int idCategoria, string periodoFiltro)
+        {
+            IdCategoria = idCategoria;
+            PeriodoFiltro = periodoFiltro;
+        }
+    }
+    public class CategoriaDetalhesMessage
+    {
+        public int IdCategoria { get; }
+        public string PeriodoFiltro { get; }
+
+        public CategoriaDetalhesMessage(int idCategoria, string periodoFiltro)
+        {
+            IdCategoria = idCategoria;
+            PeriodoFiltro = periodoFiltro;
+        }
+    }
     public class TemaAlteradoMessage : ValueChangedMessage<bool>
     {
         public TemaAlteradoMessage(bool isDark) : base(isDark)

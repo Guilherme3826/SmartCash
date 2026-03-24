@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SmartCash.EfCore.Models;
 using SmartCash.Interfaces;
 using SmartCash.Mensageiros;
+using SmartCash.ViewModels.Categorias;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -39,6 +40,8 @@ namespace SmartCash.ViewModels
 
             CarregarConfiguracoes();
             _isCarregando = false;
+
+
         }
 
         private void CarregarConfiguracoes()

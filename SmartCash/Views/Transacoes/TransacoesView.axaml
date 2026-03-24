@@ -81,11 +81,12 @@
 						<ListBox ItemsSource="{Binding Transacoes}"
                                  Background="Transparent"
                                  SelectionMode="Single"
+                                 SelectedItem="{Binding TransacaoSelecionada}"
                                  ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
 							<ListBox.ItemTemplate>
 								<DataTemplate x:DataType="models:TransacaoModel">
-									<Border Classes="ListItemBorder">
+									<Border Classes="ListItemBorder" Margin="0,0,0,5">
 
 										<Border.ContextFlyout>
 											<MenuFlyout>

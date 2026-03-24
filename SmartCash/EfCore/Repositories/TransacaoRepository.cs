@@ -27,7 +27,7 @@ namespace SmartCash.EfCore.Repositories
                 var query = db.Transacoes
                     .AsNoTracking()
                     .Include(t => t.Itens)
-                        .ThenInclude(i => i.Produto);
+                        .ThenInclude(i => i.Produto).ThenInclude(i => i.Categoria);
 
                 Debug.WriteLine($"Executando Query SQLite (Transações Completas): \n{query.ToQueryString()}");
                 return await query.ToListAsync();

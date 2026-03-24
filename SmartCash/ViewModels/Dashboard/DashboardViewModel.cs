@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,11 +42,15 @@ namespace SmartCash.ViewModels.Dashboard
         [ObservableProperty]
         private ObservableCollection<ResumoCategoriaModel> _categoriasMesSelecionado = new();
 
+        // Propriedade adicionada para capturar o clique do usuário na lista
+        [ObservableProperty]
+        private ResumoCategoriaModel? _categoriaSelecionada;
+
         [ObservableProperty]
         private IEnumerable<ISeries> _seriesGraficoPizza = Enumerable.Empty<ISeries>();
 
         [ObservableProperty]
-        private double _valorMaximoGauge = 100;      
+        private double _valorMaximoGauge = 100;
 
         [ObservableProperty]
         bool isTemaEscuro = false;
@@ -78,7 +83,7 @@ namespace SmartCash.ViewModels.Dashboard
             LabelFormatter = point => $"{point.Context.Series.Name}";
 
             WeakReferenceMessenger.Default.Register<NovaTransacaoAdicionada>(this, (r, m) =>
-            {                
+            {
                 _ = CarregarDashboardAsync();
             });
 
@@ -91,6 +96,24 @@ namespace SmartCash.ViewModels.Dashboard
             if (value != null)
             {
                 _ = CarregarItensDoMesSelecionadoAsync(value);
+            }
+        }
+
+        // Evento disparado automaticamente ao clicar em uma categoria na lista do Dashboard
+        partial void OnCategoriaSelecionadaChanged(ResumoCategoriaModel? value)
+        {
+            if (value != null)
+            {
+                // Formata o período do Dashboard para o formato de texto que a CategoriaDetalhesViewModel espera (ex: "março 2026")
+                string filtroAtual = MesSelecionado != null
+                    ? new DateTime(MesSelecionado.Ano, MesSelecionado.Mes, 1).ToString("MMMM yyyy", new CultureInfo("pt-BR"))
+                    : "Todos os Períodos";
+
+                // Envia a mensagem global com o ID e o Filtro formatado
+                WeakReferenceMessenger.Default.Send(new NavegarParaCategoriaDetalhesGlobalMessage(value.Categoria.IdCategoria, filtroAtual));
+
+                // Limpa a seleção para permitir que o usuário clique no mesmo item novamente depois
+                CategoriaSelecionada = null;
             }
         }
 
@@ -137,6 +160,7 @@ namespace SmartCash.ViewModels.Dashboard
             }
 
             CategoriasMesSelecionado.Clear();
+
             var resumo = itens
                 .GroupBy(i => i.Produto.IdCategoria)
                 .Select(g => new ResumoCategoriaModel
@@ -144,32 +168,37 @@ namespace SmartCash.ViewModels.Dashboard
                     Categoria = g.First().Produto.Categoria,
                     Total = g.Sum(i => i.ValorTotal)
                 })
-                .OrderBy(c => c.Categoria.Nome)
+                .OrderByDescending(c => c.Total)
+                .Take(8)
                 .ToList();
 
             double maxGasto = resumo.Any() ? (double)resumo.Max(x => x.Total) : 100;
             ValorMaximoGauge = maxGasto;
 
-            foreach (var cat in resumo)
-            {
-                CategoriasMesSelecionado.Add(cat);
-            }
-
-            var series = new List<ISeries>();
             var coresHex = new[]
             {
-                "#2196F3", // Azul
-                "#F44336", // Vermelho
-                "#8BC34A", // Verde
-                "#FF9800", // Laranja
-                "#9C27B0", // Roxo
-                "#00BCD4"  // Ciano
+                "#2196F3",
+                "#F44336",
+                "#8BC34A",
+                "#FF9800",
+                "#9C27B0",
+                "#00BCD4",
+                "#E91E63",
+                "#FFC107"
             };
 
             for (int i = 0; i < resumo.Count; i++)
             {
                 var cat = resumo[i];
                 cat.CorHex = coresHex[i % coresHex.Length];
+                CategoriasMesSelecionado.Add(cat);
+            }
+
+            var series = new List<ISeries>();
+
+            for (int i = resumo.Count - 1; i >= 0; i--)
+            {
+                var cat = resumo[i];
 
                 var gaugeSeries = new XamlGaugeSeries
                 {

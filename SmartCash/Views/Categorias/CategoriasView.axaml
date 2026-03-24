@@ -65,49 +65,83 @@
 				</Border>
 			</Border>
 
-			<Border Grid.Row="1" Classes="ListContainerCard" Margin="15">
-				<ListBox ItemsSource="{Binding Categorias}"
-                         Background="Transparent"
-                         ScrollViewer.VerticalScrollBarVisibility="Hidden">
+			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+				<StackPanel Classes="MainContentArea">
 
-					<ListBox.ItemTemplate>
-						<DataTemplate x:DataType="models:CategoriaModel">
-							<Border Classes="ListItemBorder">
+					<Border Classes="FieldCard">
+						<ComboBox HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding OpcoesFiltro}"
+                                  SelectedItem="{Binding FiltroSelecionado}"
+                                  PlaceholderText="Selecionar Período">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding}" Classes="ComboBoxItemText"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Border>
 
-								<Border.ContextFlyout>
-									<MenuFlyout>
-										<MenuItem Header="Excluir Categoria"
-                                                  Command="{Binding $parent[UserControl].((vm:CategoriasViewModel)DataContext).ExcluirCategoriaCommand}"
-                                                  CommandParameter="{Binding}">
-											<MenuItem.Icon>
-												<i:Icon Value="fa-solid fa-trash-can" Classes="IconDanger"/>
-											</MenuItem.Icon>
-										</MenuItem>
-									</MenuFlyout>
-								</Border.ContextFlyout>
+					<Border Classes="ListContainerCard">
+						<ListBox ItemsSource="{Binding Categorias}"
+                                 Background="Transparent"
+                                 ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
-								<Grid ColumnDefinitions="Auto, *, Auto">
-									<Border Grid.Column="0" Classes="IconAvatarCard">
-										<i:Icon Value="{Binding IconeApresentacao}" Classes="IconAvatarGraphic"/>
+							<ListBox.ItemTemplate>
+								<DataTemplate x:DataType="vm:CategoriaDisplayModel">
+									<Border Classes="ListItemBorder" Margin="0,0,0,5">
+
+										<Border.ContextFlyout>
+											<MenuFlyout>
+												<MenuItem Header="Ver Detalhes"
+                                                          Command="{Binding $parent[UserControl].((vm:CategoriasViewModel)DataContext).AbrirDetalhesCommand}"
+                                                          CommandParameter="{Binding}">
+													<MenuItem.Icon>
+														<i:Icon Value="fa-solid fa-list" Classes="MenuIcon"/>
+													</MenuItem.Icon>
+												</MenuItem>
+												
+												<MenuItem Header="Excluir Categoria"
+                                                          Command="{Binding $parent[UserControl].((vm:CategoriasViewModel)DataContext).ExcluirCategoriaCommand}"
+                                                          CommandParameter="{Binding}">
+													<MenuItem.Icon>
+														<i:Icon Value="fa-solid fa-trash-can" Classes="IconDanger"/>
+													</MenuItem.Icon>
+												</MenuItem>
+											</MenuFlyout>
+										</Border.ContextFlyout>
+
+										<Grid ColumnDefinitions="Auto, *, Auto">
+											<Border Grid.Column="0" Classes="IconAvatarCard">
+												<i:Icon Value="{Binding Categoria.IconeApresentacao}" Classes="IconAvatarGraphic"/>
+											</Border>
+
+											<StackPanel Grid.Column="1" Classes="ListItemTextContainer">
+												<TextBlock Text="{Binding Categoria.Nome}" Classes="ListItemTitle"/>
+												
+												<TextBlock Text="{Binding TotalGasto, StringFormat='{}Gasto no período: {0:C}'}" Classes="ListItemSubtitle"/>
+											</StackPanel>
+
+											<i:Icon Grid.Column="2" Value="fa-solid fa-chevron-right" Classes="ChevronRight"/>
+										</Grid>
 									</Border>
-
-									<StackPanel Grid.Column="1" Classes="ListItemTextContainer">
-										<TextBlock Text="{Binding Nome}" Classes="ListItemTitle"/>
-									</StackPanel>
-
-									<i:Icon Grid.Column="2" Value="fa-solid fa-chevron-right" Classes="ChevronRight"/>
-								</Grid>
-							</Border>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</Border>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</Border>
+					
+					<Rectangle Height="40" Fill="Transparent"/>
+				</StackPanel>
+			</ScrollViewer>
 		</Grid>
 
-		<ContentControl Content="{Binding ViewSubAtual}" IsVisible="{Binding !ExibindoLista}">
+<ContentControl Content="{Binding ViewSubAtual}" IsVisible="{Binding !ExibindoLista}">
 			<ContentControl.DataTemplates>
 				<DataTemplate DataType="vm:AdicionarCategoriaViewModel">
 					<cviews:AdicionarCategoriaView />
+				</DataTemplate>
+
+				<DataTemplate DataType="vm:CategoriaDetalhesViewModel">
+					<cviews:CategoriaDetalhesView />
 				</DataTemplate>
 			</ContentControl.DataTemplates>
 		</ContentControl>

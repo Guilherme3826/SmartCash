@@ -38,7 +38,7 @@ public class MainActivity : AvaloniaMainActivity<App>
             .WithInterFont()
             .With(new AndroidPlatformOptions
             {
-                RenderingMode = new[] { AndroidRenderingMode.Egl }
+                RenderingMode = new[] { AndroidRenderingMode.Vulkan }
             });
     }
 

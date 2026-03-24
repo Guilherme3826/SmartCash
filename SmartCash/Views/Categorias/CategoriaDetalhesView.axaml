@@ -3,12 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
-             xmlns:vm="clr-namespace:SmartCash.ViewModels.Transacoes"
-             xmlns:models="clr-namespace:SmartCash.EfCore.Models"
+             xmlns:vm="clr-namespace:SmartCash.ViewModels.Categorias"
+             x:DataType="vm:CategoriaDetalhesViewModel"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
-             x:DataType="vm:TransacaoDetalhesViewModel"
              Background="{DynamicResource WaBackground}"
-             x:Class="SmartCash.Views.Transacoes.TransacaoDetalhesView">
+             x:Class="SmartCash.Views.Categorias.CategoriaDetalhesView">
 
 	<Grid RowDefinitions="Auto, *">
 
@@ -29,17 +28,17 @@
 
 						<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
 							<Border Classes="IconAvatarCard">
-								<i:Icon Value="fa-solid fa-receipt" Classes="IconAvatarGraphic"/>
+								<i:Icon Value="{Binding Categoria.IconeApresentacao, FallbackValue='fa-solid fa-tags'}" Classes="IconAvatarGraphic"/>
 							</Border>
-							<TextBlock Text="Detalhes" Classes="HeaderTitle" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding Categoria.Nome}" Classes="HeaderTitle" VerticalAlignment="Center"/>
 						</StackPanel>
 
 						<Rectangle Grid.Column="2" Width="32" Fill="Transparent"/>
 					</Grid>
 
 					<StackPanel IsVisible="{Binding !EstaCarregando}" HorizontalAlignment="Center" Spacing="5">
-						<TextBlock Text="{Binding Transacao.ValorTotal, StringFormat='{}{0:C}'}" Classes="HeaderSummaryValue"/>
-						<TextBlock Text="{Binding Transacao.Data, StringFormat='{}{0:dd/MM/yyyy}'}" Classes="HeaderSummarySubtitle"/>
+						<TextBlock Text="{Binding TotalGastoNoPeriodo, StringFormat='{}{0:C}'}" Classes="HeaderSummaryValue"/>
+						<TextBlock Text="{Binding PeriodoFiltroAtual, StringFormat='{}Filtrado por: {0}'}" Classes="HeaderSummarySubtitle"/>
 					</StackPanel>
 				</StackPanel>
 			</Border>
@@ -53,23 +52,23 @@
 				<StackPanel Classes="ListArea">
 
 					<Border Classes="ListContainerCard">
-						<ListBox ItemsSource="{Binding ItensDoDia}"
+						<ListBox ItemsSource="{Binding Itens}"
                                  Background="Transparent"
                                  ScrollViewer.VerticalScrollBarVisibility="Hidden">
 							<ListBox.ItemTemplate>
-								<DataTemplate x:DataType="vm:ItemDisplayModel">
+								<DataTemplate x:DataType="vm:CategoriaItemDisplayModel">
 									<Border Classes="ListItemBorder">
 										<Grid ColumnDefinitions="Auto, *, Auto">
 
-											<Border Grid.Column="0" Classes="IconAvatarCard">
-                                                <i:Icon Value="{Binding Item.Produto.Categoria.IconeApresentacao}" Classes="IconAvatarGraphic"/>
+											<Border Grid.Column="0" Classes="IconAvatarCardWarning">
+												<i:Icon Value="fa-solid fa-box-open" Classes="IconAvatarGraphicWarning"/>
 											</Border>
 
 											<StackPanel Grid.Column="1" Classes="ListItemTextContainer">
 												<TextBlock Text="{Binding Item.Produto.Nome}" Classes="ListItemTitle"/>
 												
 												<StackPanel Orientation="Horizontal" Spacing="5">
-													<TextBlock Text="{Binding Horario, StringFormat='{}{0:HH:mm}'}" Classes="ListItemSubtitle"/>
+													<TextBlock Text="{Binding DataCompra, StringFormat='{}{0:dd/MM/yyyy}'}" Classes="ListItemSubtitle"/>
 													<TextBlock Text="•" Classes="ListItemSubtitle"/>
 													<TextBlock Text="{Binding Item.Quantidade, StringFormat='{}{0} unidades'}" Classes="ListItemSubtitle"/>
 												</StackPanel>

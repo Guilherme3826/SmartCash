@@ -188,12 +188,15 @@ public partial class App : Application
         // ViewModels
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<CategoriasViewModel>();
+
         services.AddSingleton<ConsumiveisViewModel>();
         services.AddSingleton<TransacoesViewModel>();
         services.AddSingleton<ConfiguracoesViewModel>();
         services.AddSingleton<DashboardViewModel>();
 
         services.AddTransient<AdicionarCategoriaViewModel>();
+        services.AddTransient<CategoriaDetalhesViewModel>();
+        services.AddTransient<TransacaoDetalhesViewModel>();
         services.AddTransient<AdicionarTransacaoViewModel>();
         services.AddTransient<TransacaoDetalhesViewModel>();
         services.AddTransient<AdicionarConsumivelViewModel>();
@@ -202,6 +205,7 @@ public partial class App : Application
         services.AddTransient<DashboardView>();
         services.AddTransient<CategoriasView>();
         services.AddTransient<AdicionarCategoriaView>();
+        services.AddTransient<CategoriaDetalhesView>();
         services.AddTransient<ConsumiveisView>();
         services.AddTransient<TransacoesView>();
         services.AddTransient<TransacaoDetalhesView>();
@@ -211,6 +215,6 @@ public partial class App : Application
 
 
 
-       
+
     }
 }

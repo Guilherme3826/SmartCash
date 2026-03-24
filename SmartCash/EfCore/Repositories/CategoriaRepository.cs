@@ -23,7 +23,12 @@ namespace SmartCash.EfCore.Repositories
 
             try
             {
-                var query = db.Categorias.AsNoTracking();
+                var query = db.Categorias
+                    .AsNoTracking()
+                    .Include(c => c.Produtos)
+                        .ThenInclude(p => p.Itens)
+                            .ThenInclude(i => i.Transacao); // Incluído para obter a Data
+
                 Debug.WriteLine($"Executando Query SQLite (Categorias): \n{query.ToQueryString()}");
                 return await query.ToListAsync();
             }
@@ -42,6 +47,9 @@ namespace SmartCash.EfCore.Repositories
             {
                 return await db.Categorias
                     .AsNoTracking()
+                    .Include(c => c.Produtos)
+                        .ThenInclude(p => p.Itens)
+                            .ThenInclude(i => i.Transacao) // Incluído para obter a Data
                     .FirstOrDefaultAsync(x => x.IdCategoria == id);
             }
             catch (Exception ex)

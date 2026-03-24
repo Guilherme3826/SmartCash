@@ -8,6 +8,7 @@ using SmartCash.Mensageiros;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization; // Adicionado para garantir o parse correto
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,7 +25,6 @@ namespace SmartCash.ViewModels.Transacoes
         [ObservableProperty] private string _buscaTexto = string.Empty;
         [ObservableProperty] private decimal _valorTotalTemp;
 
-        // --- NOVAS PROPRIEDADES ---
         [ObservableProperty] private string _quantidadeInput = "1";
         [ObservableProperty] private string _precoUnitarioInput = string.Empty;
 
@@ -42,14 +42,10 @@ namespace SmartCash.ViewModels.Transacoes
 
             WeakReferenceMessenger.Default.Register<NovoConsumivelAdicionado>(this, (r, m) =>
             {
-                // Usamos o Dispatcher ou Task.Run se necessário, mas como é um 
-                // comando de IO, chamamos o método assíncrono.
                 _ = CarregarProdutosSugestaoAsync();
             });
-
         }
 
-        // Monitora quando um produto é selecionado na AutoComplete para sugerir o preço atual
         partial void OnProdutoSelecionadoChanged(ConsumiveisModel? value)
         {
             if (value != null)
@@ -61,9 +57,10 @@ namespace SmartCash.ViewModels.Transacoes
         [RelayCommand]
         private void IncrementarQuantidade()
         {
-            if (int.TryParse(QuantidadeInput, out int atual))
+            // Alterado para decimal para suportar incremento mesmo se houver valor quebrado (ex: 1.5 + 1 = 2.5)
+            if (decimal.TryParse(QuantidadeInput, NumberStyles.Any, CultureInfo.CurrentCulture, out decimal atual))
             {
-                QuantidadeInput = (atual + 1).ToString();
+                QuantidadeInput = (atual + 1).ToString(CultureInfo.CurrentCulture);
             }
             else
             {
@@ -74,51 +71,40 @@ namespace SmartCash.ViewModels.Transacoes
         [RelayCommand]
         private void AdicionarItem()
         {
-            // 1. Identifica o produto (pela seleção ou pelo texto digitado)
             var produto = ProdutoSelecionado ?? ProdutosSugestao.FirstOrDefault(p =>
                 p.Nome.Equals(BuscaTexto, StringComparison.OrdinalIgnoreCase));
 
             if (produto == null) return;
 
-            // 2. Parse dos inputs com segurança
-            if (!int.TryParse(QuantidadeInput, out int qtd) || qtd <= 0)
+            // CORREÇÃO: Usando decimal.TryParse para aceitar pesos como 0,5kg ou 1,250kg
+            if (!decimal.TryParse(QuantidadeInput, NumberStyles.Any, CultureInfo.CurrentCulture, out decimal qtd) || qtd <= 0)
                 qtd = 1;
 
-            // Garante que o parse decimal use a cultura correta (ponto ou vírgula)
-            if (!decimal.TryParse(PrecoUnitarioInput, System.Globalization.NumberStyles.Currency, null, out decimal precoUnit) || precoUnit <= 0)
+            if (!decimal.TryParse(PrecoUnitarioInput, NumberStyles.Currency, CultureInfo.CurrentCulture, out decimal precoUnit) || precoUnit <= 0)
                 precoUnit = produto.Valor;
 
-            // 3. Cria o novo item
             var novoItem = new ItemModel
             {
                 IdConsumivel = produto.IdConsumivel,
                 Produto = produto,
-                Quantidade = qtd,
+                Quantidade = (Decimal)qtd, // Cast para double se sua Model ainda for double, ou mantenha decimal se já alterou a Model
                 ValorUnit = precoUnit,
                 ValorTotal = qtd * precoUnit
             };
 
-            // 4. Adiciona à lista temporária
             ItensTemporarios.Add(novoItem);
-
-            // 5. Atualiza os cálculos de totais da tela ANTES de limpar a entrada
             AtualizarCalculos();
-
-            // 6. Limpa os campos de entrada (esta chamada dispara as notificações de PropertyChanged)
             LimparCamposEntrada();
         }
 
         private void LimparCamposEntrada()
         {
-            // Primeiro limpamos o texto da busca para "matar" o filtro
             BuscaTexto = string.Empty;
             OnPropertyChanged(nameof(BuscaTexto));
 
-            // Depois limpamos o objeto selecionado
             ProdutoSelecionado = null;
             OnPropertyChanged(nameof(ProdutoSelecionado));
 
-            // Resetamos os demais campos
             QuantidadeInput = "1";
             PrecoUnitarioInput = string.Empty;
         }
@@ -147,7 +133,7 @@ namespace SmartCash.ViewModels.Transacoes
                 Itens = ItensTemporarios.Select(i => new ItemModel
                 {
                     IdConsumivel = i.IdConsumivel,
-                    Quantidade = i.IdConsumivel == 0 ? 0 : i.Quantidade, // Ajuste conforme sua regra de negócio
+                    Quantidade = i.IdConsumivel == 0 ? 0 : i.Quantidade,
                     ValorUnit = i.ValorUnit,
                     ValorTotal = i.ValorTotal
                 }).ToList()
@@ -157,7 +143,7 @@ namespace SmartCash.ViewModels.Transacoes
             await _parentViewModel.CarregarDadosCommand.ExecuteAsync(null);
             Voltar();
 
-            WeakReferenceMessenger.Default.Send(new NovaTransacaoAdicionada{});
+            WeakReferenceMessenger.Default.Send(new NovaTransacaoAdicionada { });
         }
 
         [RelayCommand]

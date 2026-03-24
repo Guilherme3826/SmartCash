@@ -51,14 +51,12 @@ namespace SmartCash.ViewModels.Transacoes
         [RelayCommand]
         public async Task CarregarDadosAsync()
         {
-            // Busca as transações com Include dos Itens e Produtos para exibir o total e detalhes
             var dados = await _transacaoRepository.GetAllAsync();
 
             _todasTransacoes = dados.OrderByDescending(t => t.Data).ToList();
 
             GerarListaDeMeses();
 
-            // Define o filtro inicial como o mês atual ou o primeiro da lista
             MesSelecionado = MesesFiltro.FirstOrDefault();
             AplicarFiltro();
         }
@@ -85,16 +83,28 @@ namespace SmartCash.ViewModels.Transacoes
 
         private void AplicarFiltro()
         {
-            if (string.IsNullOrEmpty(MesSelecionado))
+            IEnumerable<TransacaoModel> filtradas = _todasTransacoes;
+
+            if (!string.IsNullOrEmpty(MesSelecionado))
             {
-                Transacoes = new ObservableCollection<TransacaoModel>(_todasTransacoes);
-                return;
+                filtradas = _todasTransacoes.Where(t =>
+                    t.Data.ToString("MMMM yyyy", new CultureInfo("pt-BR")) == MesSelecionado);
             }
 
-            var filtradas = _todasTransacoes.Where(t =>
-                t.Data.ToString("MMMM yyyy", new CultureInfo("pt-BR")) == MesSelecionado).ToList();
+            // Agrupa as transações pelo dia e cria um único objeto virtual contendo a soma dos valores e a união dos itens
+            var resumoDiario = filtradas
+                .GroupBy(t => t.Data.Date)
+                .Select(g => new TransacaoModel
+                {
+                    IdTransacao = g.First().IdTransacao, // Mantém a referência primária
+                    Data = g.Key,
+                    ValorTotal = g.Sum(x => x.ValorTotal),
+                    Itens = g.SelectMany(x => x.Itens).ToList()
+                })
+                .OrderByDescending(t => t.Data)
+                .ToList();
 
-            Transacoes = new ObservableCollection<TransacaoModel>(filtradas);
+            Transacoes = new ObservableCollection<TransacaoModel>(resumoDiario);
         }
 
         [RelayCommand]
@@ -102,23 +112,19 @@ namespace SmartCash.ViewModels.Transacoes
         {
             if (transacao == null) return;
 
-            // Resetamos para garantir a troca de contexto
             ViewSubAtual = null;
 
-            // Pedimos apenas a ViewModel. O XAML cuidará de criar a View.
             var vm = App.ServiceProvider.GetRequiredService<TransacaoDetalhesViewModel>();
 
             ViewSubAtual = vm;
             ExibindoLista = false;
 
-            // Envia o ID para a VM que acabou de ser criada
             WeakReferenceMessenger.Default.Send(new TransacaoSelecionadaMessage(transacao.IdTransacao));
         }
 
         [RelayCommand]
         private void Adicionar()
         {
-            // O ServiceProvider resolve as dependências (repositórios) automaticamente
             var vm = App.ServiceProvider.GetRequiredService<AdicionarTransacaoViewModel>();
             ViewSubAtual = vm;
             ExibindoLista = false;
@@ -131,10 +137,14 @@ namespace SmartCash.ViewModels.Transacoes
 
             try
             {
-                // Assumindo que seu IBaseRepository possui o método DeleteAsync ou similar
-                await _transacaoRepository.DeleteAsync(transacao.IdTransacao);
+                // Como aglutinamos as transações do dia na visualização, precisamos deletar todas as do banco referentes ao dia
+                var transacoesDoDia = _todasTransacoes.Where(t => t.Data.Date == transacao.Data.Date).ToList();
 
-                // Recarrega os dados para atualizar a interface e os filtros automaticamente
+                foreach (var t in transacoesDoDia)
+                {
+                    await _transacaoRepository.DeleteAsync(t.IdTransacao);
+                }
+
                 await CarregarDadosAsync();
             }
             catch (Exception ex)
@@ -147,14 +157,11 @@ namespace SmartCash.ViewModels.Transacoes
         {
             if (value != null)
             {
-                // 1. Prepara a View de destino (ela já começa a ouvir o Messenger)
                 ViewSubAtual = new TransacaoDetalhesViewModel(_transacaoRepository, this);
                 ExibindoLista = false;
 
-                // 2. Envia a mensagem com o ID
                 WeakReferenceMessenger.Default.Send(new TransacaoSelecionadaMessage(value.IdTransacao));
 
-                // 3. Limpa seleção da lista
                 TransacaoSelecionada = null;
             }
         }

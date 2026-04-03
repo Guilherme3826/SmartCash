@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -26,6 +26,8 @@
 		<PackageReference Include="Avalonia.Diagnostics">
 			<IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
 			<PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>none</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" />
@@ -57,9 +59,8 @@
 			<DependentUpon>ConsumiveisView.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\Dashboard\DashboardView.axaml.cs">
-		  <DependentUpon>DashboardView.axaml</DependentUpon>
+			<DependentUpon>DashboardView.axaml</DependentUpon>
 		</Compile>
 	</ItemGroup>
-
 
 </Project>

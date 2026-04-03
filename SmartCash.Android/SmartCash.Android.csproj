@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net9.0-android</TargetFramework>
+		<TargetFramework>net10.0-android</TargetFramework>
 		<SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
 		<Nullable>enable</Nullable>
 		<ApplicationId>com.CompanyName.SmartCash</ApplicationId>
-		<ApplicationVersion>1</ApplicationVersion>
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>2</ApplicationVersion>
+		<ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 		<UseShortFileNames>True</UseShortFileNames>
@@ -35,17 +35,17 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <AndroidUseAapt2>True</AndroidUseAapt2>
-	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-	  <AndroidPackageFormat>aab</AndroidPackageFormat>
-	  <AndroidKeyStore>True</AndroidKeyStore>
-	  <AndroidSigningKeyAlias>gmdev</AndroidSigningKeyAlias>
-	  <AndroidSigningKeyPass>BBh$6526</AndroidSigningKeyPass>
-	  <AndroidSigningStorePass>BBh$6526</AndroidSigningStorePass>
+		<AndroidUseAapt2>True</AndroidUseAapt2>
+		<AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+		<AndroidPackageFormat>aab</AndroidPackageFormat>
+		<AndroidKeyStore>True</AndroidKeyStore>
+		<AndroidSigningKeyAlias>gmdev</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>BBh$6526</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>BBh$6526</AndroidSigningStorePass>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Icon.png" />
+		<None Remove="Icon.png" />
 	</ItemGroup>
 
 	<ItemGroup>

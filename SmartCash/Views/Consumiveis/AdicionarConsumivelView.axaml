@@ -46,6 +46,19 @@
 		<ScrollViewer Grid.Row="1">
 			<StackPanel Classes="FormArea">
 
+				<Border IsVisible="{Binding MostrarAviso}"
+                        Background="#33FF0000"
+                        BorderBrush="#FF0000"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12"
+                        Margin="0,0,0,15">
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						<i:Icon Value="fa-solid fa-circle-exclamation" Foreground="#FF0000" FontSize="18" VerticalAlignment="Center"/>
+						<TextBlock Text="{Binding MensagemAviso}" Foreground="#FF0000" VerticalAlignment="Center" FontWeight="Bold" TextWrapping="Wrap"/>
+					</StackPanel>
+				</Border>
+
 				<StackPanel Classes="FieldContainer">
 					<TextBlock Text="Nome do Produto / Serviço" Classes="FieldLabel"/>
 					<Border Classes="FieldCard">

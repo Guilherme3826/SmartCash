@@ -46,7 +46,10 @@ namespace SmartCash.ViewModels.Transacoes
         }
 
         // Construtor para Design-Time
-        public TransacoesViewModel() { }
+        public TransacoesViewModel()
+        {
+            _transacaoRepository = null!;
+        }
 
         [RelayCommand]
         public async Task CarregarDadosAsync()
@@ -157,10 +160,8 @@ namespace SmartCash.ViewModels.Transacoes
         {
             if (value != null)
             {
-                ViewSubAtual = new TransacaoDetalhesViewModel(_transacaoRepository, this);
-                ExibindoLista = false;
-
-                WeakReferenceMessenger.Default.Send(new TransacaoSelecionadaMessage(value.IdTransacao));
+                // Reutiliza o comando existente que utiliza a injeção de dependência corretamente
+                AbrirDetalhes(value);
 
                 TransacaoSelecionada = null;
             }

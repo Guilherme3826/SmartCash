@@ -92,9 +92,18 @@
 									<Border Classes="ListItemBorder">
 										<Border.ContextFlyout>
 											<MenuFlyout>
+												<MenuItem Header="Editar Consumível"
+                                                          x:CompileBindings="False"
+                                                          Command="{Binding $parent[UserControl].DataContext.EditarConsumivelCommand}"
+                                                          CommandParameter="{Binding}">
+													<MenuItem.Icon>
+														<i:Icon Value="fa-solid fa-pen"/>
+													</MenuItem.Icon>
+												</MenuItem>
 												<MenuItem Header="Excluir Consumível"
-														  Command="{Binding $parent[UserControl].((vm:ConsumiveisViewModel)DataContext).ExcluirConsumivelCommand}"
-														  CommandParameter="{Binding}">
+                                                          x:CompileBindings="False"
+                                                          Command="{Binding $parent[UserControl].DataContext.ExcluirConsumivelCommand}"
+                                                          CommandParameter="{Binding}">
 													<MenuItem.Icon>
 														<i:Icon Value="fa-solid fa-trash-can" Classes="IconDanger"/>
 													</MenuItem.Icon>

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Models;
 using SmartCash.Mensageiros;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,33 +15,55 @@ namespace SmartCash.ViewModels.Consumiveis
     {
         private readonly IBaseRepository<ConsumiveisModel> _repository;
         private readonly IBaseRepository<CategoriaModel> _catRepository;
-        private readonly ConsumiveisViewModel _parent;
-        private readonly ConsumiveisModel? _itemParaEdicao;
+
+        private ConsumiveisViewModel? _parent;
+        private ConsumiveisModel? _itemParaEdicao;
 
         [ObservableProperty] private string _nome = string.Empty;
         [ObservableProperty] private string _valor = string.Empty;
         [ObservableProperty] private CategoriaModel? _categoriaSelecionada;
         [ObservableProperty] private List<CategoriaModel> _categorias = new();
 
+        // Propriedades para controle do aviso na interface
+        [ObservableProperty] private bool _mostrarAviso;
+        [ObservableProperty] private string _mensagemAviso = string.Empty;
+
         public AdicionarConsumivelViewModel(
             IBaseRepository<ConsumiveisModel> repository,
-            IBaseRepository<CategoriaModel> catRepository,
-            ConsumiveisViewModel parent,
-            ConsumiveisModel? item = null)
+            IBaseRepository<CategoriaModel> catRepository)
         {
             _repository = repository;
             _catRepository = catRepository;
+        }
+
+        // Método chamado logo após a injeção para configurar se é uma edição ou adição
+        public void Inicializar(ConsumiveisViewModel parent, ConsumiveisModel? item = null)
+        {
             _parent = parent;
             _itemParaEdicao = item;
+            MostrarAviso = false;
 
-            if (_itemParaEdicao != null) PreencherDados();
+            if (_itemParaEdicao != null)
+            {
+                PreencherDados();
+            }
+            else
+            {
+                Nome = string.Empty;
+                Valor = string.Empty;
+                CategoriaSelecionada = null;
+            }
+
             _ = CarregarCategorias();
         }
 
         private void PreencherDados()
         {
-            Nome = _itemParaEdicao!.Nome;
-            Valor = _itemParaEdicao.Valor.ToString("F2");
+            if (_itemParaEdicao != null)
+            {
+                Nome = _itemParaEdicao.Nome;
+                Valor = _itemParaEdicao.Valor.ToString("F2");
+            }
         }
 
         private async Task CarregarCategorias()
@@ -52,19 +75,32 @@ namespace SmartCash.ViewModels.Consumiveis
                 CategoriaSelecionada = Categorias.FirstOrDefault(c => c.IdCategoria == _itemParaEdicao.IdCategoria);
         }
 
-        // O toolkit gerará o SalvarCommand
         [RelayCommand]
         private async Task Salvar()
         {
             if (string.IsNullOrWhiteSpace(Nome) || CategoriaSelecionada == null) return;
 
+            // Validação de Duplicidade
+            var todosConsumiveis = await _repository.GetAllAsync();
+            bool nomeDuplicado = todosConsumiveis.Any(c =>
+                c.Nome.Equals(Nome.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                c.IdConsumivel != (_itemParaEdicao?.IdConsumivel ?? 0));
+
+            if (nomeDuplicado)
+            {
+                MensagemAviso = "Já existe um produto ou serviço cadastrado com este nome.";
+                MostrarAviso = true;
+                return;
+            }
+
+            MostrarAviso = false;
             decimal.TryParse(Valor, out decimal preco);
 
             if (_itemParaEdicao == null)
             {
                 var novo = new ConsumiveisModel
                 {
-                    Nome = Nome,
+                    Nome = Nome.Trim(),
                     Valor = preco,
                     IdCategoria = CategoriaSelecionada.IdCategoria
                 };
@@ -72,26 +108,30 @@ namespace SmartCash.ViewModels.Consumiveis
             }
             else
             {
-                _itemParaEdicao.Nome = Nome;
+                _itemParaEdicao.Nome = Nome.Trim();
                 _itemParaEdicao.Valor = preco;
                 _itemParaEdicao.IdCategoria = CategoriaSelecionada.IdCategoria;
                 await _repository.UpdateAsync(_itemParaEdicao);
             }
 
-            // Chama o método de recarregar da lista principal
-            await _parent.CarregarDadosAsync();
+            if (_parent != null)
+            {
+                await _parent.CarregarDadosAsync();
+            }
 
             WeakReferenceMessenger.Default.Send(new NovoConsumivelAdicionado { });
 
             Voltar();
         }
 
-        // O toolkit gerará o VoltarCommand
         [RelayCommand]
         private void Voltar()
         {
-            _parent.ExibindoLista = true;
-            _parent.ViewSubAtual = null;
+            if (_parent != null)
+            {
+                _parent.ExibindoLista = true;
+                _parent.ViewSubAtual = null;
+            }
         }
     }
 }

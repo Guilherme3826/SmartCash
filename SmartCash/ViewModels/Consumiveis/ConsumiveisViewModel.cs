@@ -53,6 +53,8 @@ namespace SmartCash.ViewModels.Consumiveis
         // Construtor vazio estritamente para o Design.DataContext do XAML não gerar erros no Visual Studio
         public ConsumiveisViewModel()
         {
+            _consumiveisRepository = null!;
+            _categoriaRepository = null!;
         }
 
         [RelayCommand]
@@ -73,7 +75,7 @@ namespace SmartCash.ViewModels.Consumiveis
 
             // 2. Carrega os consumíveis já com o Include da Categoria para o Binding da interface
             var consumiveisDb = await _consumiveisRepository.GetAllAsync();
-            _todosConsumiveis = consumiveisDb;
+            _todosConsumiveis = consumiveisDb.OrderBy(c => c.Nome).ToList();
 
             // 3. Atualiza as coleções observáveis que notificam a interface
             Categorias = new ObservableCollection<CategoriaModel>(listaCategorias);
@@ -97,6 +99,18 @@ namespace SmartCash.ViewModels.Consumiveis
             {
                 System.Diagnostics.Debug.WriteLine($"[ERRO AO EXCLUIR] {ex.Message}");
             }
+        }
+
+        [RelayCommand]
+        private void EditarConsumivel(ConsumiveisModel consumivel)
+        {
+            if (consumivel == null) return;
+
+            var editarVm = App.ServiceProvider.GetRequiredService<AdicionarConsumivelViewModel>();
+            editarVm.Inicializar(this, consumivel);
+
+            ViewSubAtual = editarVm;
+            ExibindoLista = false;
         }
 
         // Método interceptador gerado pelo CommunityToolkit sempre que a propriedade CategoriaSelecionada é alterada
@@ -132,6 +146,8 @@ namespace SmartCash.ViewModels.Consumiveis
         private async Task AdicionarAsync()
         {
             var adicionarVm = App.ServiceProvider.GetRequiredService<AdicionarConsumivelViewModel>();
+            adicionarVm.Inicializar(this, null);
+
             ViewSubAtual = adicionarVm;
             ExibindoLista = false;
             await Task.CompletedTask;

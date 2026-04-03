@@ -59,15 +59,29 @@
 							<ListBox.ItemTemplate>
 								<DataTemplate x:DataType="vm:ItemDisplayModel">
 									<Border Classes="ListItemBorder">
+
+										<Border.ContextFlyout>
+											<MenuFlyout>
+												<MenuItem Header="Excluir Ítem"
+                                                          x:CompileBindings="False"
+                                                          Command="{Binding $parent[UserControl].DataContext.ExcluirItemCommand}"
+                                                          CommandParameter="{Binding}">
+													<MenuItem.Icon>
+														<i:Icon Value="fa-solid fa-trash-can" Classes="IconDanger"/>
+													</MenuItem.Icon>
+												</MenuItem>
+											</MenuFlyout>
+										</Border.ContextFlyout>
+
 										<Grid ColumnDefinitions="Auto, *, Auto">
 
 											<Border Grid.Column="0" Classes="IconAvatarCard">
-                                                <i:Icon Value="{Binding Item.Produto.Categoria.IconeApresentacao}" Classes="IconAvatarGraphic"/>
+												<i:Icon Value="{Binding Item.Produto.Categoria.IconeApresentacao}" Classes="IconAvatarGraphic"/>
 											</Border>
 
 											<StackPanel Grid.Column="1" Classes="ListItemTextContainer">
 												<TextBlock Text="{Binding Item.Produto.Nome}" Classes="ListItemTitle"/>
-												
+
 												<StackPanel Orientation="Horizontal" Spacing="5">
 													<TextBlock Text="{Binding Horario, StringFormat='{}{0:HH:mm}'}" Classes="ListItemSubtitle"/>
 													<TextBlock Text="•" Classes="ListItemSubtitle"/>

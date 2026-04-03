@@ -17,6 +17,9 @@ namespace SmartCash.EfCore.Configurations
             builder.Property(e => e.Nome).IsRequired().HasMaxLength(50);
             builder.Property(e => e.Valor).IsRequired();
 
+            // Proteção no Banco de Dados: Impede nomes duplicados
+            builder.HasIndex(e => e.Nome).IsUnique();
+
             builder.HasOne(d => d.Categoria)
                 .WithMany(p => p.Produtos)
                 .HasForeignKey(d => d.IdCategoria)

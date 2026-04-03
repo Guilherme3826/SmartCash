@@ -8,7 +8,7 @@ using SmartCash.Mensageiros;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization; // Adicionado para garantir o parse correto
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,6 +27,9 @@ namespace SmartCash.ViewModels.Transacoes
 
         [ObservableProperty] private string _quantidadeInput = "1";
         [ObservableProperty] private string _precoUnitarioInput = string.Empty;
+
+        // Alterado para DateTimeOffset? para ser compatível com o DatePicker
+        [ObservableProperty] private DateTimeOffset? _dataSelecionada = DateTimeOffset.Now;
 
         public ObservableCollection<ItemModel> ItensTemporarios { get; } = new();
 
@@ -57,7 +60,6 @@ namespace SmartCash.ViewModels.Transacoes
         [RelayCommand]
         private void IncrementarQuantidade()
         {
-            // Alterado para decimal para suportar incremento mesmo se houver valor quebrado (ex: 1.5 + 1 = 2.5)
             if (decimal.TryParse(QuantidadeInput, NumberStyles.Any, CultureInfo.CurrentCulture, out decimal atual))
             {
                 QuantidadeInput = (atual + 1).ToString(CultureInfo.CurrentCulture);
@@ -76,7 +78,6 @@ namespace SmartCash.ViewModels.Transacoes
 
             if (produto == null) return;
 
-            // CORREÇÃO: Usando decimal.TryParse para aceitar pesos como 0,5kg ou 1,250kg
             if (!decimal.TryParse(QuantidadeInput, NumberStyles.Any, CultureInfo.CurrentCulture, out decimal qtd) || qtd <= 0)
                 qtd = 1;
 
@@ -87,7 +88,7 @@ namespace SmartCash.ViewModels.Transacoes
             {
                 IdConsumivel = produto.IdConsumivel,
                 Produto = produto,
-                Quantidade = (Decimal)qtd, // Cast para double se sua Model ainda for double, ou mantenha decimal se já alterou a Model
+                Quantidade = (Decimal)qtd,
                 ValorUnit = precoUnit,
                 ValorTotal = qtd * precoUnit
             };
@@ -128,7 +129,8 @@ namespace SmartCash.ViewModels.Transacoes
 
             var novaTransacao = new TransacaoModel
             {
-                Data = DateTime.Now,
+                // Extraindo o DateTime do DateTimeOffset
+                Data = DataSelecionada?.DateTime ?? DateTime.Now,
                 ValorTotal = ValorTotalTemp,
                 Itens = ItensTemporarios.Select(i => new ItemModel
                 {

@@ -69,7 +69,11 @@
 				<StackPanel Classes="FieldContainer">
 					<TextBlock Text="Preço Padrão (R$)" Classes="FieldLabel"/>
 					<Border Classes="FieldCard">
-						<TextBox Text="{Binding Valor}" Classes="InputBase" Watermark="0,00"/>
+                        <TextBox Text="{Binding Valor}" 
+                                 Classes="InputBase" 
+                                 Watermark="0,00"
+                                 TextInputOptions.ContentType="Number"
+                                 TextChanged="NumericTextBox_TextChanged" />
 					</Border>
 				</StackPanel>
 

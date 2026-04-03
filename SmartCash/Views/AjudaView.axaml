@@ -1,0 +1,112 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:mvm="clr-namespace:SmartCash.ViewModels"
+             xmlns:views="clr-namespace:SmartCash.Views"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
+             x:DataType="mvm:AjudaViewModel"
+             Background="{DynamicResource WaBackground}"
+             x:Class="SmartCash.Views.AjudaView">
+
+	<Grid RowDefinitions="Auto, *">
+		
+		<Border Grid.Row="0" Classes="HeaderBox" CornerRadius="0"
+                x:CompileBindings="False"
+                Padding="{Binding $parent[TopLevel].InsetsManager.SafeAreaPadding, FallbackValue='0,40,0,0'}">
+
+			<Border Classes="HeaderContent" Padding="10,12">
+				<Grid ColumnDefinitions="Auto, *, Auto">
+					
+					<Button Grid.Column="0"
+                            Command="{Binding $parent[views:MainView].((mvm:MainViewModel)DataContext).VoltarCommand}"
+                            Classes="IconButton"
+                            Margin="0,0,5,0">
+						<i:Icon Value="fa-solid fa-arrow-left" Foreground="{DynamicResource WaHeaderIcon}" FontSize="24"/>
+					</Button>
+
+					<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+						<Border Classes="IconAvatarCard">
+							<i:Icon Value="fa-regular fa-circle-question" Classes="IconAvatarGraphic"/>
+						</Border>
+						<TextBlock Text="Ajuda" Classes="HeaderTitle" VerticalAlignment="Center"/>
+					</StackPanel>
+
+				</Grid>
+			</Border>
+		</Border>
+
+		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+			<StackPanel Classes="MainContentArea" Spacing="20" Margin="15">
+				
+				<Border Classes="ListContainerCard" Padding="15">
+					<StackPanel Spacing="15">
+						
+						<StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+							<i:Icon Value="fa-solid fa-bolt" Foreground="{DynamicResource WaPrimary}" FontSize="20"/>
+							<TextBlock Text="Agilize seus Lançamentos" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}" TextWrapping="Wrap"/>
+						</StackPanel>
+						
+						<TextBlock Text="Para aqueles gastos do dia a dia que se repetem, o SmartCash oferece um atalho inteligente:" 
+                                   Foreground="{DynamicResource WaTextSecondary}" 
+                                   TextWrapping="Wrap" 
+                                   LineHeight="22"/>
+
+						<StackPanel Spacing="5">
+							<TextBlock Text="1. Cadastre o Item:" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}" />
+                            <TextBlock Text="Vá na aba Consumíveis, acesse o menu e selecione 'Novo Consumível'. Escolha um nome (ex: 'Cafezinho'), defina o valor médio e a categoria correspondente." 
+                                       TextWrapping="Wrap" Foreground="{DynamicResource WaTextSecondary}" />
+						</StackPanel>
+
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="2. Lançamento Rápido:" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}" />
+                            <TextBlock Text="Na próxima vez que comprar esse item, vá em Transações e clique em 'Nova Transação'." 
+                                       TextWrapping="Wrap" Foreground="{DynamicResource WaTextSecondary}" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="3. Selecione e Salve:" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}" />
+                            <TextBlock Text="Em vez de digitar tudo, apenas procure e clique no consumível que você cadastrou. Informe a quantidade e pronto! O app calcula o total e salva em segundos." 
+                                       TextWrapping="Wrap" Foreground="{DynamicResource WaTextSecondary}" />
+                        </StackPanel>
+
+					</StackPanel>
+				</Border>
+
+                <Border Classes="ListContainerCard" Background="{DynamicResource WaSurface}" Padding="15">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Dica Pro" FontWeight="Bold" Foreground="{DynamicResource WaPrimary}"/>
+                        <TextBlock Text="O SmartCash já vem com categorias essenciais, mas você pode personalizar sua experiência adicionando novas categorias antes de começar seus lançamentos, deixando tudo com a sua cara!" 
+                                   TextWrapping="Wrap" Foreground="{DynamicResource WaTextSecondary}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="ListContainerCard" Padding="15">
+                    <StackPanel Spacing="15">
+                        
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <i:Icon Value="fa-solid fa-star" Foreground="{DynamicResource WaPrimary}" FontSize="20"/>
+                            <TextBlock Text="Novidades Recentes" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="Controle Total de Datas:" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}" />
+                            <TextBlock Text="Agora você pode alterar a data específica de um único item diretamente nos detalhes da transação. Caso a nova data já possua registros, os itens serão agrupados automaticamente." 
+                                       TextWrapping="Wrap" Foreground="{DynamicResource WaTextSecondary}" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="Edição Aprimorada:" FontWeight="Bold" Foreground="{DynamicResource WaTextPrimary}" />
+                            <TextBlock Text="Exclua itens individuais de uma compra e gerencie seus produtos com proteção ativa contra cadastros duplicados." 
+                                       TextWrapping="Wrap" Foreground="{DynamicResource WaTextSecondary}" />
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+			</StackPanel>
+		</ScrollViewer>
+
+	</Grid>
+</UserControl>

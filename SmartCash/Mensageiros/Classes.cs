@@ -43,5 +43,5 @@ namespace SmartCash.Mensageiros
     }
     public class NovaTransacaoAdicionada { }
     public class NovoConsumivelAdicionado { }
-    
+    public class CategoriaAlterada { }
 }

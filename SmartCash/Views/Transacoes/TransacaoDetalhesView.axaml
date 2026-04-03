@@ -62,6 +62,14 @@
 
 										<Border.ContextFlyout>
 											<MenuFlyout>
+												<MenuItem Header="Alterar Data"
+                                                          x:CompileBindings="False"
+                                                          Command="{Binding $parent[UserControl].DataContext.AbrirEdicaoDataCommand}"
+                                                          CommandParameter="{Binding}">
+													<MenuItem.Icon>
+														<i:Icon Value="fa-regular fa-calendar-days"/>
+													</MenuItem.Icon>
+												</MenuItem>
 												<MenuItem Header="Excluir Ítem"
                                                           x:CompileBindings="False"
                                                           Command="{Binding $parent[UserControl].DataContext.ExcluirItemCommand}"
@@ -102,5 +110,30 @@
 				</StackPanel>
 			</ScrollViewer>
 		</Grid>
+
+		<Grid Grid.RowSpan="2" IsVisible="{Binding EditandoData}" Background="#80000000" ZIndex="100">
+			<Border Background="{DynamicResource WaSurface}" CornerRadius="12" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center" Width="340">
+				<StackPanel Spacing="15">
+					<TextBlock Text="Selecione o Novo Dia" Classes="HeaderTitle" FontSize="18" HorizontalAlignment="Center"/>
+					
+					<TextBlock Text="{Binding ItemSendoEditado.Item.Produto.Nome}" 
+                               Foreground="{DynamicResource WaTextSecondary}" 
+                               HorizontalAlignment="Center" 
+                               Margin="0,0,0,10"/>
+
+					<DatePicker SelectedDate="{Binding NovaDataSelecionada}" 
+                                HorizontalAlignment="Stretch" 
+                                Background="Transparent" 
+                                DayFormat="dd" MonthFormat="MMM" YearFormat="yyyy" />
+
+					<Button Content="Cancelar" 
+                            Command="{Binding CancelarEdicaoCommand}" 
+                            Margin="0,15,0,0" 
+                            HorizontalAlignment="Stretch" 
+                            HorizontalContentAlignment="Center"/>
+				</StackPanel>
+			</Border>
+		</Grid>
+
 	</Grid>
 </UserControl>

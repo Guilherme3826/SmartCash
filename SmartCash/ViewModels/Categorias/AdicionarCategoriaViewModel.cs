@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using SmartCash.EfCore.Interfaces;
 using SmartCash.EfCore.Repositories;
 using SmartCash.EfCore.Models;
+using SmartCash.Mensageiros;
 using System.Threading.Tasks;
 
 namespace SmartCash.ViewModels.Categorias
@@ -89,6 +91,9 @@ namespace SmartCash.ViewModels.Categorias
 
                 // 3. Atualiza a lista de categorias para incluir a nova que acabamos de criar
                 await _parentViewModel.CarregarCategorias();
+
+                // 4. Notifica o sistema de que uma categoria foi adicionada
+                WeakReferenceMessenger.Default.Send(new CategoriaAlterada());
             }
         }
 

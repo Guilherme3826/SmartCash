@@ -46,11 +46,12 @@ namespace SmartCash.ViewModels.Categorias
         // O construtor agora recebe a interface vinculada ao Modelo correto
         public CategoriasViewModel(IBaseRepository<CategoriaModel> categoriaRepository)
         {
-  
+
             ExibindoLista = true;
             _categoriaRepository = categoriaRepository;
             _ = CarregarCategorias();
         }
+
         // Adicione este método na sua CategoriasViewModel.cs
         public void AbrirDetalhesExternamente(int idCategoria, string periodoFiltro)
         {
@@ -193,6 +194,9 @@ namespace SmartCash.ViewModels.Categorias
 
                 // Recarrega do banco para atualizar todos os cálculos do filtro
                 await CarregarCategorias();
+
+                // Notifica o sistema de que uma categoria foi excluída
+                WeakReferenceMessenger.Default.Send(new CategoriaAlterada());
             }
             catch (Exception ex)
             {

@@ -52,12 +52,21 @@
 		<StackPanel Grid.Row="1" Classes="FormArea">
 
 			<StackPanel Classes="FieldContainer">
+				<TextBlock Text="Data da Transação" Classes="FieldLabel"/>
+				<Border Classes="FieldCard">
+					<DatePicker SelectedDate="{Binding DataSelecionada}"
+                                HorizontalAlignment="Stretch"
+                                Background="Transparent"
+                                DayFormat="dd" MonthFormat="MMM" YearFormat="yyyy" />
+				</Border>
+			</StackPanel>
+
+			<StackPanel Classes="FieldContainer">
 				<TextBlock Text="O que você comprou?" Classes="FieldLabel"/>
 
 				<Grid ColumnDefinitions="*, Auto">
 					<Border Grid.Column="0" Classes="FieldCard" CornerRadius="12,0,0,12" Margin="0,0,1,0">
 						<AutoCompleteBox x:Name="AutoCompleteProdutos"
-										 SelectionChanged="AutoComplete_SelectionChanged"
 										 ItemsSource="{Binding ProdutosSugestao}"
 										 SelectedItem="{Binding ProdutoSelecionado}"
 										 Text="{Binding BuscaTexto, Mode=TwoWay}"
@@ -100,9 +109,11 @@
 
 					<Grid ColumnDefinitions="*, Auto">
 						<Border Grid.Column="0" Classes="FieldCard" CornerRadius="12,0,0,12" Margin="0,0,1,0">
-							<TextBox Text="{Binding QuantidadeInput}"
+                            <TextBox Text="{Binding QuantidadeInput}"
                                      Classes="InputBase"
-                                     HorizontalContentAlignment="Center"/>
+                                     HorizontalContentAlignment="Center"
+                                     TextInputOptions.ContentType="Number"
+                                     TextChanged="NumericTextBox_TextChanged" />
 						</Border>
 
 						<Button Grid.Column="1"
@@ -117,10 +128,12 @@
 					<TextBlock Text="Preço Unit. (Opcional)" Classes="FieldLabel"/>
 
 					<Border Classes="FieldCard">
-						<TextBox x:Name="TxtPreco"
+                        <TextBox x:Name="TxtPreco"
 								 Text="{Binding PrecoUnitarioInput}"
                                  Classes="InputBase"
-                                 Watermark="R$ 0,00"/>
+                                 Watermark="R$ 0,00"
+                                 TextInputOptions.ContentType="Number"
+                                 TextChanged="NumericTextBox_TextChanged" />
 					</Border>
 				</StackPanel>
 			</Grid>

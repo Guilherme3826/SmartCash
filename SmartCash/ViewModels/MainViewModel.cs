@@ -27,15 +27,10 @@ namespace SmartCash.ViewModels
 
             WeakReferenceMessenger.Default.Register<NavegarParaCategoriaDetalhesGlobalMessage>(this, (r, m) =>
             {
-                // 1. Muda para a aba de Categorias (substitua pelo seu comando exato se for diferente)
                 NavegarCategorias();
 
-                // 2. Pede a CategoriasViewModel ao sistema. Se ela não existia, é criada agora!
                 var categoriasVm = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<CategoriasViewModel>(App.ServiceProvider);
 
-                // 3. Executamos de forma assíncrona com um atraso mínimo de 50 milissegundos.
-                // Isso garante que a animação/troca da aba do Avalonia termine antes de forçarmos a exibição dos detalhes,
-                // evitando que a navegação do menu "atropele" a abertura da sub-tela.
                 Task.Delay(50).ContinueWith(_ =>
                 {
                     Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
@@ -75,7 +70,15 @@ namespace SmartCash.ViewModels
         {
             var view = App.ServiceProvider.GetRequiredService<ConfiguracoesView>();
             ViewAtual = view;
-            AtualizarEstadoNavegacao(); // Deixa todos falsos, pois a tela não está na BottomNav
+            AtualizarEstadoNavegacao();
+        }
+
+        [RelayCommand]
+        private void NavegarAjuda()
+        {
+            var view = App.ServiceProvider.GetRequiredService<AjudaView>();
+            ViewAtual = view;
+            AtualizarEstadoNavegacao();
         }
 
         [RelayCommand]

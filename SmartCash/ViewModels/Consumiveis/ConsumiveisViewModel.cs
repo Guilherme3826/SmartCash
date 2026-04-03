@@ -40,6 +40,10 @@ namespace SmartCash.ViewModels.Consumiveis
         [ObservableProperty]
         private ConsumiveisModel? _consumivelSelecionado;
 
+        // Propriedade adicionada para o campo de busca
+        [ObservableProperty]
+        private string _buscaNome = string.Empty;
+
         public ConsumiveisViewModel(
             IBaseRepository<ConsumiveisModel> consumiveisRepository,
             IBaseRepository<CategoriaModel> categoriaRepository)
@@ -81,6 +85,9 @@ namespace SmartCash.ViewModels.Consumiveis
             Categorias = new ObservableCollection<CategoriaModel>(listaCategorias);
             Consumiveis = new ObservableCollection<ConsumiveisModel>(_todosConsumiveis);
             CategoriaSelecionada = categoriaTodas;
+
+            // Limpa o campo de busca ao recarregar
+            BuscaNome = string.Empty;
         }
 
         [RelayCommand]
@@ -119,6 +126,12 @@ namespace SmartCash.ViewModels.Consumiveis
             AplicarFiltro();
         }
 
+        // Método interceptador gerado pelo CommunityToolkit sempre que o texto de busca é alterado
+        partial void OnBuscaNomeChanged(string value)
+        {
+            AplicarFiltro();
+        }
+
         private void AplicarFiltro()
         {
             if (_todosConsumiveis == null || !_todosConsumiveis.Any())
@@ -126,20 +139,21 @@ namespace SmartCash.ViewModels.Consumiveis
                 return;
             }
 
-            if (CategoriaSelecionada == null || CategoriaSelecionada.IdCategoria == 0)
-            {
-                // Restaura a lista completa se selecionar "Todas as Categorias"
-                Consumiveis = new ObservableCollection<ConsumiveisModel>(_todosConsumiveis);
-            }
-            else
-            {
-                // Filtra os consumíveis baseando-se no ID da categoria selecionada no ComboBox
-                var filtrados = _todosConsumiveis
-                    .Where(c => c.IdCategoria == CategoriaSelecionada.IdCategoria)
-                    .ToList();
+            var filtrados = _todosConsumiveis.AsEnumerable();
 
-                Consumiveis = new ObservableCollection<ConsumiveisModel>(filtrados);
+            // Filtra pela categoria caso não seja "Todas as Categorias"
+            if (CategoriaSelecionada != null && CategoriaSelecionada.IdCategoria != 0)
+            {
+                filtrados = filtrados.Where(c => c.IdCategoria == CategoriaSelecionada.IdCategoria);
             }
+
+            // Filtra pelo nome digitado
+            if (!string.IsNullOrWhiteSpace(BuscaNome))
+            {
+                filtrados = filtrados.Where(c => c.Nome.Contains(BuscaNome, StringComparison.OrdinalIgnoreCase));
+            }
+
+            Consumiveis = new ObservableCollection<ConsumiveisModel>(filtrados.ToList());
         }
 
         [RelayCommand]

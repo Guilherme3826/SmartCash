@@ -66,18 +66,26 @@
 
 				<StackPanel Classes="MainContentArea">
 
-					<Border Classes="FieldCard">
-						<ComboBox HorizontalAlignment="Stretch"
-                                  ItemsSource="{Binding Categorias}"
-                                  SelectedItem="{Binding CategoriaSelecionada}"
-                                  PlaceholderText="Filtrar por Categoria">
-							<ComboBox.ItemTemplate>
-								<DataTemplate x:DataType="models:CategoriaModel">
-									<TextBlock Text="{Binding Nome}" Classes="ComboBoxItemText"/>
-								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>
-					</Border>
+					<StackPanel Spacing="10" Margin="0,0,0,15">
+						<Border Classes="FieldCard">
+							<TextBox Text="{Binding BuscaNome}" 
+                                     Classes="InputBase" 
+                                     Watermark="Buscar por nome..." />
+						</Border>
+
+						<Border Classes="FieldCard">
+							<ComboBox HorizontalAlignment="Stretch"
+                                      ItemsSource="{Binding Categorias}"
+                                      SelectedItem="{Binding CategoriaSelecionada}"
+                                      PlaceholderText="Filtrar por Categoria">
+								<ComboBox.ItemTemplate>
+									<DataTemplate x:DataType="models:CategoriaModel">
+										<TextBlock Text="{Binding Nome}" Classes="ComboBoxItemText"/>
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+						</Border>
+					</StackPanel>
 
 					<Border Classes="ListContainerCard">
 

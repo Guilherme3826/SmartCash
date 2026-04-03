@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace SmartCash.ViewModels.Transacoes
 {
-    // Classe auxiliar para mesclar o item com o horário da sua respectiva transação
     public class ItemDisplayModel
     {
         public ItemModel Item { get; set; } = null!;
@@ -28,12 +27,20 @@ namespace SmartCash.ViewModels.Transacoes
         [ObservableProperty]
         private TransacaoModel? _transacao;
 
-        // Nova propriedade declarada para ancorar a lista de itens com horário no XAML
         [ObservableProperty]
         private ObservableCollection<ItemDisplayModel> _itensDoDia = new();
 
         [ObservableProperty]
         private bool _estaCarregando;
+
+        [ObservableProperty] private bool _editandoData;
+        [ObservableProperty] private ItemDisplayModel? _itemSendoEditado;
+
+        // O Avalonia DatePicker utiliza DateTimeOffset
+        [ObservableProperty] private DateTimeOffset? _novaDataSelecionada;
+
+        // Propriedade de controle interno para evitar loop infinito na troca de datas
+        private bool _isProcessandoMudancaData = false;
 
         public TransacaoDetalhesViewModel(
             ITransacaoRepository transacaoRepository,
@@ -56,22 +63,19 @@ namespace SmartCash.ViewModels.Transacoes
         {
             EstaCarregando = true;
 
-            // 1. Busca a transação específica para descobrir qual foi o dia selecionado
             var transacaoBase = await _transacaoRepository.GetByIdAsync(id);
 
             if (transacaoBase != null)
             {
-                // 2. Busca todas as transações para poder filtrar as do mesmo dia
                 var todas = await _transacaoRepository.GetAllAsync();
                 var transacoesDoDia = todas
                     .Where(t => t.Data.Date == transacaoBase.Data.Date)
-                    .OrderByDescending(t => t.Data) // Ordena das mais recentes para as mais antigas no dia
+                    .OrderByDescending(t => t.Data)
                     .ToList();
 
                 var itensCompilados = new List<ItemDisplayModel>();
                 decimal valorTotalDia = 0;
 
-                // 3. Varre todas as transações do dia para somar o valor e aglutinar os itens
                 foreach (var t in transacoesDoDia)
                 {
                     valorTotalDia += t.ValorTotal;
@@ -83,20 +87,18 @@ namespace SmartCash.ViewModels.Transacoes
                             itensCompilados.Add(new ItemDisplayModel
                             {
                                 Item = item,
-                                Horario = t.Data // Salva o horário exato em que esta transação ocorreu
+                                Horario = t.Data
                             });
                         }
                     }
                 }
 
-                // 4. Cria um objeto Transacao virtual apenas para alimentar o cabeçalho com a soma total do dia
                 Transacao = new TransacaoModel
                 {
                     Data = transacaoBase.Data.Date,
                     ValorTotal = valorTotalDia
                 };
 
-                // 5. Alimenta a lista que será exibida no XAML
                 ItensDoDia = new ObservableCollection<ItemDisplayModel>(itensCompilados);
             }
 
@@ -120,43 +122,147 @@ namespace SmartCash.ViewModels.Transacoes
             var item = displayItem.Item;
             var dataAtual = Transacao.Data.Date;
 
-            // 1. Exclui o item no banco de dados
             await _itemRepository.DeleteAsync(item.IdItem);
 
-            // 2. Verifica o status da transação mãe daquele item específico
             var transacaoMae = await _transacaoRepository.GetByIdAsync(item.IdTransacao);
             if (transacaoMae != null)
             {
-                // Se a transação mãe ficou vazia após excluir o item, nós a apagamos
-                if (transacaoMae.Itens.Count == 0)
+                if (transacaoMae.Itens.Count <= 0)
                 {
                     await _transacaoRepository.DeleteAsync(transacaoMae.IdTransacao);
                 }
                 else
                 {
-                    // Se ainda há itens nela, atualizamos o valor descontando o item excluído
                     transacaoMae.ValorTotal -= item.ValorTotal;
                     await _transacaoRepository.UpdateAsync(transacaoMae);
                 }
             }
 
-            // 3. Verifica se sobraram outras transações neste mesmo dia
             var todas = await _transacaoRepository.GetAllAsync();
             var restanteNoDia = todas.FirstOrDefault(t => t.Data.Date == dataAtual);
 
-            // 4. Notifica o sistema global (Dashboard e Lista mãe) para atualizar os cálculos
             WeakReferenceMessenger.Default.Send(new NovaTransacaoAdicionada());
 
             if (restanteNoDia != null)
             {
-                // Recarrega os dados do dia utilizando um ID válido remanescente
                 await CarregarDetalhesAsync(restanteNoDia.IdTransacao);
             }
             else
             {
-                // Se não sobrou nenhum item no dia todo, fechamos os detalhes
                 Voltar();
             }
+        }
+
+        [RelayCommand]
+        private void AbrirEdicaoData(ItemDisplayModel displayItem)
+        {
+            if (displayItem == null || displayItem.Item == null) return;
+
+            // Bloqueia temporariamente o disparo do evento de mudança enquanto preenchemos a data inicial
+            _isProcessandoMudancaData = true;
+            ItemSendoEditado = displayItem;
+            NovaDataSelecionada = new DateTimeOffset(displayItem.Horario);
+            _isProcessandoMudancaData = false;
+
+            EditandoData = true;
+        }
+
+        [RelayCommand]
+        private void CancelarEdicao()
+        {
+            EditandoData = false;
+            ItemSendoEditado = null;
+        }
+
+        // Este método é acionado automaticamente pelo CommunityToolkit toda vez que a propriedade NovaDataSelecionada mudar
+        partial void OnNovaDataSelecionadaChanged(DateTimeOffset? value)
+        {
+            if (!_isProcessandoMudancaData && value.HasValue && EditandoData)
+            {
+                // Se o usuário mudou a data no DatePicker e não estamos num bloqueio de sistema, salva automaticamente.
+                _ = SalvarNovaDataAsync();
+            }
+        }
+
+        private async Task SalvarNovaDataAsync()
+        {
+            if (ItemSendoEditado == null || ItemSendoEditado.Item == null || NovaDataSelecionada == null || Transacao == null) return;
+
+            // Bloqueia chamadas duplas
+            _isProcessandoMudancaData = true;
+
+            var item = ItemSendoEditado.Item;
+            var dataAtualDaTransacao = Transacao.Data.Date;
+            var novaData = NovaDataSelecionada.Value.Date;
+
+            if (dataAtualDaTransacao == novaData)
+            {
+                CancelarEdicao();
+                _isProcessandoMudancaData = false;
+                return;
+            }
+
+            var todasTransacoes = await _transacaoRepository.GetAllAsync();
+            var transacaoAntiga = await _transacaoRepository.GetByIdAsync(item.IdTransacao);
+
+            if (transacaoAntiga == null)
+            {
+                _isProcessandoMudancaData = false;
+                return;
+            }
+
+            var transacaoDestino = todasTransacoes.FirstOrDefault(t => t.Data.Date == novaData);
+
+            if (transacaoDestino != null)
+            {
+                transacaoDestino.ValorTotal += item.ValorTotal;
+                await _transacaoRepository.UpdateAsync(transacaoDestino);
+
+                item.IdTransacao = transacaoDestino.IdTransacao;
+                await _itemRepository.UpdateAsync(item);
+            }
+            else
+            {
+                var novaTransacao = new TransacaoModel
+                {
+                    Data = novaData.Add(DateTime.Now.TimeOfDay),
+                    ValorTotal = item.ValorTotal
+                };
+                await _transacaoRepository.AddAsync(novaTransacao);
+
+                item.IdTransacao = novaTransacao.IdTransacao;
+                await _itemRepository.UpdateAsync(item);
+            }
+
+            if (transacaoAntiga.Itens.Count <= 1)
+            {
+                await _transacaoRepository.DeleteAsync(transacaoAntiga.IdTransacao);
+            }
+            else
+            {
+                transacaoAntiga.ValorTotal -= item.ValorTotal;
+                await _transacaoRepository.UpdateAsync(transacaoAntiga);
+            }
+
+            EditandoData = false;
+            ItemSendoEditado = null;
+
+            // Aciona o recarregamento da tela principal e gráficos
+            WeakReferenceMessenger.Default.Send(new NovaTransacaoAdicionada());
+
+            var transacoesRestantesHoje = await _transacaoRepository.GetAllAsync();
+            var restanteNoDia = transacoesRestantesHoje.FirstOrDefault(t => t.Data.Date == dataAtualDaTransacao);
+
+            if (restanteNoDia != null)
+            {
+                await CarregarDetalhesAsync(restanteNoDia.IdTransacao);
+            }
+            else
+            {
+                Voltar();
+            }
+
+            _isProcessandoMudancaData = false;
         }
     }
 }

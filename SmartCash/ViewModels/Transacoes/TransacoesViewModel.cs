@@ -43,6 +43,12 @@ namespace SmartCash.ViewModels.Transacoes
         {
             _transacaoRepository = transacaoRepository;
             _ = CarregarDadosAsync();
+
+            // Adicionado o escutador para atualizar a lista automaticamente
+            WeakReferenceMessenger.Default.Register<NovaTransacaoAdicionada>(this, (r, m) =>
+            {
+                _ = CarregarDadosAsync();
+            });
         }
 
         // Construtor para Design-Time
@@ -149,6 +155,9 @@ namespace SmartCash.ViewModels.Transacoes
                 }
 
                 await CarregarDadosAsync();
+
+                // Notifica o Dashboard de que transações foram excluídas
+                WeakReferenceMessenger.Default.Send(new NovaTransacaoAdicionada());
             }
             catch (Exception ex)
             {
@@ -160,9 +169,7 @@ namespace SmartCash.ViewModels.Transacoes
         {
             if (value != null)
             {
-                // Reutiliza o comando existente que utiliza a injeção de dependência corretamente
                 AbrirDetalhes(value);
-
                 TransacaoSelecionada = null;
             }
         }

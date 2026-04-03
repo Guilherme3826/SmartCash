@@ -2,58 +2,72 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using SmartCash.ViewModels.Consumiveis;
+using System;
+using System.Linq;
 
-namespace SmartCash.Views.Consumiveis;
-
-public partial class AdicionarConsumivelView : UserControl
+namespace SmartCash.Views.Consumiveis
 {
-    public AdicionarConsumivelView()
+    public partial class AdicionarConsumivelView : UserControl
     {
-        InitializeComponent();
-    }
-
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnAttachedToVisualTree(e);
-
-        // Obtém o TopLevel (Janela/Activity principal) para ouvir eventos de hardware
-        var topLevel = TopLevel.GetTopLevel(this);
-        if (topLevel != null)
+        public AdicionarConsumivelView()
         {
-            // Remove antes de adicionar para prevenir múltiplas assinaturas acidentais
-            topLevel.BackRequested -= TopLevel_BackRequested;
-            topLevel.BackRequested += TopLevel_BackRequested;
-        }
-    }
-
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromVisualTree(e);
-
-        var topLevel = TopLevel.GetTopLevel(this);
-        if (topLevel != null)
-        {
-            // Crucial para que o botão voltar volte a funcionar normalmente nas outras telas
-            topLevel.BackRequested -= TopLevel_BackRequested;
+            InitializeComponent();
         }
 
-        // Limpa o DataContext para garantir que a View possa ser coletada pelo GC e evitar erros de Visual Parent
-        DataContext = null;
-    }
-
-    private void TopLevel_BackRequested(object? sender, RoutedEventArgs e)
-    {
-        // Verifica se o DataContext é a ViewModel correta
-        if (DataContext is AdicionarConsumivelViewModel vm)
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            // Se o comando puder ser executado (lógica de validação da VM)
-            if (vm.VoltarCommand.CanExecute(null))
+            base.OnAttachedToVisualTree(e);
+
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel != null)
             {
-                // Marca o evento como 'Handled' para o Android não fechar o app
-                e.Handled = true;
+                topLevel.BackRequested -= TopLevel_BackRequested;
+                topLevel.BackRequested += TopLevel_BackRequested;
+            }
+        }
 
-                // Executa a lógica de fechar a sub-view e voltar para a lista
-                vm.VoltarCommand.Execute(null);
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel != null)
+            {
+                topLevel.BackRequested -= TopLevel_BackRequested;
+            }
+
+            DataContext = null;
+        }
+
+        private void TopLevel_BackRequested(object? sender, RoutedEventArgs e)
+        {
+            if (DataContext is AdicionarConsumivelViewModel vm)
+            {
+                if (vm.VoltarCommand.CanExecute(null))
+                {
+                    e.Handled = true;
+                    vm.VoltarCommand.Execute(null);
+                }
+            }
+        }
+
+        // NOVO: Handler usando TextChanged contorna os teclados virtuais bloqueando letras dinamicamente
+        public void NumericTextBox_TextChanged(object? sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox textBox && !string.IsNullOrEmpty(textBox.Text))
+            {
+                var originalText = textBox.Text;
+
+                // Filtra o texto mantendo apenas números e separadores de decimais
+                var cleanText = new string(originalText.Where(c => char.IsDigit(c) || c == ',' || c == '.').ToArray());
+
+                if (originalText != cleanText)
+                {
+                    // Restaura a posição do cursor após apagar a letra inválida
+                    var caretIndex = textBox.CaretIndex;
+                    textBox.Text = cleanText;
+                    textBox.CaretIndex = Math.Max(0, caretIndex - (originalText.Length - cleanText.Length));
+                }
             }
         }
     }
